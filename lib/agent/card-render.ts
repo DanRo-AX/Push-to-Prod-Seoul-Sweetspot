@@ -14,8 +14,12 @@ import { join } from "node:path";
 const execFileAsync = promisify(execFile);
 const CHROME_PATH =
   "/Applications/Google Chrome.app/Contents/MacOS/Google Chrome";
+// 오프라인 원칙(스펙 §10): Pretendard Black 을 public/fonts 에 번들해 먼저 읽는다.
+// CDN 은 로컬 파일이 없을 때만 쓰는 폴백 — 기존 gh 경로는 jsDelivr 50MB 제한으로 죽어 있어
+// npm 패키지 경로로 교체한다(번들이 있으면 어차피 도달하지 않음).
+const PRETENDARD_LOCAL = join(process.cwd(), "public", "fonts", "pretendard-black.woff2");
 const PRETENDARD_URL =
-  "https://cdn.jsdelivr.net/gh/orioncactus/pretendard/dist/web/static/woff2/Pretendard-Black.woff2";
+  "https://cdn.jsdelivr.net/npm/pretendard@1.3.9/dist/web/static/woff2/Pretendard-Black.woff2";
 
 export type CardFormat = "feed" | "reel"; // feed=1080x1350(4:5), reel=1080x1920(9:16)
 
@@ -29,10 +33,19 @@ export interface CardSpec {
   showChevron?: boolean; // 캐러셀 > 인디케이터
 }
 
-// 폰트는 1회만 받아 data-URI 로 캐시 (Chrome 렌더 시 네트워크 타이밍 의존 제거).
+// 폰트는 1회만 읽어 data-URI 로 캐시 (Chrome 렌더 시 네트워크 타이밍 의존 제거).
 let fontCache: string | null = null;
 async function pretendardDataUri(): Promise<string | null> {
   if (fontCache !== null) return fontCache || null;
+  // 1) 로컬 번들 우선 — 네트워크 불요(오프라인 데모 원칙).
+  try {
+    const buf = await readFile(PRETENDARD_LOCAL);
+    fontCache = `data:font/woff2;base64,${buf.toString("base64")}`;
+    return fontCache;
+  } catch {
+    // 번들이 없으면 CDN 폴백을 시도한다.
+  }
+  // 2) CDN 폴백 — 실패/오프라인이면 null → 호출처가 시스템 폰트로 자연 폴백.
   try {
     const res = await fetch(PRETENDARD_URL, { signal: AbortSignal.timeout(15_000) });
     if (!res.ok) {
