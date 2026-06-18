@@ -1,0 +1,52 @@
+{
+  "leads": [
+    {
+      "name": "윤세라",
+      "company": "하우스앤톤",
+      "email": "sera.yoon@example.com",
+      "stage": "meeting",
+      "score": 82,
+      "lastTouch": "2026-06-09"
+    },
+    {
+      "name": "서지우",
+      "company": "카페 아침상",
+      "email": "jiwoo.seo@example.com",
+      "stage": "won",
+      "score": 90,
+      "lastTouch": "2026-06-10"
+    },
+    {
+      "name": "임도현",
+      "company": "부엌연구소",
+      "email": "dohyun.lim@example.com",
+      "stage": "replied",
+      "score": 71,
+      "lastTouch": "2026-06-08"
+    },
+    {
+      "name": "강무진",
+      "company": "비스트로 마저",
+      "email": "mujin.kang@example.com",
+      "stage": "contacted",
+      "score": 55,
+      "lastTouch": "2026-06-04"
+    },
+    {
+      "name": "문가람",
+      "company": "한식 다이닝 주안",
+      "email": "garam.moon@example.com",
+      "stage": "replied",
+      "score": 77,
+      "lastTouch": "2026-06-07"
+    },
+    {
+      "name": "노하진",
+      "company": "스테이 툇마루",
+      "email": "hajin.noh@example.com",
+      "stage": "new",
+      "score": 60,
+      "lastTouch": "2026-06-03"
+    }
+  ]
+}

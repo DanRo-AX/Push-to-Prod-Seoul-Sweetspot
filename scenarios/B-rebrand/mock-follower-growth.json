@@ -1,0 +1,33 @@
+{
+  "note": "리브랜딩 전후 28일 일별 스냅샷 — 정체 구간 실측, 반등 구간(5/30 신규 라인 공개 이후) 보수 추정 (데모 데이터)",
+  "snapshots": [
+    { "date": "2026-05-14", "instagram": 2400, "newsletterSubs": 480 },
+    { "date": "2026-05-15", "instagram": 2399, "newsletterSubs": 480 },
+    { "date": "2026-05-16", "instagram": 2398, "newsletterSubs": 479 },
+    { "date": "2026-05-17", "instagram": 2397, "newsletterSubs": 479 },
+    { "date": "2026-05-18", "instagram": 2395, "newsletterSubs": 479 },
+    { "date": "2026-05-19", "instagram": 2394, "newsletterSubs": 478 },
+    { "date": "2026-05-20", "instagram": 2393, "newsletterSubs": 478 },
+    { "date": "2026-05-21", "instagram": 2392, "newsletterSubs": 478 },
+    { "date": "2026-05-22", "instagram": 2391, "newsletterSubs": 477 },
+    { "date": "2026-05-23", "instagram": 2390, "newsletterSubs": 477 },
+    { "date": "2026-05-24", "instagram": 2389, "newsletterSubs": 476 },
+    { "date": "2026-05-25", "instagram": 2388, "newsletterSubs": 476 },
+    { "date": "2026-05-26", "instagram": 2387, "newsletterSubs": 476 },
+    { "date": "2026-05-27", "instagram": 2386, "newsletterSubs": 475 },
+    { "date": "2026-05-28", "instagram": 2385, "newsletterSubs": 475 },
+    { "date": "2026-05-29", "instagram": 2384, "newsletterSubs": 475 },
+    { "date": "2026-05-30", "instagram": 2388, "newsletterSubs": 477 },
+    { "date": "2026-05-31", "instagram": 2402, "newsletterSubs": 482 },
+    { "date": "2026-06-01", "instagram": 2438, "newsletterSubs": 494 },
+    { "date": "2026-06-02", "instagram": 2486, "newsletterSubs": 508 },
+    { "date": "2026-06-03", "instagram": 2542, "newsletterSubs": 523 },
+    { "date": "2026-06-04", "instagram": 2620, "newsletterSubs": 540 },
+    { "date": "2026-06-05", "instagram": 2691, "newsletterSubs": 560 },
+    { "date": "2026-06-06", "instagram": 2762, "newsletterSubs": 580 },
+    { "date": "2026-06-07", "instagram": 2828, "newsletterSubs": 598 },
+    { "date": "2026-06-08", "instagram": 2884, "newsletterSubs": 614 },
+    { "date": "2026-06-09", "instagram": 2934, "newsletterSubs": 628 },
+    { "date": "2026-06-10", "instagram": 2980, "newsletterSubs": 640 }
+  ]
+}

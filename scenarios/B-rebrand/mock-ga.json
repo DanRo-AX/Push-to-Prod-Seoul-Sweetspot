@@ -1,0 +1,51 @@
+{
+  "brandName": "온그릇",
+  "note": "W0~W2 리브랜딩 전 실측(정체 구간), W3~W4 리브랜딩 후 보수 추정 (데모 데이터)",
+  "weeks": [
+    {
+      "week": "W0",
+      "posts": 2,
+      "followers": 2400,
+      "newsletterSubs": 480,
+      "outboundSent": 0,
+      "outboundReplies": 0,
+      "meetings": 0
+    },
+    {
+      "week": "W1",
+      "posts": 2,
+      "followers": 2392,
+      "newsletterSubs": 478,
+      "outboundSent": 0,
+      "outboundReplies": 0,
+      "meetings": 0
+    },
+    {
+      "week": "W2",
+      "posts": 1,
+      "followers": 2385,
+      "newsletterSubs": 475,
+      "outboundSent": 8,
+      "outboundReplies": 1,
+      "meetings": 0
+    },
+    {
+      "week": "W3",
+      "posts": 5,
+      "followers": 2620,
+      "newsletterSubs": 540,
+      "outboundSent": 15,
+      "outboundReplies": 3,
+      "meetings": 1
+    },
+    {
+      "week": "W4",
+      "posts": 5,
+      "followers": 2980,
+      "newsletterSubs": 640,
+      "outboundSent": 14,
+      "outboundReplies": 3,
+      "meetings": 2
+    }
+  ]
+}

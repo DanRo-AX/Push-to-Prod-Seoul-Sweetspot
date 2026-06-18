@@ -1,0 +1,111 @@
+{
+  "period": "최근 30일",
+  "source": "GA4 → BigQuery 여정 테이블 (mock)",
+  "note": "GA4 클라이언트 ID ↔ 문의·구매 폼 제출 매칭, 익명화 처리 (데모 데이터)",
+  "sessions": [
+    {
+      "userId": "u-4d2c",
+      "visits": 5,
+      "totalMinutes": 92,
+      "daysToConversion": 8,
+      "converted": true,
+      "lastPath": "/contact"
+    },
+    {
+      "userId": "u-8f17",
+      "visits": 4,
+      "totalMinutes": 71,
+      "daysToConversion": 6,
+      "converted": true,
+      "lastPath": "/lines/oneul"
+    },
+    {
+      "userId": "u-1b9e",
+      "visits": 5,
+      "totalMinutes": 134,
+      "daysToConversion": 9,
+      "converted": true,
+      "lastPath": "/contact"
+    },
+    {
+      "userId": "u-ac35",
+      "visits": 4,
+      "totalMinutes": 66,
+      "daysToConversion": 7,
+      "converted": true,
+      "lastPath": "/store"
+    },
+    {
+      "userId": "u-72f0",
+      "visits": 5,
+      "totalMinutes": 105,
+      "daysToConversion": 7,
+      "converted": true,
+      "lastPath": "/contact"
+    },
+    {
+      "userId": "u-93ab",
+      "visits": 12,
+      "totalMinutes": 2880,
+      "daysToConversion": 15,
+      "converted": true,
+      "lastPath": "/contact"
+    },
+    {
+      "userId": "u-5e68",
+      "visits": 7,
+      "totalMinutes": 176,
+      "daysToConversion": 13,
+      "converted": false,
+      "lastPath": "/lines/oneul"
+    },
+    {
+      "userId": "u-d21f",
+      "visits": 6,
+      "totalMinutes": 151,
+      "daysToConversion": 11,
+      "converted": false,
+      "lastPath": "/contact"
+    },
+    {
+      "userId": "u-39c7",
+      "visits": 6,
+      "totalMinutes": 128,
+      "daysToConversion": 10,
+      "converted": false,
+      "lastPath": "/lines/ondo"
+    },
+    {
+      "userId": "u-f80a",
+      "visits": 2,
+      "totalMinutes": 8,
+      "daysToConversion": 4,
+      "converted": false,
+      "lastPath": "/"
+    },
+    {
+      "userId": "u-6b54",
+      "visits": 1,
+      "totalMinutes": 5,
+      "daysToConversion": 2,
+      "converted": false,
+      "lastPath": "/journal/rebrand"
+    },
+    {
+      "userId": "u-07e9",
+      "visits": 2,
+      "totalMinutes": 14,
+      "daysToConversion": 6,
+      "converted": false,
+      "lastPath": "/lines/bonga"
+    },
+    {
+      "userId": "u-cb12",
+      "visits": 3,
+      "totalMinutes": 22,
+      "daysToConversion": 8,
+      "converted": false,
+      "lastPath": "/store"
+    }
+  ]
+}

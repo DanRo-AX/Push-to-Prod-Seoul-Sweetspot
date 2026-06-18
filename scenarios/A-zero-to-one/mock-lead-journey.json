@@ -1,0 +1,103 @@
+{
+  "period": "최근 30일",
+  "source": "GA4 → BigQuery 여정 테이블 (mock)",
+  "note": "GA4 클라이언트 ID ↔ 문의·예약 폼 제출 매칭, 익명화 처리 (데모 데이터)",
+  "sessions": [
+    {
+      "userId": "u-3f8a",
+      "visits": 5,
+      "totalMinutes": 84,
+      "daysToConversion": 7,
+      "converted": true,
+      "lastPath": "/contact"
+    },
+    {
+      "userId": "u-91c2",
+      "visits": 4,
+      "totalMinutes": 62,
+      "daysToConversion": 6,
+      "converted": true,
+      "lastPath": "/popup/reservation"
+    },
+    {
+      "userId": "u-b7e4",
+      "visits": 5,
+      "totalMinutes": 118,
+      "daysToConversion": 7,
+      "converted": true,
+      "lastPath": "/contact"
+    },
+    {
+      "userId": "u-d05f",
+      "visits": 4,
+      "totalMinutes": 97,
+      "daysToConversion": 6,
+      "converted": true,
+      "lastPath": "/lines/boreum"
+    },
+    {
+      "userId": "u-2ae9",
+      "visits": 4,
+      "totalMinutes": 58,
+      "daysToConversion": 6,
+      "converted": true,
+      "lastPath": "/popup/reservation"
+    },
+    {
+      "userId": "u-7c1d",
+      "visits": 13,
+      "totalMinutes": 3040,
+      "daysToConversion": 16,
+      "converted": true,
+      "lastPath": "/contact"
+    },
+    {
+      "userId": "u-e6a1",
+      "visits": 6,
+      "totalMinutes": 142,
+      "daysToConversion": 12,
+      "converted": false,
+      "lastPath": "/popup/reservation"
+    },
+    {
+      "userId": "u-58b3",
+      "visits": 8,
+      "totalMinutes": 188,
+      "daysToConversion": 14,
+      "converted": false,
+      "lastPath": "/lines/geumeum"
+    },
+    {
+      "userId": "u-c49a",
+      "visits": 6,
+      "totalMinutes": 116,
+      "daysToConversion": 9,
+      "converted": false,
+      "lastPath": "/contact"
+    },
+    {
+      "userId": "u-0f72",
+      "visits": 2,
+      "totalMinutes": 9,
+      "daysToConversion": 3,
+      "converted": false,
+      "lastPath": "/"
+    },
+    {
+      "userId": "u-a3d8",
+      "visits": 1,
+      "totalMinutes": 4,
+      "daysToConversion": 1,
+      "converted": false,
+      "lastPath": "/popup"
+    },
+    {
+      "userId": "u-66e0",
+      "visits": 2,
+      "totalMinutes": 12,
+      "daysToConversion": 5,
+      "converted": false,
+      "lastPath": "/lines/choseung"
+    }
+  ]
+}

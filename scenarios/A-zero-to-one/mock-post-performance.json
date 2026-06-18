@@ -1,0 +1,59 @@
+{
+  "note": "인스타그램 인사이트 D+1/D+7 스냅샷 (데모 데이터)",
+  "posts": [
+    {
+      "postId": "p1",
+      "concept": "성수 팝업 D-14 공지 — 「문라이트 시향 세션」 사전 예약 오픈",
+      "format": "정적 공지 피드",
+      "publishedAt": "2026-06-01",
+      "metricsD1": {
+        "reach": 1800,
+        "likes": 96,
+        "saves": 24,
+        "profileVisits": 41,
+        "linkClicks": 12
+      },
+      "metricsD7": {
+        "reach": 4200,
+        "likes": 228,
+        "saves": 61,
+        "profileVisits": 97,
+        "linkClicks": 33
+      }
+    },
+    {
+      "postId": "p2",
+      "concept": "「월하향」 포어링 과정 — 작업실의 밤, 한 배치가 부어지는 25분",
+      "format": "저조도 포어링 과정 릴스",
+      "publishedAt": "2026-06-03",
+      "metricsD1": {
+        "reach": 5600,
+        "likes": 472,
+        "saves": 210,
+        "profileVisits": 154,
+        "linkClicks": 45
+      },
+      "metricsD7": {
+        "reach": 18400,
+        "likes": 1630,
+        "saves": 740,
+        "profileVisits": 512,
+        "linkClicks": 168
+      }
+    },
+    {
+      "postId": "p3",
+      "concept": "초승·보름·그믐 — 하룻밤의 순서로 읽는 세 가지 라인 소개",
+      "format": "제품 3종 캐러셀",
+      "publishedAt": "2026-06-09",
+      "metricsD1": {
+        "reach": 2900,
+        "likes": 243,
+        "saves": 88,
+        "profileVisits": 76,
+        "linkClicks": 27
+      },
+      "metricsD7": null
+    }
+  ]
+}

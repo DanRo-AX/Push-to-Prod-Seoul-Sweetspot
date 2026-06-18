@@ -1,0 +1,60 @@
+{
+  "contacts": [
+    {
+      "name": "김서연",
+      "company": "모온 소품숍",
+      "role": "대표",
+      "email": "seoyeon.kim@example.com",
+      "context": "지난주 인스타그램에 '여름 무드 오브제' 기획전 오픈 소식을 올리고 조명·향 카테고리 큐레이션을 강화 중"
+    },
+    {
+      "name": "박지호",
+      "company": "카페 슬로우브루",
+      "role": "매니저",
+      "email": "jiho.park@example.com",
+      "context": "6월부터 저녁 영업을 연장해 '나이트 카페' 운영을 시작, 저녁 시간대 무드 연출 소품을 찾는다는 공지를 게시"
+    },
+    {
+      "name": "이하늘",
+      "company": "위켄드포터",
+      "role": "MD",
+      "email": "haneul.lee@example.com",
+      "context": "편집숍 내 로컬 신진 브랜드 팝업 코너를 상시 운영하며 최근 하반기 입점 브랜드 공개 모집 공지를 올림"
+    },
+    {
+      "name": "정유진",
+      "company": "플라워샵 윤달",
+      "role": "대표",
+      "email": "yujin.jung@example.com",
+      "context": "매주 토요일 드라이플라워 클래스를 운영하며 클래스 공간에 어울리는 향 협업 파트너를 찾는다고 스토리에 언급"
+    },
+    {
+      "name": "한도윤",
+      "company": "스테이 성수온",
+      "role": "브랜드 매니저",
+      "email": "doyoon.han@example.com",
+      "context": "객실 어메니티를 로컬 브랜드와 협업하는 '성수 메이드' 시리즈를 진행 중, 다음 시즌 파트너 물색 단계"
+    },
+    {
+      "name": "오민재",
+      "company": "서점 틈",
+      "role": "대표",
+      "email": "minjae.oh@example.com",
+      "context": "월 1회 심야 책방 행사 '밤의 문장'을 운영하며 지난 회차에 조명과 향으로 공간 연출을 시도했다고 후기 게시"
+    },
+    {
+      "name": "최아람",
+      "company": "마켓레이트",
+      "role": "마케터",
+      "email": "aram.choi@example.com",
+      "context": "그로서리 매장에 리빙 코너를 신설하고 식기·향 카테고리를 확장 중이라는 입점 안내 페이지를 최근 오픈"
+    },
+    {
+      "name": "백소이",
+      "company": "티룸 다정",
+      "role": "대표",
+      "email": "soi.baek@example.com",
+      "context": "시즌 블렌딩 티 '여름밤'을 출시하고 저녁 한정 페어링 디저트 코스를 새로 선보임"
+    }
+  ]
+}

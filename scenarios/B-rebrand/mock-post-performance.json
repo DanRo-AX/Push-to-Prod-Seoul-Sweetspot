@@ -1,0 +1,59 @@
+{
+  "note": "인스타그램 인사이트 D+1/D+7 스냅샷 (데모 데이터)",
+  "posts": [
+    {
+      "postId": "q1",
+      "concept": "리브랜딩 공지 — 새 로고와 패키지, '매일의 식탁에 온기를'",
+      "format": "정적 공지 피드",
+      "publishedAt": "2026-06-06",
+      "metricsD1": {
+        "reach": 1500,
+        "likes": 84,
+        "saves": 19,
+        "profileVisits": 32,
+        "linkClicks": 9
+      },
+      "metricsD7": null
+    },
+    {
+      "postId": "q2",
+      "concept": "물레 성형 과정 — 같은 그릇이 하나도 없는 이유",
+      "format": "물레 성형 과정 릴스",
+      "publishedAt": "2026-05-31",
+      "metricsD1": {
+        "reach": 7200,
+        "likes": 690,
+        "saves": 150,
+        "profileVisits": 128,
+        "linkClicks": 34
+      },
+      "metricsD7": {
+        "reach": 21600,
+        "likes": 1880,
+        "saves": 430,
+        "profileVisits": 356,
+        "linkClicks": 92
+      }
+    },
+    {
+      "postId": "q3",
+      "concept": "'오늘' 라인 — 1인 식탁을 채우는 플레이팅 다섯 장면",
+      "format": "1인 식탁 플레이팅 캐러셀",
+      "publishedAt": "2026-06-02",
+      "metricsD1": {
+        "reach": 3400,
+        "likes": 312,
+        "saves": 190,
+        "profileVisits": 121,
+        "linkClicks": 48
+      },
+      "metricsD7": {
+        "reach": 9800,
+        "likes": 841,
+        "saves": 520,
+        "profileVisits": 334,
+        "linkClicks": 141
+      }
+    }
+  ]
+}

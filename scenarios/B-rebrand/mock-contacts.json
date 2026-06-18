@@ -1,0 +1,46 @@
+{
+  "contacts": [
+    {
+      "name": "강무진",
+      "company": "비스트로 마저",
+      "role": "오너 셰프",
+      "email": "mujin.kang@example.com",
+      "context": "여름 시즌 메뉴 개편을 앞두고 플레이팅 중심의 신메뉴 티저 콘텐츠를 연달아 게시 중"
+    },
+    {
+      "name": "윤세라",
+      "company": "하우스앤톤",
+      "role": "리빙 MD",
+      "email": "sera.yoon@example.com",
+      "context": "리빙 편집숍 식기 카테고리를 리뉴얼하며 국내 공방 브랜드 입점 제안을 받는다고 공지"
+    },
+    {
+      "name": "임도현",
+      "company": "부엌연구소",
+      "role": "스튜디오 디렉터",
+      "email": "dohyun.lim@example.com",
+      "context": "원데이 쿠킹 클래스 하반기 시즌을 준비하며 클래스용 식기 협찬 파트너를 모집 중"
+    },
+    {
+      "name": "서지우",
+      "company": "카페 아침상",
+      "role": "대표",
+      "email": "jiwoo.seo@example.com",
+      "context": "'그릇이 예쁜 브런치 카페'로 입소문이 나면서 사용하는 식기 브랜드를 묻는 댓글이 많다고 스토리에 언급"
+    },
+    {
+      "name": "문가람",
+      "company": "한식 다이닝 주안",
+      "role": "총괄 매니저",
+      "email": "garam.moon@example.com",
+      "context": "가을 코스 리뉴얼을 준비하며 코스 전용 식기를 국내 도자 브랜드와 맞추고 싶다는 인터뷰가 최근 공개됨"
+    },
+    {
+      "name": "노하진",
+      "company": "스테이 툇마루",
+      "role": "브랜드 매니저",
+      "email": "hajin.noh@example.com",
+      "context": "한옥 스테이 조식 다이닝을 새로 열며 상차림에 쓸 식기와 소반 구성을 소개하는 콘텐츠를 준비 중"
+    }
+  ]
+}

@@ -1,0 +1,55 @@
+{
+  "period": "최근 30일",
+  "note": "키워드 타겟 콘텐츠 유입 세션 ↔ 문의·예약 폼 제출 매칭 (데모 데이터)",
+  "rows": [
+    {
+      "contentId": "ct-01",
+      "title": "성수동 팝업 가이드 — 6월 넷째 주, 연무장길에서 만나요",
+      "keyword": "성수동 팝업",
+      "sessions": 420,
+      "inquiries": 2
+    },
+    {
+      "contentId": "ct-02",
+      "title": "핸드포어드 캔들이 만들어지는 25분 — 작업실의 밤 기록",
+      "keyword": "핸드포어드 캔들",
+      "sessions": 920,
+      "inquiries": 5
+    },
+    {
+      "contentId": "ct-03",
+      "title": "소이캔들 고르는 법 — 향 노트로 읽는 세 가지 라인",
+      "keyword": "소이캔들 추천",
+      "sessions": 660,
+      "inquiries": 3
+    },
+    {
+      "contentId": "ct-04",
+      "title": "문라이트 시향 세션, 이렇게 예약하세요",
+      "keyword": "시향 예약",
+      "sessions": 310,
+      "inquiries": 6
+    },
+    {
+      "contentId": "ct-05",
+      "title": "공간에 향을 입히다 — 카페·스테이를 위한 캔들 큐레이션 안내",
+      "keyword": "카페 캔들 납품",
+      "sessions": 140,
+      "inquiries": 6
+    },
+    {
+      "contentId": "ct-06",
+      "title": "잠들기 전 무드를 만드는 법 — 그믐 「깊은 밤의 숲」",
+      "keyword": "슬립 캔들",
+      "sessions": 380,
+      "inquiries": 1
+    },
+    {
+      "contentId": "ct-07",
+      "title": "미니 캔들, 마음을 전하는 가장 작은 단위",
+      "keyword": "미니 캔들 선물",
+      "sessions": 540,
+      "inquiries": 2
+    }
+  ]
+}

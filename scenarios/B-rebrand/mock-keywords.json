@@ -1,0 +1,132 @@
+{
+  "totalTracked": 6700,
+  "note": "6,700개 추적 중 기회 상위 14개 (mock)",
+  "seeds": [
+    {
+      "keyword": "그릇 맛집",
+      "monthlySearches": 27000,
+      "rank": null,
+      "prevRank": null,
+      "competitorRank": 2,
+      "intent": "탐색",
+      "audience": "B2C"
+    },
+    {
+      "keyword": "1인 식기 세트",
+      "monthlySearches": 6200,
+      "rank": 15,
+      "prevRank": 18,
+      "competitorRank": null,
+      "intent": "거래",
+      "audience": "B2C"
+    },
+    {
+      "keyword": "무광 그릇",
+      "monthlySearches": 4800,
+      "rank": 9,
+      "prevRank": 13,
+      "competitorRank": null,
+      "intent": "탐색",
+      "audience": "B2C"
+    },
+    {
+      "keyword": "혼밥 플레이팅",
+      "monthlySearches": 8400,
+      "rank": null,
+      "prevRank": null,
+      "competitorRank": 5,
+      "intent": "탐색",
+      "audience": "B2C"
+    },
+    {
+      "keyword": "수제 도자기 그릇",
+      "monthlySearches": 3100,
+      "rank": 7,
+      "prevRank": 8,
+      "competitorRank": null,
+      "intent": "탐색",
+      "audience": "B2C"
+    },
+    {
+      "keyword": "내열 뚝배기",
+      "monthlySearches": 7300,
+      "rank": 12,
+      "prevRank": 12,
+      "competitorRank": null,
+      "intent": "거래",
+      "audience": "B2C"
+    },
+    {
+      "keyword": "신혼 반상기",
+      "monthlySearches": 2900,
+      "rank": 4,
+      "prevRank": 4,
+      "competitorRank": null,
+      "intent": "거래",
+      "audience": "B2C"
+    },
+    {
+      "keyword": "온그릇",
+      "monthlySearches": 720,
+      "rank": 1,
+      "prevRank": 1,
+      "competitorRank": null,
+      "intent": "탐색",
+      "audience": "B2C"
+    },
+    {
+      "keyword": "도자기 머그",
+      "monthlySearches": 5600,
+      "rank": 17,
+      "prevRank": 19,
+      "competitorRank": null,
+      "intent": "탐색",
+      "audience": "B2C"
+    },
+    {
+      "keyword": "플레이팅 그릇 추천",
+      "monthlySearches": 4400,
+      "rank": null,
+      "prevRank": null,
+      "competitorRank": 6,
+      "intent": "거래",
+      "audience": "B2C"
+    },
+    {
+      "keyword": "티포트 추천",
+      "monthlySearches": 1800,
+      "rank": 19,
+      "prevRank": 22,
+      "competitorRank": null,
+      "intent": "거래",
+      "audience": "B2C"
+    },
+    {
+      "keyword": "답례품 그릇",
+      "monthlySearches": 2200,
+      "rank": 5,
+      "prevRank": 4,
+      "competitorRank": null,
+      "intent": "거래",
+      "audience": "B2C"
+    },
+    {
+      "keyword": "카페 그릇 납품",
+      "monthlySearches": 1600,
+      "rank": null,
+      "prevRank": null,
+      "competitorRank": 4,
+      "intent": "거래",
+      "audience": "B2B"
+    },
+    {
+      "keyword": "식당 그릇 도매",
+      "monthlySearches": 3300,
+      "rank": 14,
+      "prevRank": 16,
+      "competitorRank": null,
+      "intent": "거래",
+      "audience": "B2B"
+    }
+  ]
+}

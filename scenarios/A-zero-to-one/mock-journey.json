@@ -1,0 +1,13 @@
+{
+  "period": "최근 14일",
+  "source": "GA4 → BigQuery 여정 테이블 (mock)",
+  "note": "팝업 D-14 기준 실측 + 일부 보정 (데모 데이터)",
+  "stages": [
+    { "stage": "인스타 도달", "count": 12400 },
+    { "stage": "프로필 방문", "count": 1860 },
+    { "stage": "예약 페이지 진입", "count": 540 },
+    { "stage": "시향 세션 예약 시작", "count": 210 },
+    { "stage": "예약 완료", "count": 96 },
+    { "stage": "리마인드 응답(방문 확정)", "count": 71 }
+  ]
+}

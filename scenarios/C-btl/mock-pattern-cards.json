@@ -1,0 +1,65 @@
+[
+  {
+    "card_id": "PC-001",
+    "title": "패션 팝업 Why Now — 컬렉션 시즌 전환 시점",
+    "content": "매 시즌 전환점(S/S→F/W, F/W→S/S)은 소비자의 '옷 구매' 의향이 연중 최고조에 달하는 시기다. 특히 MZ 세대는 시즌 첫 구매를 '경험 기반 구매'로 전환하는 경향이 강해, 팝업 체험이 온라인 구매보다 객단가 40% 이상 높은 결과를 보여왔다.",
+    "industry": ["패션"],
+    "track": ["기획"],
+    "field_path": "proposal.proposal_angle.why_now",
+    "usage_count": 5
+  },
+  {
+    "card_id": "PC-002",
+    "title": "패션 브랜드 차별점 — 체험형 vs 전시형",
+    "content": "경쟁사 팝업이 '전시형(보는 팝업)'에 집중할 때, '착용 체험형(입는 팝업)'으로 차별화하면 SNS 자발적 공유율이 평균 2.3배 높게 나타났다. 신규 컬렉션의 실루엣·소재를 직접 체험하는 피팅존 운영이 핵심.",
+    "industry": ["패션"],
+    "track": ["기획", "운영"],
+    "field_path": "proposal.proposal_angle.differentiation",
+    "usage_count": 4
+  },
+  {
+    "card_id": "PC-003",
+    "title": "성수동 팝업 공간 기획 — 존 구성 표준",
+    "content": "성수동 80평 기준 검증된 존 구성: 파사드(입구 체험·포토·브랜딩) 15평 + 메인 전시존(컬렉션 행거·쇼케이스) 35평 + 피팅·체험존 20평 + 카운터·POS 10평. 동선은 파사드→전시→체험→카운터 일방통행이 체류시간을 최대화.",
+    "industry": ["패션", "뷰티"],
+    "track": ["기획", "제작"],
+    "field_path": "proposal.space_plan.zones",
+    "usage_count": 6
+  },
+  {
+    "card_id": "PC-004",
+    "title": "뷰티 팝업 핵심 체험 — 발색·텍스처 라이브 시연",
+    "content": "뷰티 팝업에서 가장 높은 전환을 기록한 체험 요소는 '라이브 발색 시연 + 즉석 구매 연동'. 아티스트가 10분 단위로 발색 데모를 진행하고, 시연 직후 옆 카운터에서 즉시 구매 가능하게 배치하면 구매 전환율이 시연 미운영 대비 67% 높다.",
+    "industry": ["뷰티"],
+    "track": ["기획", "운영"],
+    "field_path": "proposal.concept.key_experience",
+    "usage_count": 3
+  },
+  {
+    "card_id": "PC-005",
+    "title": "F/W 시즌 팝업 컨셉 무드 — 다크·레이어드",
+    "content": "F/W 패션 팝업의 높은 SNS 반응을 기록한 무드 키워드: 다크 모노크롬(black/grey/deep navy), 레이어드 텍스처(코트·니트·레더 혼합 디스플레이), 인더스트리얼 소재(철제 파이프·콘크리트 바닥·노출 천장). 차가운 소재에 웜 조명을 더하면 고급감과 접근성을 동시에 구현.",
+    "industry": ["패션"],
+    "track": ["기획", "제작"],
+    "field_path": "proposal.concept.mood",
+    "usage_count": 7
+  },
+  {
+    "card_id": "PC-006",
+    "title": "VIP 행사 운영 표준 — 사전 체험 이벤트",
+    "content": "팝업 오픈 전일 VIP 사전 체험 행사 운영 표준: 초청 인원 50~100명, 행사 시간 2시간(사전 리셉션 30분 + 컬렉션 프레젠테이션 30분 + 자유 체험 1시간), 취재진/인플루언서 20% 비중이 SNS 도달 최대화. 별도 진행자(MC) 필수, 케이터링 1식 포함.",
+    "industry": ["패션", "뷰티", "F&B"],
+    "track": ["운영"],
+    "field_path": "proposal.production_items",
+    "usage_count": 4
+  },
+  {
+    "card_id": "PC-007",
+    "title": "팝업 성과 지표 — 방문객·전환·SNS",
+    "content": "팝업 성과 3대 지표: (1) 일 방문객 수 목표 달성률, (2) 현장 구매 전환율(방문→구매, 패션 평균 8~12%), (3) SNS 노출 건수(해시태그 기준). 이 세 지표를 사전에 합의하고 일일 모니터링 체계를 갖추는 것이 사후 클라이언트 만족도의 최대 변수.",
+    "industry": ["패션", "뷰티", "F&B", "캐릭터", "리빙"],
+    "track": ["기획", "운영"],
+    "field_path": "proposal.success_metric",
+    "usage_count": 8
+  }
+]

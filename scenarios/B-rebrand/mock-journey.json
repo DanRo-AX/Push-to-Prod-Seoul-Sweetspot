@@ -1,0 +1,13 @@
+{
+  "period": "최근 14일",
+  "source": "GA4 → BigQuery 여정 테이블 (mock)",
+  "note": "리브랜딩 직후 2주 실측 + 일부 보정 (데모 데이터)",
+  "stages": [
+    { "stage": "인스타 도달", "count": 8900 },
+    { "stage": "프로필 방문", "count": 1140 },
+    { "stage": "스토어 방문", "count": 620 },
+    { "stage": "'오늘' 라인 상세 조회", "count": 180 },
+    { "stage": "장바구니", "count": 74 },
+    { "stage": "구매", "count": 41 }
+  ]
+}

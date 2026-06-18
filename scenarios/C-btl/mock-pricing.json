@@ -1,0 +1,177 @@
+[
+  {
+    "item_key": "파사드 외벽 시공",
+    "category": "시공",
+    "unit_price": 3500000,
+    "unit": "식",
+    "description": "건물 외벽 브랜딩 시공 (페인트·래핑·조명 포함)"
+  },
+  {
+    "item_key": "내부 인테리어 시공",
+    "category": "시공",
+    "unit_price": 8000000,
+    "unit": "식",
+    "description": "팝업 내부 기본 시공 (바닥·벽면·천장 마감)"
+  },
+  {
+    "item_key": "포토존 제작",
+    "category": "제작물",
+    "unit_price": 2500000,
+    "unit": "개",
+    "description": "SNS 포토존 구조물 제작 (백드롭·조명 포함)"
+  },
+  {
+    "item_key": "행거랙 렌탈",
+    "category": "렌탈",
+    "unit_price": 150000,
+    "unit": "개",
+    "description": "행거랙 렌탈 (설치/철거 포함, 기간당)"
+  },
+  {
+    "item_key": "쇼케이스 렌탈",
+    "category": "렌탈",
+    "unit_price": 250000,
+    "unit": "개",
+    "description": "제품 쇼케이스 렌탈 (유리 진열장, 기간당)"
+  },
+  {
+    "item_key": "조명 장비 렌탈",
+    "category": "렌탈",
+    "unit_price": 1200000,
+    "unit": "식",
+    "description": "팝업 조명 풀셋 렌탈 (스팟·무드·포토 조명 포함)"
+  },
+  {
+    "item_key": "운영 매니저",
+    "category": "인력",
+    "unit_price": 200000,
+    "unit": "일",
+    "description": "현장 운영 총괄 매니저 (1명, 일당)"
+  },
+  {
+    "item_key": "운영 스태프",
+    "category": "인력",
+    "unit_price": 130000,
+    "unit": "일",
+    "description": "현장 운영 스태프 (1명, 일당)"
+  },
+  {
+    "item_key": "VIP 행사 운영 인력",
+    "category": "인력",
+    "unit_price": 250000,
+    "unit": "일",
+    "description": "VIP 행사 전담 운영 인력 (1명, 행사일)"
+  },
+  {
+    "item_key": "그래픽 제작",
+    "category": "제작물",
+    "unit_price": 1800000,
+    "unit": "식",
+    "description": "팝업 그래픽 디자인 및 출력물 제작 (현수막·배너·POP 포함)"
+  },
+  {
+    "item_key": "디지털 사이니지",
+    "category": "렌탈",
+    "unit_price": 800000,
+    "unit": "개",
+    "description": "디지털 사이니지 렌탈 (55인치, 기간당)"
+  },
+  {
+    "item_key": "QR 코드 키오스크",
+    "category": "제작물",
+    "unit_price": 600000,
+    "unit": "개",
+    "description": "QR 체험/예약 키오스크 제작 및 설치"
+  },
+  {
+    "item_key": "설치·철거 인력",
+    "category": "인력",
+    "unit_price": 150000,
+    "unit": "일",
+    "description": "설치/철거 작업 인력 (1명, 일당)"
+  },
+  {
+    "item_key": "공간 렌탈비",
+    "category": "운영",
+    "unit_price": 5000000,
+    "unit": "일",
+    "description": "팝업 공간 일일 임대료 (80평 기준)"
+  },
+  {
+    "item_key": "청소·유지관리",
+    "category": "운영",
+    "unit_price": 100000,
+    "unit": "일",
+    "description": "매일 청소 및 공간 유지관리 서비스"
+  },
+  {
+    "item_key": "기획·디렉팅 비",
+    "category": "운영",
+    "unit_price": 8000000,
+    "unit": "식",
+    "description": "전체 팝업 기획 및 크리에이티브 디렉팅 비용"
+  },
+  {
+    "item_key": "VIP 굿즈 패키지",
+    "category": "제작물",
+    "unit_price": 35000,
+    "unit": "개",
+    "description": "VIP 방문객 증정 굿즈 세트 (브랜드 패키징 포함)"
+  },
+  {
+    "item_key": "방문객 굿즈",
+    "category": "제작물",
+    "unit_price": 8000,
+    "unit": "개",
+    "description": "일반 방문객 증정 소형 굿즈 (스티커·엽서 등)"
+  },
+  {
+    "item_key": "음향 장비 렌탈",
+    "category": "렌탈",
+    "unit_price": 500000,
+    "unit": "식",
+    "description": "배경 음악 재생 음향 시스템 렌탈 (기간당)"
+  },
+  {
+    "item_key": "냉난방 렌탈",
+    "category": "렌탈",
+    "unit_price": 300000,
+    "unit": "일",
+    "description": "이동식 냉난방기 렌탈 (독립 공간, 일당)"
+  },
+  {
+    "item_key": "SNS 포토부스",
+    "category": "제작물",
+    "unit_price": 3000000,
+    "unit": "개",
+    "description": "AI 포토부스 또는 부스형 포토존 구조물 (소프트웨어 포함)"
+  },
+  {
+    "item_key": "보안 요원",
+    "category": "인력",
+    "unit_price": 180000,
+    "unit": "일",
+    "description": "보안 요원 (1명, 일당)"
+  },
+  {
+    "item_key": "의상 스타일링 랙",
+    "category": "제작물",
+    "unit_price": 400000,
+    "unit": "개",
+    "description": "컬렉션 스타일링 디스플레이 랙 (맞춤 제작)"
+  },
+  {
+    "item_key": "무선 태블릿 POS",
+    "category": "렌탈",
+    "unit_price": 80000,
+    "unit": "일",
+    "description": "주문·결제용 무선 태블릿 POS 렌탈 (일당)"
+  },
+  {
+    "item_key": "포토존 배경지 제작",
+    "category": "제작물",
+    "unit_price": 800000,
+    "unit": "개",
+    "description": "대형 포토존 배경지 맞춤 인쇄 제작 (3m×3m 기준)"
+  }
+]

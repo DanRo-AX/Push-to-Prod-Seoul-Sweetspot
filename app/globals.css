@@ -1,0 +1,6032 @@
+@import "tailwindcss";
+
+/* @vscode/codicons — 실제 VS Code 아이콘 글리프 매핑(.codicon-*{content:"\exxx"}) 일괄 로드.
+   이 import 가 가져오는 codicon.css 의 @font-face 는 src 가 상대경로(./codicon.ttf?hash)라
+   Next 의 CSS 파이프라인에서 404 가 난다. 따라서 아래(코드에디터 IDE 블록)에서 우리만의
+   @font-face { font-family:"codicon"; src:url("/codicon.ttf") } 를 *나중에* 선언해
+   동일 family 의 마지막 선언이 이기게 한다(우리 폰트 = public/codicon.ttf 가 승리).
+   글리프 클래스 매핑은 여기서 통째로 받아오고, 폰트 파일만 우리 것으로 덮어쓴다. */
+@import "@vscode/codicons/dist/codicon.css";
+
+/* octopus ChatGPT 순백 미니멀 테마 — 디자인 토큰 v4.0 ("순백 + 잉크 + 버밀리언 절제") */
+/* 랜딩과 콘솔이 이 토큰을 공유한다. 색상 하드코딩 금지 — 항상 var() 사용. */
+/* 아트 디렉션: ChatGPT 풍 순백 미니멀. 흰 바탕 + 잉크 본문 +
+   버밀리언 단일 액센트(아주 절제, 활성 노드/주요 버튼/링크에만) + sans 중심 타이포.
+   글로우/네온/발광/세피아 절대 금지 — 아주 옅은 회색 그림자만. */
+:root {
+  /* 표면 — 순백 스택 (어두울수록 가라앉음) */
+  --bg-0: #ffffff;   /* 페이지 캔버스 (앱 바탕) */
+  --bg-1: #fafafa;   /* 카드 / 은은한 패널 / 들린 표면 */
+  --bg-2: #f0f0ef;   /* 가라앉은 표면 (입력 웰·트랙·코드 블록) */
+  --bg-3: #fafafa;   /* 최상위 표면 (모달 내부 카드 등) — bg-1 과 동일 톤 */
+
+  /* 확장 표면 — 호환 별칭.
+     --bg-raised: 한 단계 들린 표면 (목업 행·강조 칩 배경)
+     --bg-inset : 가라앉은 표면 (입력 웰·코드 블록·트랙) */
+  --bg-raised: #fafafa;
+  --bg-inset: #f0f0ef;
+
+  /* 보더 — 잉크 알파 헤어라인 */
+  --line-1: rgba(0, 0, 0, 0.10);
+  --line-2: rgba(0, 0, 0, 0.06);
+  /* 강조 보더 — 활성/선택 상태의 또렷한 윤곽 */
+  --line-strong: rgba(0, 0, 0, 0.18);
+
+  /* 액센트 (버밀리언 1색 — 아주 절제, 활성 노드/주요 버튼/링크에만) */
+  --accent: #d9472a;
+  --accent-hover: #b8381f;
+  --accent-tint: rgba(217, 71, 42, 0.08);
+  /* 호환 별칭 — 기존 코드가 --accent-bright / --accent-dim / --accent-glow 를 참조한다.
+     글로우 개념은 폐기하되, 이름은 살려 알파 틴트로 재매핑(발광 효과 제거). */
+  --accent-bright: #b8381f;
+  --accent-dim: rgba(217, 71, 42, 0.08);
+  --accent-glow: rgba(217, 71, 42, 0.08);
+
+  /* 상태 — 클린 톤(그린·앰버·레드), 각 dim = 알파 0.10 */
+  --ok: #2f8f57;        --ok-dim: rgba(47, 143, 87, 0.10);
+  --ok-glow: rgba(47, 143, 87, 0.10);
+  --warn: #b8791f;      --warn-dim: rgba(184, 121, 31, 0.10);
+  --danger: #c0392b;    --danger-dim: rgba(192, 57, 43, 0.10);
+  /* info — 별도 색 폐기, 액센트로 흡수(단일 액센트 원칙) */
+  --info: #d9472a;      --info-dim: rgba(217, 71, 42, 0.08);
+
+  /* 텍스트 3단계 — 잉크(중립) */
+  --ink: #0d0d0d;
+  --text-1: #0d0d0d;
+  --text-2: #5d5d5d;
+  --text-3: #8e8e8e;
+
+  /* 그림자 — 아주 옅은 회색만 (글로우/발광 금지) */
+  --shadow-1: 0 1px 2px rgba(0, 0, 0, 0.05), 0 8px 24px rgba(0, 0, 0, 0.06); /* hero 프레임 전용 대형 */
+  --shadow-card: 0 1px 2px rgba(0, 0, 0, 0.05), 0 8px 24px rgba(0, 0, 0, 0.06); /* 카드용 */
+
+  /* 레거시 텍스처 토큰 — 신규 사용 금지, 호환용 유지 */
+  --grid-line: rgba(0, 0, 0, 0.035);
+
+  /* 하위 호환 별칭 */
+  --background: var(--bg-0);
+  --foreground: var(--text-1);
+  --panel: var(--bg-1);
+  --panel-border: var(--line-1);
+
+  /* 폰트 스택 — self-host(@font-face below) 기반. next/font 미사용(빌드 네트워크 의존 제거,
+     오프라인 데모/골든런 재현성 보장). 한글 본문은 Pretendard/Apple SD Gothic 폴백. */
+  --font-geist-sans: "Geist", ui-sans-serif, system-ui, sans-serif;
+  --font-geist-mono: "Geist Mono", ui-monospace, "SF Mono", monospace;
+  --font-serif: "Nanum Myeongjo", "Apple SD Gothic Neo", serif;
+
+  color-scheme: light;
+}
+
+/* ── self-host 폰트 (public/fonts/*.woff2, @fontsource 유래) ───────────────
+   next/font/google 를 제거하고 직접 @font-face 로 로드한다. 빌드가 fonts.gstatic
+   네트워크에 묶이지 않아 오프라인 빌드/데모가 항상 통과한다. */
+@font-face { font-family:"Geist"; font-style:normal; font-weight:400; font-display:swap; src:url("/fonts/geist-sans-latin-400-normal.woff2") format("woff2") }
+@font-face { font-family:"Geist"; font-style:normal; font-weight:500; font-display:swap; src:url("/fonts/geist-sans-latin-500-normal.woff2") format("woff2") }
+@font-face { font-family:"Geist"; font-style:normal; font-weight:600; font-display:swap; src:url("/fonts/geist-sans-latin-600-normal.woff2") format("woff2") }
+@font-face { font-family:"Geist"; font-style:normal; font-weight:700; font-display:swap; src:url("/fonts/geist-sans-latin-700-normal.woff2") format("woff2") }
+@font-face { font-family:"Geist"; font-style:normal; font-weight:800; font-display:swap; src:url("/fonts/geist-sans-latin-800-normal.woff2") format("woff2") }
+@font-face { font-family:"Geist"; font-style:normal; font-weight:900; font-display:swap; src:url("/fonts/geist-sans-latin-900-normal.woff2") format("woff2") }
+@font-face { font-family:"Geist Mono"; font-style:normal; font-weight:400; font-display:swap; src:url("/fonts/geist-mono-latin-400-normal.woff2") format("woff2") }
+@font-face { font-family:"Geist Mono"; font-style:normal; font-weight:500; font-display:swap; src:url("/fonts/geist-mono-latin-500-normal.woff2") format("woff2") }
+@font-face { font-family:"Geist Mono"; font-style:normal; font-weight:600; font-display:swap; src:url("/fonts/geist-mono-latin-600-normal.woff2") format("woff2") }
+@font-face { font-family:"Geist Mono"; font-style:normal; font-weight:700; font-display:swap; src:url("/fonts/geist-mono-latin-700-normal.woff2") format("woff2") }
+/* Nanum Myeongjo — latin + korean subset. 동일 weight 에 두 subset 을 unicode-range 로 분리 */
+@font-face { font-family:"Nanum Myeongjo"; font-style:normal; font-weight:400; font-display:swap; src:url("/fonts/nanum-myeongjo-latin-400-normal.woff2") format("woff2"); unicode-range:U+0000-00FF,U+0131,U+0152-0153,U+2000-206F,U+2074,U+20AC,U+2122,U+2191,U+2193,U+2212,U+2215 }
+@font-face { font-family:"Nanum Myeongjo"; font-style:normal; font-weight:400; font-display:swap; src:url("/fonts/nanum-myeongjo-korean-400-normal.woff2") format("woff2"); unicode-range:U+1100-11FF,U+3130-318F,U+A960-A97F,U+AC00-D7A3,U+D7B0-D7FF }
+@font-face { font-family:"Nanum Myeongjo"; font-style:normal; font-weight:700; font-display:swap; src:url("/fonts/nanum-myeongjo-latin-700-normal.woff2") format("woff2"); unicode-range:U+0000-00FF,U+0131,U+0152-0153,U+2000-206F,U+2074,U+20AC,U+2122,U+2191,U+2193,U+2212,U+2215 }
+@font-face { font-family:"Nanum Myeongjo"; font-style:normal; font-weight:700; font-display:swap; src:url("/fonts/nanum-myeongjo-korean-700-normal.woff2") format("woff2"); unicode-range:U+1100-11FF,U+3130-318F,U+A960-A97F,U+AC00-D7A3,U+D7B0-D7FF }
+@font-face { font-family:"Nanum Myeongjo"; font-style:normal; font-weight:800; font-display:swap; src:url("/fonts/nanum-myeongjo-latin-800-normal.woff2") format("woff2"); unicode-range:U+0000-00FF,U+0131,U+0152-0153,U+2000-206F,U+2074,U+20AC,U+2122,U+2191,U+2193,U+2212,U+2215 }
+@font-face { font-family:"Nanum Myeongjo"; font-style:normal; font-weight:800; font-display:swap; src:url("/fonts/nanum-myeongjo-korean-800-normal.woff2") format("woff2"); unicode-range:U+1100-11FF,U+3130-318F,U+A960-A97F,U+AC00-D7A3,U+D7B0-D7FF }
+
+@theme inline {
+  --color-background: var(--background);
+  --color-foreground: var(--foreground);
+  --font-sans: var(--font-geist-sans);
+  --font-mono: var(--font-geist-mono);
+  --font-serif: var(--font-serif);
+}
+
+html {
+  scroll-behavior: smooth;
+}
+
+body {
+  background: var(--bg-0);
+  color: var(--text-1);
+  /* Pretendard 를 Apple SD Gothic Neo 보다 앞에 — macOS 에서도 Pretendard 우선 선택 */
+  font-family:
+    var(--font-geist-sans),
+    "Pretendard",
+    "Apple SD Gothic Neo",
+    "Malgun Gothic",
+    sans-serif;
+  /* 한국어 어절 중간 줄바꿈('알려/줘', '씁니/다') 방지 — 헤딩뿐 아니라 본문 전체.
+     keep-all 로 한 줄에 못 담는 초장문 어절은 break-word 가 비상 줄바꿈으로 받친다. */
+  word-break: keep-all;
+  overflow-wrap: break-word;
+  -webkit-font-smoothing: antialiased;
+  -moz-osx-font-smoothing: grayscale;
+}
+
+/* 긴 모노 토큰 가드 — approval_required 같은 무공백 문자열이 좁은 칩/코드 컨테이너에서
+   넘치지 않도록 임의 지점 줄바꿈을 허용한다 (min-content 축소 포함). */
+code, kbd, samp, .num,
+[class*="font-geist-mono"] {
+  overflow-wrap: anywhere;
+}
+
+/* 키보드 포커스 링 — 전역 (마우스 클릭에는 나타나지 않음) */
+:focus-visible {
+  outline: 2px solid var(--accent);
+  outline-offset: 2px;
+}
+
+/* 선택 영역 — 브랜드 액센트. 작은 디테일이지만 페이지 전체의 '서명' 역할 */
+::selection {
+  background: var(--accent);
+  color: #fff;
+}
+
+/* 라이트 스크롤바 — 연회색 thumb */
+* {
+  scrollbar-width: thin;
+  scrollbar-color: #d4d4d4 transparent;
+}
+*::-webkit-scrollbar { width: 8px; height: 8px; }
+*::-webkit-scrollbar-track { background: transparent; }
+*::-webkit-scrollbar-thumb { background: #d4d4d4; border-radius: 9999px; }
+*::-webkit-scrollbar-thumb:hover { background: #bfbfbf; }
+
+/* 타이핑 커서 깜빡임 (AgentFeed 말풍선) — 유지 */
+@keyframes blink-cursor {
+  0%, 49% { opacity: 1; }
+  50%, 100% { opacity: 0; }
+}
+.animate-blink { animation: blink-cursor 1s step-end infinite; }
+
+/* ── 디스플레이 세리프 헬퍼 ───────────────────────────
+   큰 제목엔 반드시 세리프(명조). 사용처는 이 클래스 또는
+   font-[family-name:var(--font-serif)] 로 명조를 호출한다. */
+.font-serif,
+.display-serif {
+  font-family: var(--font-serif), "Nanum Myeongjo", "Apple SD Gothic Neo", serif;
+}
+
+/* ── 공용 유틸 ─────────────────────────────────────── */
+.num {
+  font-family: var(--font-geist-mono), monospace;
+  font-variant-numeric: tabular-nums;
+  letter-spacing: -0.02em;
+}
+
+/* 상승면 — 종이 카드 깊이. 글로우/인셋 발광 제거, 종이 그림자만.
+   적용처(필수): FeatureBento 브리핑 카드, TrustSection 좌측 타임라인 카드,
+   Workflow sticky 승인 카드, 콘솔 시나리오 카드, ChatInput 컨테이너.
+   hover 시 lift(이동) 금지 — 정적 깊이 전용. */
+.surface-raised {
+  box-shadow: var(--shadow-card);
+}
+
+/* 상승면(대형) — Hero 미리보기 프레임 전용 변형. 종이 그림자 대형. */
+.surface-hero {
+  box-shadow: var(--shadow-1);
+}
+
+/* CTA press 상태 — primary CTA + ChatInput 전송 버튼에 부여.
+   hover: 미세한 종이 그림자 상승, active: 눌리는 감각(scale 0.98). 색상 전환은 각 버튼 클래스가 담당. */
+.btn-press {
+  transition:
+    transform 0.15s cubic-bezier(0.22, 1, 0.36, 1),
+    box-shadow 0.15s cubic-bezier(0.22, 1, 0.36, 1),
+    background-color 0.15s cubic-bezier(0.22, 1, 0.36, 1);
+}
+.btn-press:hover {
+  box-shadow: 0 1px 2px rgba(0, 0, 0, 0.06), 0 6px 18px rgba(0, 0, 0, 0.08);
+}
+.btn-press:active {
+  transform: scale(0.98);
+  box-shadow: 0 1px 2px rgba(0, 0, 0, 0.07);
+}
+
+/* hover 리프트 — 세컨더리 버튼/링크 카드용. 1px 상승 + 종이 그림자. */
+.btn-lift {
+  transition:
+    transform 0.15s cubic-bezier(0.22, 1, 0.36, 1),
+    box-shadow 0.15s cubic-bezier(0.22, 1, 0.36, 1);
+}
+.btn-lift:hover {
+  transform: translateY(-1px);
+  box-shadow: 0 2px 6px rgba(0, 0, 0, 0.06), 0 10px 24px rgba(0, 0, 0, 0.07);
+}
+.btn-lift:active {
+  transform: translateY(0);
+  box-shadow: 0 1px 2px rgba(0, 0, 0, 0.07);
+}
+
+/* .keep-all — body 전역 keep-all 승격으로 사실상 no-op. 기존 사용처 호환을 위해 유지. */
+.keep-all {
+  word-break: keep-all;
+}
+/* .bg-grid — 레거시. 신규 사용 금지. 호환을 위해 정의만 유지. */
+.bg-grid {
+  background-image:
+    linear-gradient(to right, var(--grid-line) 1px, transparent 1px),
+    linear-gradient(to bottom, var(--grid-line) 1px, transparent 1px);
+  background-size: 32px 32px;
+}
+
+/* ── 에디토리얼 유틸 (신규) ──────────────────────────── */
+
+/* .rule — 잉크 헤어라인. 섹션 구분·메타 행 구분에. */
+.rule {
+  border: 0;
+  height: 1px;
+  background: var(--line-1);
+}
+
+/* .ink-underline — hover 시 밑줄 드로우(좌→우). 인라인 링크/내비 항목용. */
+.ink-underline {
+  background-image: linear-gradient(var(--accent), var(--accent));
+  background-repeat: no-repeat;
+  background-position: 0 100%;
+  background-size: 0% 1.5px;
+  transition: background-size 0.3s cubic-bezier(0.22, 1, 0.36, 1);
+}
+.ink-underline:hover {
+  background-size: 100% 1.5px;
+}
+
+/* .accent-bar — 좌측 버밀리언 바. 인용/강조 블록·활성 항목 표시용.
+   padding-left 는 사용처가 부여한다. */
+.accent-bar {
+  border-left: 3px solid var(--accent);
+}
+
+/* ── 콘솔 모션 시스템 (octo-*) ───────────────────────
+   easing 통일: cubic-bezier(0.22, 1, 0.36, 1)
+   애니메이션 속성은 opacity / transform / box-shadow / CSS변수만.
+   에디토리얼 재정의: 발광 키프레임은 종이 그림자/보더 강조로 대체. */
+
+/* 1. 페이드업 등장 — 피드 아이템, 아티팩트 탭 전환, 모달, 콘솔 첫 마운트 */
+@keyframes octo-rise {
+  from { opacity: 0; transform: translateY(8px); }
+  to   { opacity: 1; transform: translateY(0); }
+}
+.anim-rise { animation: octo-rise 0.35s cubic-bezier(0.22, 1, 0.36, 1) both; }
+
+/* 2. 펄스 점 — LIVE 인디케이터·승인 대기 칩 (소형 점 요소 전용).
+   글로우 발산 → 버밀리언 링 확산(알파)으로 절제. */
+@keyframes octo-pulse {
+  0%   { box-shadow: 0 0 0 0 var(--accent-tint); }
+  70%  { box-shadow: 0 0 0 6px transparent; }
+  100% { box-shadow: 0 0 0 0 transparent; }
+}
+.anim-pulse-dot { animation: octo-pulse 1.8s cubic-bezier(0.4, 0, 0.6, 1) infinite; }
+
+/* 3. 시머 — 실행 중 도구 카드 (콘솔 전용). 종이 위 잉크 알파 스윕으로 절제. */
+@keyframes octo-shimmer {
+  from { background-position: 200% 0; }
+  to   { background-position: -200% 0; }
+}
+.anim-shimmer {
+  background-image: linear-gradient(
+    105deg, transparent 40%, rgba(0, 0, 0, 0.04) 50%, transparent 60%);
+  background-size: 200% 100%;
+  animation: octo-shimmer 1.8s linear infinite;
+}
+
+/* 4. 완료 플래시 — tool_end·email_sent 1회. 발광 제거, 그린 보더 강조 1회로. */
+@keyframes octo-flash-ok {
+  0%   { box-shadow: 0 0 0 1px var(--ok); }
+  100% { box-shadow: 0 0 0 1px rgba(47, 143, 87, 0); }
+}
+.anim-flash-ok { animation: octo-flash-ok 0.9s ease-out 1 both; }
+
+/* 5. 카운터 틱 — 상태바·결과물 패널 등 카운터 숫자 (key 리마운트 트리거) */
+@keyframes octo-tick {
+  0%   { opacity: 0; transform: translateY(55%); }
+  60%  { opacity: 1; transform: translateY(-8%); }
+  100% { opacity: 1; transform: translateY(0); }
+}
+.anim-tick { display: inline-block; animation: octo-tick 0.3s cubic-bezier(0.22, 1, 0.36, 1) both; }
+
+/* 6. 경고 보더 호흡 — 승인 모달 박스 전용. 글로우 제거, 앰버 보더 알파 호흡으로. */
+@keyframes octo-breathe-warn {
+  0%, 100% { box-shadow: 0 0 0 1px rgba(184, 121, 31, 0.30); }
+  50%      { box-shadow: 0 0 0 1px rgba(184, 121, 31, 0.65); }
+}
+.anim-breathe-warn { animation: octo-breathe-warn 2.4s ease-in-out infinite; }
+
+/* 7. 진행 헤어라인 — Hero 콘솔 목업의 1px 진행 인디케이터.
+   발광 그라디언트 → 버밀리언 잉크 스윕으로 절제. */
+@keyframes octo-scan {
+  from { transform: translateX(-100%); }
+  to   { transform: translateX(500%); }
+}
+.anim-scan {
+  background: linear-gradient(90deg, transparent, var(--accent), transparent);
+  animation: octo-scan 2.4s ease-in-out infinite;
+}
+
+/* 8. 보더 스피너 — 실행 중 도구 카드 (font-size로 크기 제어) */
+@keyframes octo-spin { to { transform: rotate(360deg); } }
+.spinner-ring {
+  display: inline-block;
+  width: 1em; height: 1em; border-radius: 9999px;
+  border: 2px solid var(--line-1);
+  border-top-color: var(--accent);
+  animation: octo-spin 0.8s linear infinite;
+}
+
+/* 9. 팝인 — 인스타 그리드 셀 스태거 */
+@keyframes octo-pop {
+  0%   { opacity: 0; transform: scale(0.6); }
+  70%  { opacity: 1; transform: scale(1.05); }
+  100% { opacity: 1; transform: scale(1); }
+}
+.anim-pop { animation: octo-pop 0.4s cubic-bezier(0.22, 1, 0.36, 1) both; }
+
+/* ── 랜딩 아트디렉션 유틸 (콘솔 사용 금지) ───────────── */
+
+/* 아웃라인 타이포 — 디스플레이 모먼트 전용 (마퀴 교차 행 · 푸터 워드마크).
+   본문/위계 텍스트에 사용 금지. 스트로크 미지원 환경은 text-3 단색 폴백. */
+.text-outline {
+  color: transparent;
+  -webkit-text-stroke: 1px var(--line-strong);
+}
+@supports not (-webkit-text-stroke: 1px #000) {
+  .text-outline {
+    color: var(--text-3);
+  }
+}
+
+/* 종이 결 — 랜딩 <main> 1곳 전용 오버레이 (fixed 1장, 애니메이션 없음).
+   따뜻한 종이 면에 미세한 질감을 깔아 '인쇄물' 밀도를 더한다. 콘솔 사용 금지.
+   라이트 바탕이므로 multiply 합성으로 결을 가라앉힌다. */
+.grain::after {
+  content: "";
+  position: fixed;
+  inset: 0;
+  z-index: 80;
+  pointer-events: none;
+  mix-blend-mode: multiply;
+  background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='180' height='180'%3E%3Cfilter id='n'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.8' numOctaves='2' stitchTiles='stitch'/%3E%3CfeColorMatrix type='saturate' values='0'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23n)'/%3E%3C/svg%3E");
+  background-size: 180px 180px;
+  opacity: 0.04;
+}
+
+/* ── 랜딩 모션 시스템 (콘솔 사용 금지) ──────────────── */
+
+/* 10. 스크롤 리빌 — Reveal.tsx가 .reveal-in 토글. 1회성. */
+.reveal {
+  opacity: 0;
+  transform: translateY(16px);
+  transition:
+    opacity 0.6s cubic-bezier(0.22, 1, 0.36, 1),
+    transform 0.6s cubic-bezier(0.22, 1, 0.36, 1);
+  transition-delay: var(--reveal-delay, 0ms);
+}
+.reveal.reveal-in { opacity: 1; transform: none; }
+
+/* 10b. 리빌 변주 — Reveal.tsx 의 variant prop 이 클래스를 고른다.
+   · rise(.reveal, 기본)  — 카드·벤토 셀·본문 블록 (16px 페이드업)
+   · wipe(.reveal-wipe)   — 섹션 헤딩·디스플레이 타이포 전용 (줄 마스크 리빌)
+   · draw(.reveal-draw)   — 헤어라인·레일 전용 (scaleX 0→1 가로 드로우) */
+.reveal-wipe .wipe-line {
+  transform: translateY(110%);
+  transition: transform 0.7s cubic-bezier(0.22, 1, 0.36, 1);
+  transition-delay: calc(var(--reveal-delay, 0ms) + var(--line-i, 0) * 80ms);
+}
+.reveal-wipe.reveal-in .wipe-line { transform: none; }
+.reveal-draw {
+  transform: scaleX(0);
+  transform-origin: left;
+  transition: transform 0.8s cubic-bezier(0.22, 1, 0.36, 1);
+  transition-delay: var(--reveal-delay, 0ms);
+}
+.reveal-draw.reveal-in { transform: scaleX(1); }
+
+/* 11. 페이퍼 워시 — 히어로 배경 전용 1곳. 오로라(보라 발광) 폐기 →
+   따뜻한 종이 톤 미세 그라디언트 워시로 대체(발광 없음, 22s 느린 드리프트). */
+.hero-aurora { position: absolute; inset: 0; overflow: hidden; pointer-events: none; }
+.hero-aurora::before {
+  content: ""; position: absolute; inset: -40%;
+  background:
+    radial-gradient(45% 55% at 28% 26%, rgba(217, 71, 42, 0.04), transparent 70%),
+    radial-gradient(40% 50% at 72% 22%, rgba(0, 0, 0, 0.03), transparent 70%),
+    radial-gradient(55% 65% at 50% 82%, rgba(240, 240, 239, 0.6), transparent 70%);
+  filter: blur(50px);
+  animation: octo-aurora 22s ease-in-out infinite alternate;
+}
+@keyframes octo-aurora { to { transform: translate(3%, 4%) rotate(4deg); } }
+
+/* 12. 텍스트 잉크 스윕 — 히어로 H1의 핵심 구절 1곳 전용.
+   샤인(발광 그라디언트) 폐기 → 잉크↔버밀리언 미세 스윕(클립). */
+.text-shine {
+  background: linear-gradient(110deg, var(--ink) 38%, var(--accent) 50%, var(--ink) 62%);
+  background-size: 200% 100%;
+  -webkit-background-clip: text;
+  background-clip: text;
+  color: transparent;
+  animation: octo-shine 7s linear infinite;
+}
+@keyframes octo-shine { to { background-position: -200% 0; } }
+
+/* 13. 마퀴 — 작업명 텍스트 스트립 (콘텐츠 2벌 복제 + 양끝 mask 페이드 필수) */
+.marquee {
+  overflow: hidden;
+  -webkit-mask: linear-gradient(90deg, transparent, #000 12%, #000 88%, transparent);
+  mask: linear-gradient(90deg, transparent, #000 12%, #000 88%, transparent);
+}
+.marquee-track {
+  display: flex; width: max-content; gap: 2.5rem;
+  animation: octo-marquee 36s linear infinite;
+}
+.marquee:hover .marquee-track { animation-play-state: paused; }
+@keyframes octo-marquee { to { transform: translateX(-50%); } }
+
+/* 14. 보더 드로우 — 최종 CTA 버튼 단 1곳 (페이지 1곳 초과 금지).
+   회전 발광 빔(border-beam) 폐기 → 버밀리언 1px 링이 좌→우로 그려졌다 사라지는
+   절제된 잉크 드로우. 클래스명·마스크 구조는 호환 유지, 연출만 종이 톤으로. */
+@property --beam-angle { syntax: "<angle>"; initial-value: 0deg; inherits: false; }
+.border-beam { position: relative; }
+.border-beam::before {
+  content: ""; position: absolute; inset: -1px; border-radius: inherit;
+  padding: 1px;
+  background: conic-gradient(from var(--beam-angle), transparent 70%, var(--accent) 86%, transparent 100%);
+  -webkit-mask: linear-gradient(#000 0 0) content-box, linear-gradient(#000 0 0);
+  -webkit-mask-composite: xor;
+  mask: linear-gradient(#000 0 0) content-box, linear-gradient(#000 0 0);
+  mask-composite: exclude;
+  pointer-events: none;
+  animation: octo-beam 5s linear infinite;
+}
+@keyframes octo-beam { to { --beam-angle: 360deg; } }
+
+/* 16. 히어로 목업 시퀀스 — 사용처가 animation-delay 로 단계 루프를 조립한다. */
+@keyframes mock-step-in {
+  from { opacity: 0; transform: translateY(6px); }
+  to   { opacity: 1; transform: translateY(0); }
+}
+@keyframes mock-pulse {
+  0%, 100% { opacity: 1; }
+  50%      { opacity: 0.45; }
+}
+.anim-mock-step { animation: mock-step-in 0.4s cubic-bezier(0.22, 1, 0.36, 1) both; }
+.anim-mock-pulse { animation: mock-pulse 1.6s ease-in-out infinite; }
+
+/* 17. 포인터 스포트라이트 — 마우스 추적 하이라이트.
+   JS(가벼운 포인터 핸들러)는 --spot-x/--spot-y 갱신만 담당한다.
+   버밀리언 발광 → 종이 위 미세 버밀리언 틴트로 절제. */
+.pointer-spot {
+  background-image: radial-gradient(
+    320px circle at var(--spot-x, 50%) var(--spot-y, 50%),
+    var(--accent-tint),
+    transparent 70%
+  );
+}
+
+/* 15. 스포트라이트 — 벤토 카드 보더 하이라이트 (JS는 --mx/--my 갱신만).
+   글로우 → 종이 위 미세 버밀리언 틴트. */
+.card-spot { position: relative; }
+.card-spot::before {
+  content: ""; position: absolute; inset: 0; border-radius: inherit;
+  opacity: 0; transition: opacity 0.4s; pointer-events: none;
+  background: radial-gradient(240px circle at var(--mx, 50%) var(--my, 50%),
+    var(--accent-tint), transparent 70%);
+}
+.card-spot:hover::before { opacity: 1; }
+
+/* ── 채팅 콘솔 (octo-chat) — 기존 클래스명 유지, 시각만 에디토리얼로 ── */
+
+/* 18. 플로팅 컴포저 — 은은한 프로스티드 글래스 + 미세 보더 + 포커스 시 버밀리언 강조.
+   글래스 어휘 사용(반투명·블러)하되 입력 가독을 위해 strong 틴트 + 흰 내부 하이라이트.
+   border-color 는 사용처의 Tailwind border 클래스 위에 :focus-within 으로 덮인다. */
+.composer-glass {
+  background: var(--glass-bg-strong);
+  -webkit-backdrop-filter: var(--glass-blur);
+  backdrop-filter: var(--glass-blur);
+  border: 1px solid var(--line-1);
+  box-shadow:
+    inset 0 0 0 1px var(--glass-border),
+    var(--shadow-card);
+  transition:
+    border-color 0.25s cubic-bezier(0.22, 1, 0.36, 1),
+    box-shadow 0.25s cubic-bezier(0.22, 1, 0.36, 1);
+}
+.composer-glass:focus-within {
+  border-color: var(--accent);
+  box-shadow:
+    0 0 0 3px var(--accent-tint),
+    inset 0 0 0 1px var(--glass-border),
+    var(--shadow-card);
+}
+
+/* 19. 말풍선 등장 — 채팅 스레드 아이템 (유저 말풍선·에이전트 블록·인라인 카드 공용) */
+@keyframes octo-bubble-in {
+  from { opacity: 0; transform: translateY(8px) scale(0.985); }
+  to   { opacity: 1; transform: translateY(0) scale(1); }
+}
+.anim-bubble-in { animation: octo-bubble-in 0.32s cubic-bezier(0.22, 1, 0.36, 1) both; }
+
+/* ── 라이브 작업뷰 (콘솔 우측, "창이 열려 일하는 모습") ──────────────
+   에이전트가 도는 동안 도구별 작업 창이 종이 위에 느슨하게 겹쳐 떠오른다.
+   에디토리얼 톤 유지: 종이색 표면 + 잉크 헤어라인 + 종이 그림자(글로우 금지).
+   사진은 .photo-warm 필터로 통일. 전부 은은하게(세련 우선). */
+
+/* 창 상단 바 — 종이색 바탕 + 하단 헤어라인. 트래픽라이트 점과 주소/라벨을 얹는다. */
+.win-chrome {
+  background: var(--bg-1);
+  border-bottom: 1px solid var(--line-1);
+}
+
+/* 트래픽라이트 점 — 잉크 알파(무채). 창 호버 시 첫 점 하나만 버밀리언으로 살짝 깬다. */
+.win-dot {
+  width: 8px;
+  height: 8px;
+  border-radius: 9999px;
+  background: rgba(0, 0, 0, 0.14);
+  transition: background-color 0.25s cubic-bezier(0.22, 1, 0.36, 1);
+}
+.win-chrome:hover .win-dot:first-child,
+:hover > .win-chrome .win-dot:first-child {
+  background: var(--accent);
+}
+
+/* 종이 그림자 레이어 — 떠 있는 창 깊이. 글로우 금지, 종이 그림자만(카드보다 살짝 깊게). */
+.win-shadow {
+  box-shadow:
+    0 1px 2px rgba(0, 0, 0, 0.05),
+    0 14px 38px rgba(0, 0, 0, 0.08);
+}
+
+/* 창 등장 — 아래 + 살짝 회전에서 정착하며 페이드인. 데스크톱에 창이 뜨는 감각. */
+@keyframes win-rise {
+  from {
+    opacity: 0;
+    transform: translateY(14px) rotate(-0.6deg) scale(0.985);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0) rotate(0) scale(1);
+  }
+}
+.anim-win-rise {
+  animation: win-rise 0.5s cubic-bezier(0.22, 1, 0.36, 1) both;
+}
+
+/* 라이브 점 — "● 작업 중" 호흡. 버밀리언 점이 알파 링으로 은은히 숨쉰다. */
+@keyframes live-pulse {
+  0% {
+    box-shadow: 0 0 0 0 var(--accent-tint);
+    opacity: 1;
+  }
+  70% {
+    box-shadow: 0 0 0 5px transparent;
+    opacity: 0.65;
+  }
+  100% {
+    box-shadow: 0 0 0 0 transparent;
+    opacity: 1;
+  }
+}
+.anim-live-pulse {
+  animation: live-pulse 1.8s cubic-bezier(0.4, 0, 0.6, 1) infinite;
+}
+
+/* 주소창/썸네일 스캔 시머 — 잉크 알파 그라데이션이 좌→우로 sweep(불러오는 중 감각). */
+@keyframes addr-scan {
+  from { background-position: 200% 0; }
+  to   { background-position: -200% 0; }
+}
+.anim-addr-scan {
+  background-image: linear-gradient(
+    105deg,
+    transparent 38%,
+    rgba(0, 0, 0, 0.05) 50%,
+    transparent 62%
+  );
+  background-size: 200% 100%;
+  animation: addr-scan 2s linear infinite;
+}
+
+/* 문서 창 타이핑 캐럿 — 글이 써 내려가는 줄 끝의 버밀리언 캐럿 깜빡임. */
+@keyframes type-caret {
+  0%, 45%  { opacity: 1; }
+  50%, 100% { opacity: 0; }
+}
+.anim-type-caret {
+  display: inline-block;
+  width: 2px;
+  background: var(--accent);
+  animation: type-caret 1s step-end infinite;
+}
+
+/* 사진 톤 통일 필터 — 라이브 작업뷰 모든 사진에 부여(이미지 자체엔 filter만).
+   클래스명은 유지하되 세피아 폐기 → 중립/클린(화이트 톤에 맞춤).
+   페이퍼 오버레이가 필요하면 사용처에서 래퍼로 덮는다(이미지 위에 직접 그리지 않음). */
+.photo-warm {
+  filter: grayscale(0.08) contrast(1.02) brightness(1.01);
+}
+
+/* 흑백 강조용(선택) — 강조 모먼트의 사진을 잉크 톤으로 가라앉힌다. */
+.photo-mono {
+  filter: grayscale(1) contrast(1.04) brightness(1.02);
+}
+
+/* ── 인라인 채팅 (단일 컬럼, ChatGPT / Claude Code 풍) ──────────────
+   우측 패널·플로팅 작업창을 폐기하고 모든 것을 가운데 한 컬럼의 대화 흐름 안에
+   인라인으로 담는다. 차분·여백 넉넉·경쟁 패널 없음. 글로우/네온 금지. */
+
+/* .chat-col — 가운데 단일 컬럼. 페이지가 본문을 이 컬럼으로 잡는다.
+   max-w 와 좌우 패딩을 한곳에서 관리(컴포저·스레드·인라인 카드가 같은 폭을 공유). */
+.chat-col {
+  width: 100%;
+  max-width: 48rem; /* = max-w-3xl, 본문 가독 폭 */
+  margin-inline: auto;
+  padding-inline: 1rem;
+}
+@media (min-width: 640px) {
+  .chat-col {
+    padding-inline: 1.5rem;
+  }
+}
+
+/* .tool-step — 대화 흐름 안의 인라인 도구 스텝(Claude Code 풍).
+   "· {label}" 한 줄: 작은 점/스피너 + 차분한 라벨. 창/그림자 없음.
+   진행 중에는 앞의 글리프를 .spinner-ring 로, 완료는 .tool-step-done 으로 교체. */
+.tool-step {
+  display: flex;
+  align-items: center;
+  gap: 0.5rem;
+  padding: 0.25rem 0;
+  font-size: 13px;
+  line-height: 1.4;
+  color: var(--text-2);
+  transition: color 0.2s cubic-bezier(0.22, 1, 0.36, 1);
+}
+.tool-step:hover {
+  color: var(--text-1);
+}
+/* 앞 글리프 자리 — 점(대기)·스피너(진행)·체크(완료)가 같은 16px 슬롯을 공유 */
+.tool-step-glyph {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  width: 14px;
+  height: 14px;
+  flex-shrink: 0;
+  font-size: 12px; /* .spinner-ring 가 em 기준이므로 여기서 크기 제어 */
+  color: var(--text-3);
+}
+/* 대기/기본 점 — 잉크 알파 작은 점 */
+.tool-step-glyph::before {
+  content: "";
+  width: 5px;
+  height: 5px;
+  border-radius: 9999px;
+  background: var(--text-3);
+}
+/* 완료 상태 — 점 숨기고 딥그린 체크로. 라벨도 잉크로 또렷하게. */
+.tool-step-done {
+  color: var(--text-1);
+}
+.tool-step-done .tool-step-glyph {
+  color: var(--ok);
+}
+.tool-step-done .tool-step-glyph::before {
+  display: none;
+}
+
+/* .inline-card — 대화 안에 정착하는 결과물(아티팩트) 카드.
+   종이(bg-1) + 미세 보더(line-1) + 넉넉한 여백. 글로우/리프트 금지(정적 깊이 없음).
+   브리핑·지표차트·퍼널·칸반·인스타·뉴스레터·키워드 등 전 kind 가 이 프레임을 공유. */
+.inline-card {
+  background: var(--bg-1);
+  border: 1px solid var(--line-1);
+  border-radius: 14px;
+  padding: 1rem 1.125rem;
+  overflow: hidden;
+}
+/* 카드 머리글 행 — kind 라벨 + 메타. 하단 헤어라인으로 본문과 구분. */
+.inline-card-head {
+  display: flex;
+  align-items: center;
+  gap: 0.5rem;
+  margin: -1rem -1.125rem 1rem;
+  padding: 0.625rem 1.125rem;
+  border-bottom: 1px solid var(--line-2);
+  font-family: var(--font-geist-mono), monospace;
+  font-size: 10px;
+  letter-spacing: 0.16em;
+  color: var(--text-3);
+}
+
+/* .browse-mini — 브라우징/검색 계열 스텝의 절제된 인라인 미니 프리뷰.
+   플로팅 창이 아니라, 스텝 아래 붙는 작은 썸네일 프레임 + 의사 URL 한 줄.
+   썸네일은 public/live 이미지 1장에 .photo-warm 필터. */
+.browse-mini {
+  display: flex;
+  align-items: center;
+  gap: 0.625rem;
+  margin-top: 0.375rem;
+  padding: 0.5rem;
+  background: var(--bg-2);
+  border: 1px solid var(--line-2);
+  border-radius: 10px;
+  max-width: 22rem;
+}
+/* 썸네일 프레임 — 작은 고정 크기. 이미지엔 .photo-warm 을 직접 부여한다. */
+.browse-mini-thumb {
+  flex-shrink: 0;
+  width: 48px;
+  height: 36px;
+  border-radius: 6px;
+  overflow: hidden;
+  border: 1px solid var(--line-1);
+  background: var(--bg-1);
+}
+.browse-mini-thumb img {
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+  display: block;
+}
+/* 의사 URL 한 줄 — 모노, 잉크 보조색. 넘치면 말줄임. */
+.browse-mini-url {
+  min-width: 0;
+  flex: 1;
+  font-family: var(--font-geist-mono), monospace;
+  font-size: 11px;
+  color: var(--text-3);
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+}
+
+/* ── 라이브 마케팅 파이프라인 캔버스 (OpenAI Agent Builder 풍 노드 그래프) ──────
+   /console 상단 라이브 뷰. div+SVG+CSS 로만 구성(react-flow 등 금지).
+   도구 실행 이벤트를 5단계(브리핑→분석→콘텐츠→아웃바운드→성과)로 매핑해
+   노드가 자동으로 상태 변화: 대기(연회색) / 작동중(버밀리언 점+은은한 펄스) / 완료(체크).
+   드래그-빌더가 아니라 실행 관찰용. 화이트 톤 + 잉크 헤어라인 + 아주 옅은 그림자만. */
+
+/* .node — 캔버스 노드 카드: 흰 배경 + 1px 잉크 헤어라인 + 라운드 + 옅은 그림자.
+   기본(대기) 상태. SVG 곡선 연결선 위에 떠 있는 흰 카드. */
+.node {
+  position: relative;
+  background: var(--bg-0);
+  border: 1px solid var(--line-1);
+  border-radius: 12px;
+  box-shadow: 0 1px 2px rgba(0, 0, 0, 0.04);
+  color: var(--text-3);
+  transition:
+    border-color 0.3s cubic-bezier(0.22, 1, 0.36, 1),
+    box-shadow 0.3s cubic-bezier(0.22, 1, 0.36, 1),
+    color 0.3s cubic-bezier(0.22, 1, 0.36, 1);
+}
+
+/* .node-active — 작동 중. 버밀리언 보더 + 잉크 또렷 + 은은한 링 강조.
+   상태 점(.node-dot)은 사용처에서 얹고, 펄스는 .anim-node-pulse 로 부여. */
+.node-active {
+  border-color: var(--accent);
+  color: var(--text-1);
+  box-shadow:
+    0 0 0 3px var(--accent-tint),
+    0 1px 2px rgba(0, 0, 0, 0.04);
+}
+
+/* .node-done — 완료. 그린 헤어라인 톤 + 잉크 본문(체크는 사용처가 SVG 로 얹음). */
+.node-done {
+  border-color: rgba(47, 143, 87, 0.40);
+  color: var(--text-1);
+  box-shadow: 0 1px 2px rgba(0, 0, 0, 0.04);
+}
+
+/* .node-dot — 노드 상태 점. 기본 연회색, 작동 중 버밀리언(.node-active 안에서). */
+.node-dot {
+  width: 6px;
+  height: 6px;
+  border-radius: 9999px;
+  background: var(--text-3);
+  flex-shrink: 0;
+  transition: background-color 0.3s cubic-bezier(0.22, 1, 0.36, 1);
+}
+.node-active .node-dot { background: var(--accent); }
+.node-done .node-dot { background: var(--ok); }
+
+/* .edge — SVG 곡선 연결선 보조(stroke 는 사용처가 var(--line-1) 등으로 지정).
+   비활성 엣지 기본 스타일. 활성 경로는 .edge-active 로 버밀리언 강조. */
+.edge {
+  stroke: var(--line-1);
+  stroke-width: 1.5;
+  fill: none;
+  transition: stroke 0.3s cubic-bezier(0.22, 1, 0.36, 1);
+}
+.edge-active { stroke: var(--accent); }
+.edge-done { stroke: rgba(47, 143, 87, 0.45); }
+
+/* node-pulse — 작동 중 노드의 은은한 펄스(버밀리언 링 알파 확산). 절제. */
+@keyframes node-pulse {
+  0%   { box-shadow: 0 0 0 0 var(--accent-tint), 0 1px 2px rgba(0, 0, 0, 0.04); }
+  70%  { box-shadow: 0 0 0 6px transparent, 0 1px 2px rgba(0, 0, 0, 0.04); }
+  100% { box-shadow: 0 0 0 0 transparent, 0 1px 2px rgba(0, 0, 0, 0.04); }
+}
+.anim-node-pulse { animation: node-pulse 2s cubic-bezier(0.4, 0, 0.6, 1) infinite; }
+
+/* ── 모션 최소화 환경 ───────────────────────────────── */
+@media (prefers-reduced-motion: reduce) {
+  html { scroll-behavior: auto; }
+  .anim-rise, .anim-pulse-dot, .anim-shimmer, .anim-flash-ok,
+  .anim-tick, .anim-breathe-warn, .anim-scan, .spinner-ring, .anim-pop,
+  .text-shine, .marquee-track, .border-beam::before, .hero-aurora::before,
+  .anim-win-rise, .anim-live-pulse, .anim-addr-scan, .anim-type-caret,
+  .anim-node-pulse {
+    animation: none;
+  }
+  /* 캔버스 노드는 상태 전환 모션 없이 즉시 색만 반영. */
+  .node, .node-dot, .edge { transition: none; }
+  /* 라이브 작업 창은 정착 상태로 즉시 표시(등장 모션 없이 완성형). */
+  .anim-win-rise { opacity: 1; transform: none; }
+  .anim-live-pulse { opacity: 1; }
+  .anim-type-caret { opacity: 1; }
+  .anim-bubble-in { animation: none; }
+  .tool-step { transition: none; }
+  .composer-glass { transition: none; }
+  .ink-underline { transition: none; }
+  .reveal { opacity: 1; transform: none; transition: none; }
+  .reveal-wipe .wipe-line { transform: none; transition: none; }
+  .reveal-draw { transform: scaleX(1); transition: none; }
+  .btn-press { transition: none; }
+  .btn-press:active { transform: none; }
+  .btn-lift { transition: none; }
+  .btn-lift:hover, .btn-lift:active { transform: none; }
+  .anim-mock-step, .anim-mock-pulse,
+  [style*="mock-step-in"], [style*="mock-pulse"] {
+    animation: none !important;
+  }
+  .pointer-spot {
+    --spot-x: 50% !important;
+    --spot-y: 50% !important;
+  }
+}
+
+/* ═══════════════════════════════════════════════════════════════════
+   글래스 / 아이콘 어휘 (OpenAI Agent Builder 풍 — 반투명 프로스티드 + 컬러 타일)
+   — 캔버스뿐 아니라 앱 공통 표면(메뉴·모달·입력)에도 절제해서 확장.
+   화이트 미니멀 유지: 배경은 흰 반투명 + 블러, 보더/그림자는 아주 부드럽게.
+   ═══════════════════════════════════════════════════════════════════ */
+
+/* 카테고리별 파스텔 아이콘 타일 색 — 채도 낮은 파스텔(잉크 글리프와 대비).
+   배경(틴트) + 글리프(잉크) 두 변수를 한 쌍으로. 화이트 톤에 맞춰 절제. */
+:root {
+  /* 브리핑 = 블루 */
+  --tile-brief-bg: rgba(59, 130, 246, 0.13);
+  --tile-brief-ink: #2f6fd0;
+  /* 분석 = 바이올렛 */
+  --tile-analysis-bg: rgba(139, 92, 246, 0.13);
+  --tile-analysis-ink: #6d49c7;
+  /* 콘텐츠 = 그린 */
+  --tile-content-bg: rgba(34, 165, 110, 0.14);
+  --tile-content-ink: #1f8a5b;
+  /* 아웃바운드 = 앰버 */
+  --tile-outbound-bg: rgba(217, 138, 31, 0.15);
+  --tile-outbound-ink: #b3781c;
+  /* 성과 = 로즈 */
+  --tile-perf-bg: rgba(232, 78, 110, 0.13);
+  --tile-perf-ink: #cf3f63;
+  /* 에이전트(중앙) = 버밀리언(브랜드) */
+  --tile-agent-bg: rgba(217, 71, 42, 0.13);
+  --tile-agent-ink: var(--accent);
+
+  /* 글래스 표면 토큰 — 반투명 흰 + 블러. (강도 2단)
+     v4.1: 배경이 진짜로 비치도록 알파 하향(0.45~0.55). 블러는 유지해 가독 확보,
+     보더는 더 선명하게(아래 --glass-border-line) 윤곽을 살린다. */
+  --glass-bg: rgba(255, 255, 255, 0.48);
+  --glass-bg-strong: rgba(255, 255, 255, 0.58);
+  --glass-blur: blur(16px) saturate(1.08);
+  --glass-border: rgba(255, 255, 255, 0.55);
+  /* 선명한 잉크 보더 — 투명해진 표면의 윤곽을 또렷하게 잡아준다. */
+  --glass-border-line: rgba(0, 0, 0, 0.14);
+  --glass-shadow: 0 1px 2px rgba(0, 0, 0, 0.04), 0 10px 30px rgba(0, 0, 0, 0.07);
+}
+
+/* .glass — 반투명 프로스티드 표면. 내부 1px 흰 하이라이트 보더 위에 잉크 헤어라인.
+   배경이 비치도록(캔버스 오로라/그리드가 은은히 읽힘). 과용 금지(표면당 1겹). */
+.glass {
+  background: var(--glass-bg);
+  -webkit-backdrop-filter: var(--glass-blur);
+  backdrop-filter: var(--glass-blur);
+  border: 1px solid var(--glass-border-line);
+  box-shadow:
+    inset 0 0 0 1px var(--glass-border),
+    var(--glass-shadow);
+}
+
+/* .glass-strong — 중앙 agent / 모달 / 드롭다운용. 약간 더 불투명(가독 우선). */
+.glass-strong {
+  background: var(--glass-bg-strong);
+  -webkit-backdrop-filter: var(--glass-blur);
+  backdrop-filter: var(--glass-blur);
+  border: 1px solid var(--glass-border-line);
+  box-shadow:
+    inset 0 0 0 1px var(--glass-border),
+    var(--glass-shadow);
+}
+
+/* .icon-tile — 둥근 사각 아이콘 타일. 파스텔 배경 + 잉크 글리프 중앙.
+   기본 28px(노드/리스트). .icon-tile-lg(34px, 중앙 agent). 색은 카테고리 변형 클래스로.
+   글리프는 내부 SVG 가 currentColor 사용 → color 만 바꾸면 잉크색이 따라간다. */
+.icon-tile {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  flex-shrink: 0;
+  width: 28px;
+  height: 28px;
+  border-radius: 9px;
+  background: var(--bg-2);
+  color: var(--text-2);
+}
+.icon-tile-lg {
+  width: 34px;
+  height: 34px;
+  border-radius: 11px;
+}
+.icon-tile svg {
+  width: 60%;
+  height: 60%;
+}
+/* 카테고리 색 변형 — 배경(파스텔 틴트) + 글리프(잉크 톤). */
+.tile-brief    { background: var(--tile-brief-bg);    color: var(--tile-brief-ink); }
+.tile-analysis { background: var(--tile-analysis-bg); color: var(--tile-analysis-ink); }
+.tile-content  { background: var(--tile-content-bg);  color: var(--tile-content-ink); }
+.tile-outbound { background: var(--tile-outbound-bg); color: var(--tile-outbound-ink); }
+.tile-perf     { background: var(--tile-perf-bg);     color: var(--tile-perf-ink); }
+.tile-agent    { background: var(--tile-agent-bg);    color: var(--tile-agent-ink); }
+
+/* .canvas-aurora — 캔버스 배경의 파스텔 오로라(글래스가 투명해진 만큼 존재감 ↑).
+   .canvas-bg 위에 1겹 더 깔아 투명 글래스 뒤로 파스텔+도트그리드가 읽히게 한다.
+   과하지 않게: 알파는 0.07~0.10 선. 정적(드리프트 매우 느리게/없음).
+   ::before = 파스텔 라디얼 워시, ::after = 살짝 또렷한 도트 그리드(글래스 뒤 결). */
+.canvas-aurora::before {
+  content: "";
+  position: absolute;
+  inset: 0;
+  z-index: 0;
+  pointer-events: none;
+  background:
+    radial-gradient(42% 52% at 16% 20%, rgba(59, 130, 246, 0.10), transparent 70%),
+    radial-gradient(40% 50% at 84% 16%, rgba(139, 92, 246, 0.09), transparent 70%),
+    radial-gradient(48% 58% at 72% 86%, rgba(34, 165, 110, 0.08), transparent 72%),
+    radial-gradient(42% 52% at 24% 84%, rgba(217, 138, 31, 0.08), transparent 72%),
+    radial-gradient(38% 46% at 50% 50%, rgba(232, 78, 110, 0.05), transparent 74%);
+}
+/* 도트 그리드 결 — 글래스 뒤로 은은히 읽히도록 .canvas-bg 도트보다 살짝 또렷. */
+.canvas-aurora::after {
+  content: "";
+  position: absolute;
+  inset: 0;
+  z-index: 0;
+  pointer-events: none;
+  background-image: radial-gradient(
+    circle,
+    rgba(0, 0, 0, 0.05) 1px,
+    transparent 1px
+  );
+  background-size: 22px 22px;
+}
+
+/* .edge-add — 엣지 중간 + 추가 버튼(노드 삽입 어포던스). 작은 원형 글래스.
+   부모(엣지 그룹)에 hover 시만 또렷해지도록 사용처에서 opacity 제어 가능. */
+.edge-add {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  width: 20px;
+  height: 20px;
+  border-radius: 9999px;
+  background: var(--glass-bg-strong);
+  -webkit-backdrop-filter: blur(8px);
+  backdrop-filter: blur(8px);
+  border: 1px solid var(--line-1);
+  box-shadow:
+    inset 0 0 0 1px var(--glass-border),
+    0 1px 2px rgba(0, 0, 0, 0.06);
+  color: var(--text-2);
+  cursor: pointer;
+  /* v4.1 떨림 제거: transform 애니메이션 금지(베지어 중점 고정).
+     색/보더만 전환 — 위치·크기는 절대 변하지 않는다. */
+  transition:
+    color 0.15s cubic-bezier(0.22, 1, 0.36, 1),
+    border-color 0.15s cubic-bezier(0.22, 1, 0.36, 1);
+}
+.edge-add:hover {
+  color: var(--accent);
+  border-color: var(--accent);
+  /* transform 없음 — hover 시 크기/위치 불변(떨림 원인 제거). */
+}
+
+/* 엣지 중간 + 버튼의 foreignObject 래퍼 — 평소 숨김, 엣지 hover 시 노출.
+   SVG 최상위 레이어가 pointer-events:none 이라 버튼만 다시 auto 로 켠다. */
+.gedge-add-fo {
+  opacity: 0;
+  pointer-events: none;
+  transition: opacity 0.16s cubic-bezier(0.22, 1, 0.36, 1);
+}
+.gedge-group:hover .gedge-add-fo {
+  opacity: 1;
+  pointer-events: auto;
+}
+
+/* .palette-glass — 프로스티드 "Search…" 드롭다운/팔레트 표면.
+   .gpalette 보다 더 투명·블러. 기존 .gpalette 와 함께 쓰거나 단독으로. */
+.palette-glass {
+  background: var(--glass-bg-strong);
+  -webkit-backdrop-filter: var(--glass-blur);
+  backdrop-filter: var(--glass-blur);
+  border: 1px solid var(--line-1);
+  border-radius: 14px;
+  box-shadow:
+    inset 0 0 0 1px var(--glass-border),
+    var(--glass-shadow);
+}
+
+/* ═══════════════════════════════════════════════════════════════════
+   헤더 (극미니멀 상단 바) — TopNav
+   얇고 거의 투명한 상단 바. 본문 위에 떠 있되 존재감 최소화. 여백 넉넉.
+   ═══════════════════════════════════════════════════════════════════ */
+.topbar {
+  display: flex;
+  align-items: center;
+  gap: 0.75rem;
+  height: 52px;
+  padding-inline: 1.25rem;
+  /* 거의 투명 + 미세 블러 — 스크롤 시 본문이 비친다. */
+  background: rgba(255, 255, 255, 0.55);
+  -webkit-backdrop-filter: blur(12px) saturate(1.05);
+  backdrop-filter: blur(12px) saturate(1.05);
+  /* 보더는 단 한 줄 하단 헤어라인만(상자감 제거). */
+  border-bottom: 1px solid var(--line-2);
+}
+/* 워드마크 — 작고 차분하게(잉크). */
+.topbar-brand {
+  font-weight: 600;
+  font-size: 14px;
+  letter-spacing: -0.01em;
+  color: var(--text-1);
+}
+/* 내비 항목 — 보조색 텍스트, hover 시 잉크로. 상자/배경 없음. */
+.topbar-link {
+  font-size: 13px;
+  color: var(--text-2);
+  transition: color 0.15s cubic-bezier(0.22, 1, 0.36, 1);
+}
+.topbar-link:hover {
+  color: var(--text-1);
+}
+/* 활성 내비 항목 — 잉크 + 미세 버밀리언 언더라인 점(절제). */
+.topbar-link-active {
+  color: var(--text-1);
+}
+
+/* ═══════════════════════════════════════════════════════════════════
+   로그인 (중앙 글래스 카드) — app/page.tsx
+   화이트 미니멀 + 은은한 오로라 바탕 위에 떠 있는 중앙 글래스 카드.
+   ═══════════════════════════════════════════════════════════════════ */
+/* 로그인 페이지 래퍼 — 중앙 정렬 + 은은한 오로라 바탕. */
+.login-wrap {
+  position: relative;
+  min-height: 100dvh;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  padding: 1.5rem;
+  background-color: var(--bg-0);
+  overflow: hidden;
+}
+/* 오로라 바탕 — 매우 옅은 파스텔 워시(존재감만, 발광 금지). */
+.login-wrap::before {
+  content: "";
+  position: absolute;
+  inset: -20%;
+  z-index: 0;
+  pointer-events: none;
+  background:
+    radial-gradient(40% 50% at 22% 26%, rgba(59, 130, 246, 0.08), transparent 70%),
+    radial-gradient(38% 48% at 78% 22%, rgba(139, 92, 246, 0.07), transparent 70%),
+    radial-gradient(46% 56% at 60% 84%, rgba(217, 71, 42, 0.05), transparent 72%);
+  filter: blur(30px);
+}
+/* 중앙 카드 — 글래스 표면. 본문은 z 위로 띄운다. */
+.login-card {
+  position: relative;
+  z-index: 1;
+  width: 100%;
+  max-width: 380px;
+  padding: 2rem 1.75rem;
+  border-radius: 18px;
+  background: var(--glass-bg-strong);
+  -webkit-backdrop-filter: var(--glass-blur);
+  backdrop-filter: var(--glass-blur);
+  border: 1px solid var(--glass-border-line);
+  box-shadow:
+    inset 0 0 0 1px var(--glass-border),
+    var(--shadow-1);
+}
+/* 입력 필드 — 가라앉은 웰 + 포커스 시 버밀리언 강조. */
+.login-input {
+  width: 100%;
+  height: 44px;
+  padding-inline: 0.875rem;
+  border-radius: 10px;
+  background: var(--bg-0);
+  border: 1px solid var(--line-1);
+  color: var(--text-1);
+  font-size: 14px;
+  transition:
+    border-color 0.18s cubic-bezier(0.22, 1, 0.36, 1),
+    box-shadow 0.18s cubic-bezier(0.22, 1, 0.36, 1);
+}
+.login-input::placeholder {
+  color: var(--text-3);
+}
+.login-input:focus {
+  outline: none;
+  border-color: var(--accent);
+  box-shadow: 0 0 0 3px var(--accent-tint);
+}
+/* 기본(데모) 버튼 — 버밀리언 풀 버튼. 누르는 감각은 .btn-press 와 조합 가능. */
+.login-btn {
+  width: 100%;
+  height: 44px;
+  border-radius: 10px;
+  background: var(--accent);
+  color: #fff;
+  font-size: 14px;
+  font-weight: 600;
+  cursor: pointer;
+  transition:
+    background-color 0.15s cubic-bezier(0.22, 1, 0.36, 1),
+    box-shadow 0.15s cubic-bezier(0.22, 1, 0.36, 1);
+}
+.login-btn:hover {
+  background: var(--accent-hover);
+}
+
+/* ═══════════════════════════════════════════════════════════════════
+   사이드 활동 패널 (우측 슬라이드) — 업무 지시 시 라이브 진행 표시
+   현재 작업 / 진행 / 피드백을 우측에서 슬라이드인하는 글래스 패널.
+   ═══════════════════════════════════════════════════════════════════ */
+/* 패널 본체 — 우측 고정 슬라이드 글래스. 열림은 .activity-panel-open 으로. */
+.activity-panel {
+  position: fixed;
+  top: 0;
+  right: 0;
+  z-index: 60;
+  display: flex;
+  flex-direction: column;
+  width: min(380px, 92vw);
+  height: 100dvh;
+  background: var(--glass-bg-strong);
+  -webkit-backdrop-filter: var(--glass-blur);
+  backdrop-filter: var(--glass-blur);
+  border-left: 1px solid var(--glass-border-line);
+  box-shadow:
+    inset 1px 0 0 var(--glass-border),
+    -8px 0 30px rgba(0, 0, 0, 0.08);
+  /* 닫힘 = 우측으로 밀어둠. 열림 클래스가 0 으로. */
+  transform: translateX(100%);
+  transition: transform 0.32s cubic-bezier(0.22, 1, 0.36, 1);
+}
+.activity-panel-open {
+  transform: translateX(0);
+}
+/* 패널 헤더 — 제목 + 닫기. 하단 헤어라인. */
+.activity-panel-head {
+  display: flex;
+  align-items: center;
+  gap: 0.5rem;
+  padding: 0.875rem 1.125rem;
+  border-bottom: 1px solid var(--line-2);
+  font-size: 13px;
+  font-weight: 600;
+  color: var(--text-1);
+}
+/* 패널 본문 — 스크롤 영역(현재 작업/진행/피드백 리스트). */
+.activity-panel-body {
+  flex: 1;
+  min-height: 0;
+  overflow-y: auto;
+  padding: 1rem 1.125rem;
+  display: flex;
+  flex-direction: column;
+  gap: 0.75rem;
+}
+/* 활동 항목 — 한 줄 진행 행(글리프 + 라벨 + 상태). 종이 위 미세 보더. */
+.activity-item {
+  display: flex;
+  align-items: flex-start;
+  gap: 0.625rem;
+  padding: 0.625rem 0.75rem;
+  border-radius: 10px;
+  background: var(--bg-1);
+  border: 1px solid var(--line-2);
+  font-size: 13px;
+  color: var(--text-2);
+}
+/* 현재 진행 중 항목 — 버밀리언 보더 + 잉크 본문 강조. */
+.activity-item-active {
+  border-color: var(--accent);
+  color: var(--text-1);
+  box-shadow: 0 0 0 3px var(--accent-tint);
+}
+/* 완료 항목 — 그린 보더 톤. */
+.activity-item-done {
+  border-color: rgba(47, 143, 87, 0.45);
+  color: var(--text-1);
+}
+/* 항목 앞 상태 점 — node-dot 어휘 재사용 가능하나 패널 전용 변형도 제공. */
+.activity-dot {
+  margin-top: 4px;
+  width: 6px;
+  height: 6px;
+  border-radius: 9999px;
+  background: var(--text-3);
+  flex-shrink: 0;
+}
+.activity-item-active .activity-dot {
+  background: var(--accent);
+}
+.activity-item-done .activity-dot {
+  background: var(--ok);
+}
+/* 패널 뒤 백드롭(선택) — 패널 열림 시 본문 살짝 가림. 클릭 시 닫기. */
+.activity-backdrop {
+  position: fixed;
+  inset: 0;
+  z-index: 55;
+  background: rgba(0, 0, 0, 0.18);
+  opacity: 0;
+  pointer-events: none;
+  transition: opacity 0.32s cubic-bezier(0.22, 1, 0.36, 1);
+}
+.activity-backdrop-open {
+  opacity: 1;
+  pointer-events: auto;
+}
+
+/* ═══════════════════════════════════════════════════════════════════
+   노드 빌더 캔버스 (편집형 그래프 + n8n 풍 라이브 실행)
+   — div + SVG + CSS + pointer events 로 직접 구현. 화이트 미니멀 톤 유지.
+   클래스 접두사 .g* (gnode/gport/gedge) — 기존 정적 .node/.edge 와 충돌 없음.
+   ═══════════════════════════════════════════════════════════════════ */
+
+/* 캔버스 바탕 — 아주 옅은 도트 그리드. 팬/줌 변환은 내부 래퍼가 담당. */
+.canvas-bg {
+  position: relative;
+  background-color: var(--bg-0);
+  background-image: radial-gradient(
+    circle,
+    rgba(0, 0, 0, 0.06) 1px,
+    transparent 1px
+  );
+  background-size: 22px 22px;
+  background-position: 0 0;
+  overflow: hidden;
+  touch-action: none; /* 포인터 팬/줌 제스처를 직접 처리 */
+}
+
+/* 능력 노드 — 반투명 프로스티드 글래스 카드. 1px 보더 + 내부 흰 하이라이트,
+   라운드, 부드러운 그림자. 배경(오로라/그리드)이 은은히 비친다. */
+.gnode {
+  position: absolute;
+  box-sizing: border-box;
+  display: flex;
+  flex-direction: column;
+  gap: 4px;
+  min-width: 148px;
+  max-width: 196px;
+  padding: 12px 14px;
+  border: 1px solid var(--glass-border-line);
+  border-radius: 14px;
+  background: var(--glass-bg);
+  -webkit-backdrop-filter: var(--glass-blur);
+  backdrop-filter: var(--glass-blur);
+  box-shadow:
+    inset 0 0 0 1px var(--glass-border),
+    0 1px 2px rgba(0, 0, 0, 0.04),
+    0 6px 18px rgba(0, 0, 0, 0.05);
+  color: var(--text-1);
+  cursor: grab;
+  user-select: none;
+  transition: border-color 0.18s ease, box-shadow 0.18s ease,
+    transform 0.12s ease;
+}
+.gnode:hover {
+  border-color: var(--line-strong);
+  box-shadow:
+    inset 0 0 0 1px var(--glass-border),
+    0 1px 2px rgba(0, 0, 0, 0.05),
+    0 10px 26px rgba(0, 0, 0, 0.08);
+}
+.gnode:active {
+  cursor: grabbing;
+}
+/* 선택된 노드 — 버밀리언 보더(절제). */
+.gnode-selected {
+  border-color: var(--accent);
+  box-shadow: 0 0 0 1px var(--accent), 0 8px 22px rgba(0, 0, 0, 0.08);
+}
+
+/* 중앙 에이전트 노드 — 강조 글래스(약간 더 불투명 + 버밀리언 미세 보더 + 원형감). */
+.gnode-agent {
+  min-width: 168px;
+  padding: 16px 18px;
+  border: 1px solid rgba(217, 71, 42, 0.30);
+  border-radius: 18px;
+  background: var(--glass-bg-strong);
+  -webkit-backdrop-filter: var(--glass-blur);
+  backdrop-filter: var(--glass-blur);
+  box-shadow:
+    inset 0 0 0 1px var(--glass-border),
+    0 1px 2px rgba(0, 0, 0, 0.06),
+    0 12px 30px rgba(0, 0, 0, 0.10);
+  font-weight: 600;
+}
+.gnode-agent:hover {
+  border-color: rgba(217, 71, 42, 0.45);
+}
+
+/* 스테이지 노드 — 리프보다 약간 크게/구분. 진짜 투명 글래스 유지(.gnode 베이스)에
+   살짝 더 또렷한 보더 + 라운드로 스파인에서 묶음임을 드러낸다. 색은 아이콘 타일이 담당. */
+.gnode-stage {
+  min-width: 168px;
+  padding: 14px 16px;
+  border-radius: 16px;
+  border-color: var(--line-strong);
+  box-shadow:
+    inset 0 0 0 1px var(--glass-border),
+    0 1px 2px rgba(0, 0, 0, 0.05),
+    0 8px 22px rgba(0, 0, 0, 0.07);
+  font-weight: 600;
+}
+
+/* 노드 상태: 작동 중(버밀리언 펄스). node-pulse 키프레임 재사용. */
+.gnode-active {
+  border-color: var(--accent);
+  animation: node-pulse 2s cubic-bezier(0.4, 0, 0.6, 1) infinite;
+}
+/* 작동 중 표식 점(노드 모서리). */
+.gnode-active-dot {
+  width: 8px;
+  height: 8px;
+  border-radius: 50%;
+  background: var(--accent);
+  box-shadow: 0 0 0 3px var(--accent-tint);
+}
+
+/* 노드 상태: 완료(은은한 그린 보더 + 체크 톤). */
+.gnode-done {
+  border-color: rgba(47, 143, 87, 0.55);
+}
+.gnode-done-tick {
+  color: var(--ok);
+}
+
+/* 산출물 도착 뱃지 — 노드 우상단 카운터(절제, 인라인 SVG 아이콘과 함께). */
+.gnode-badge {
+  display: inline-flex;
+  align-items: center;
+  gap: 3px;
+  padding: 1px 7px;
+  border-radius: 999px;
+  background: var(--accent-tint);
+  color: var(--accent);
+  font-size: 11px;
+  font-weight: 600;
+  line-height: 1.5;
+}
+
+/* 연결 포트 점 — 노드 가장자리에서 드래그로 엣지 생성. */
+.gport {
+  position: absolute;
+  width: 11px;
+  height: 11px;
+  border-radius: 50%;
+  background: var(--bg-0);
+  border: 1.5px solid var(--line-strong);
+  cursor: crosshair;
+  transition: background 0.15s ease, border-color 0.15s ease,
+    transform 0.12s ease;
+}
+.gport:hover {
+  background: var(--accent);
+  border-color: var(--accent);
+  transform: scale(1.25);
+}
+/* 연결 진행 중(드래그 소스 포트) 강조. */
+.gport-armed {
+  background: var(--accent);
+  border-color: var(--accent);
+}
+
+/* ── 가로 흐름 포트 위치 (좌=입력 / 우=출력) ──────────────
+   워크플로는 좌→우로 흐른다. 입력 포트는 노드 좌측 가장자리 중앙,
+   출력 포트는 우측 가장자리 중앙에 앵커한다. 엣지는 이 포트 좌표(노드 중앙 금지)
+   에서 출발/도착하도록 사용처(useGraphEditor)가 포트 위치를 계산한다.
+   포지셔닝만 담당 — 시각(원/보더/hover)은 .gport 가 공급. */
+.gport-in {
+  left: -6px;
+  top: 50%;
+  transform: translateY(-50%);
+}
+.gport-out {
+  right: -6px;
+  top: 50%;
+  transform: translateY(-50%);
+}
+/* hover/armed 시에도 세로 중앙 정렬 유지하며 확대(translateY 보존). */
+.gport-in:hover,
+.gport-out:hover {
+  transform: translateY(-50%) scale(1.25);
+}
+
+/* 입력/출력 라벨 캡(선택) — 포트 옆 초소형 화살표/방향 힌트. 절제. */
+.gport-cap {
+  position: absolute;
+  top: 50%;
+  transform: translateY(-50%);
+  font-size: 9px;
+  line-height: 1;
+  color: var(--text-3);
+  pointer-events: none;
+  opacity: 0;
+  transition: opacity 0.14s ease;
+}
+.gnode:hover .gport-cap {
+  opacity: 0.7;
+}
+
+/* SVG 엣지 — 베지어 곡선. 기본은 옅은 라인. */
+.gedge {
+  fill: none;
+  stroke: var(--line-strong);
+  stroke-width: 1.5;
+  transition: stroke 0.18s ease, stroke-width 0.18s ease;
+}
+.gedge:hover {
+  stroke: var(--text-2);
+}
+/* 라이브 명령이 흐르는 엣지 — 버밀리언. */
+.gedge-active {
+  stroke: var(--accent);
+  stroke-width: 2;
+}
+/* 완료된 경로 — 은은한 그린. */
+.gedge-done {
+  stroke: rgba(47, 143, 87, 0.45);
+}
+/* 엣지 삭제 핫존(넓은 투명 히트 영역) — 클릭 타겟용. */
+.gedge-hit {
+  fill: none;
+  stroke: transparent;
+  stroke-width: 16;
+  cursor: pointer;
+}
+
+/* 임시 연결선(포트 드래그 중 커서까지 따라오는 선). */
+.gedge-temp {
+  fill: none;
+  stroke: var(--accent);
+  stroke-width: 1.5;
+  stroke-dasharray: 4 4;
+  pointer-events: none;
+}
+
+/* flow-pulse — 엣지 위를 흐르는 점(명령 하달 시각화).
+   offset-path 를 따라 from→to 로 이동. 와이어를 타고 흐르는 느낌. */
+@keyframes flow-pulse {
+  from {
+    offset-distance: 0%;
+    opacity: 0;
+  }
+  10% {
+    opacity: 1;
+  }
+  90% {
+    opacity: 1;
+  }
+  to {
+    offset-distance: 100%;
+    opacity: 0;
+  }
+}
+.anim-flow-pulse {
+  offset-rotate: 0deg;
+  animation: flow-pulse 1.1s linear infinite;
+}
+/* 흐르는 점 자체 — 버밀리언 작은 원. */
+.flow-dot {
+  r: 4;
+  fill: var(--accent);
+}
+
+/* offset-path 미지원 폴백 — stroke-dashoffset 으로 엣지 자체에 흐름 표현. */
+@keyframes flow-dash {
+  to {
+    stroke-dashoffset: -24;
+  }
+}
+.gedge-flow {
+  stroke: var(--accent);
+  stroke-width: 2;
+  stroke-dasharray: 6 6;
+  animation: flow-dash 0.6s linear infinite;
+}
+
+/* 능력 팔레트(노드 추가 패널) — 떠 있는 프로스티드 글래스 패널. */
+.gpalette {
+  border: 1px solid var(--line-1);
+  border-radius: 14px;
+  background: var(--glass-bg-strong);
+  -webkit-backdrop-filter: var(--glass-blur);
+  backdrop-filter: var(--glass-blur);
+  box-shadow:
+    inset 0 0 0 1px var(--glass-border),
+    var(--glass-shadow);
+}
+.gpalette-item {
+  cursor: pointer;
+  border-radius: 8px;
+  transition: background 0.14s ease;
+}
+.gpalette-item:hover {
+  background: rgba(0, 0, 0, 0.04);
+}
+
+/* ── 노드 빌더 모션 최소화 가드 ─────────────────────── */
+@media (prefers-reduced-motion: reduce) {
+  .gnode-active,
+  .anim-flow-pulse,
+  .gedge-flow {
+    animation: none;
+  }
+  /* 흐름 점은 종점에 정착시켜 정적으로 표현. */
+  .anim-flow-pulse {
+    offset-distance: 100%;
+    opacity: 1;
+  }
+  .gnode,
+  .gport,
+  .gport-in,
+  .gport-out,
+  .gport-cap,
+  .gedge,
+  .edge-add,
+  .gedge-add-fo {
+    transition: none;
+  }
+  /* 사이드 활동 패널 — 슬라이드 모션 없이 즉시 위치(열림/닫힘 transform만 유지). */
+  .activity-panel,
+  .activity-backdrop {
+    transition: none;
+  }
+  .login-input,
+  .login-btn,
+  .topbar-link {
+    transition: none;
+  }
+}
+
+/* ── 글래스 폴백: 투명도 최소화 환경 ───────────────────
+   prefers-reduced-transparency 사용자(또는 backdrop-filter 미지원 추정)에게는
+   블러를 끄고 솔리드 표면으로 폴백 — 가독성 우선. 화이트 미니멀 톤 유지. */
+@media (prefers-reduced-transparency: reduce) {
+  .glass,
+  .gnode,
+  .gpalette,
+  .palette-glass,
+  .edge-add,
+  .topbar {
+    background: var(--bg-0);
+    -webkit-backdrop-filter: none;
+    backdrop-filter: none;
+  }
+  .glass-strong,
+  .gnode-agent,
+  .composer-glass,
+  .login-card,
+  .activity-panel {
+    background: var(--bg-1);
+    -webkit-backdrop-filter: none;
+    backdrop-filter: none;
+  }
+  /* 투명도 최소화 시 오로라 바탕도 끈다(솔리드 가독 우선). */
+  .login-wrap::before,
+  .canvas-aurora::before,
+  .canvas-aurora::after {
+    display: none;
+  }
+}
+
+/* backdrop-filter 자체 미지원 브라우저 — 솔리드 폴백(투명 표면이 그대로 비치는 것 방지). */
+@supports not ((-webkit-backdrop-filter: blur(1px)) or (backdrop-filter: blur(1px))) {
+  .glass,
+  .gnode,
+  .gpalette,
+  .palette-glass,
+  .edge-add,
+  .topbar {
+    background: var(--bg-0);
+  }
+  .glass-strong,
+  .gnode-agent,
+  .composer-glass,
+  .login-card,
+  .activity-panel {
+    background: var(--bg-1);
+  }
+}
+
+
+/* ╔══════════════════════════════════════════════════════════════════╗
+   ║  VS CODE IDE 셸 — "Dark Modern" 다크 테마 (스코프 전용)            ║
+   ║  핵심기능을 VS Code 룩앤필 위에서 돌린다(포크/Electron/monaco 아님).║
+   ║  ── 스코프 규칙(중요) ──────────────────────────────────────────  ║
+   ║  · 모든 토큰/스타일은 반드시 `.ide` (= [data-ide]) 래퍼 안에서만   ║
+   ║    적용된다. 위쪽 :root 화이트 미니멀 토큰은 절대 건드리지 않는다. ║
+   ║    → 로그인/랜딩 등 다른 페이지는 기존 순백 테마 그대로 보존.      ║
+   ║  · 색 하드코딩은 이 블록 안 --ide-* 변수로만(사용처는 var() 호출). ║
+   ║  레이아웃: CSS grid/flex. 아이콘: @vscode/codicons(실제 VS Code).  ║
+   ╚══════════════════════════════════════════════════════════════════╝ */
+
+/* ── codicon 폰트 와이어링 ────────────────────────────────────────────
+   맨 위 `@import "@vscode/codicons/dist/codicon.css"` 가 글리프 클래스 매핑
+   (.codicon-*{content:"\exxx"}) 과 함께 가져온 codicon.css 의 @font-face 는
+   src 가 상대경로(./codicon.ttf?hash)라 Next 에서 404 가 난다. 여기서 동일
+   family("codicon") 의 @font-face 를 *나중에* 선언해, 마지막 선언이 이기는
+   CSS 규칙에 따라 우리 폰트(public/codicon.ttf = /codicon.ttf)가 승리한다.
+   (이 @font-face 는 전역이지만, .codicon 클래스를 쓰는 곳은 IDE 뿐이다.) */
+@font-face {
+  font-family: "codicon";
+  font-display: block;
+  src: url("/codicon.ttf") format("truetype");
+}
+/* .codicon 기본 — codicon.css 의 .codicon[class*='codicon-'] 와 동일 셰입.
+   글리프 매핑(::before content)은 import 한 codicon.css 가 공급한다. */
+.codicon {
+  font: normal normal normal 16px/1 codicon;
+  display: inline-block;
+  text-decoration: none;
+  text-rendering: auto;
+  text-align: center;
+  -webkit-font-smoothing: antialiased;
+  -moz-osx-font-smoothing: grayscale;
+  user-select: none;
+  -webkit-user-select: none;
+  flex-shrink: 0;
+}
+
+/* ── IDE 토큰: .ide 래퍼 안에서만 유효한 로컬 변수 + 기본 색 ─────────
+   VS Code "Dark Modern" 팔레트 실제 값 기준. 액센트는 정통 #0078d4.
+   (우리 브랜드 버밀리언은 IDE 안에서 쓰지 않는다 — 정통성 우선.) */
+.ide {
+  /* ── 표면 (VS Code "Dark Modern" 실제 값 — 추측 금지) ──────────────
+     editor.bg #1f1f1f / activityBar·sideBar·titleBar·statusBar·tabsBg #181818
+     tab.activeBg #1f1f1f / inactiveBg #181818 / panel.bg #1f1f1f
+     input.bg #313131 / list.hover #2a2d2e / list.activeSelection #04395e */
+  --ide-bg: #1f1f1f;          /* editor.background — 에디터 본문 바탕 */
+  --ide-bg-alt: #181818;      /* 가장 어두운 크롬(activityBar/sideBar/titleBar/statusBar/tabsBg) */
+  --ide-panel: #181818;       /* 사이드바 본문·탭바(editorGroupHeader) */
+  --ide-panel-alt: #1f1f1f;   /* 하단 패널(터미널/출력) 바탕 — panel.background */
+  --ide-elevated: #313131;    /* 입력 웰(input.background)·살짝 들린 표면 */
+  --ide-hover: #2a2d2e;       /* list.hoverBackground — 리스트/항목 hover */
+  --ide-active-bg: #04395e;   /* list.activeSelectionBackground — 선택 행 */
+
+  /* ── 보더/콘트라스트 — 전역 #2b2b2b, 입력 보더 #3c3c3c ─────────────── */
+  --ide-border: #2b2b2b;        /* contrastBorder/editorGroup.border — 패널/영역/탭 경계 */
+  --ide-border-strong: #3c3c3c; /* input.border — 또렷한 경계·입력 보더 */
+
+  /* ── 텍스트 — foreground #cccccc / descriptionFg #9d9d9d ────────────── */
+  --ide-text: #cccccc;        /* foreground — 본문 기본/사이드바 타이틀 */
+  --ide-text-dim: #9d9d9d;    /* descriptionForeground / tab.inactiveFg */
+  --ide-text-faint: #868686;  /* activityBar.inactiveForeground — 더 흐린 메타 */
+  --ide-text-strong: #ffffff; /* tab.activeForeground / activityBar.foreground 활성 */
+  --ide-text-d7: #d7d7d7;     /* activityBar.foreground(아이콘 기본) */
+  --ide-text-e7: #e7e7e7;     /* panelTitle.activeForeground */
+
+  /* ── 액센트 — VS Code 정통 #0078d4 (우리 버밀리언 아님 — 정통성) ───── */
+  --ide-accent: #0078d4;          /* 주요 버튼·badge·탭 상단 1px·activeBorder */
+  --ide-accent-hover: #026ec1;    /* 버튼 hover(약간 진한 톤) */
+  --ide-accent-bright: #0078d4;   /* 포커스 링·링크 강조 */
+  --ide-active: #04395e;          /* 선택/활성 행 배경(블루 틴트) */
+  --ide-focus-border: #0078d4;    /* focusBorder — 포커스 아웃라인 */
+  --ide-badge: #0078d4;           /* badge.background */
+
+  /* ── 진행/실행 강조 — VS Code 는 진행 상태에 블루를 쓴다(progressBar #0078d4).
+     octopus 의 "작업 중" 페르소나/스피너/강조 badge 가 참조하던 브랜드 색을
+     IDE 정통성에 맞춰 블루로 재매핑(이전 --ide-vermilion 자리). 호환 별칭 유지. */
+  --ide-progress: #0078d4;
+  --ide-progress-dim: rgba(0, 120, 212, 0.18);
+  --ide-vermilion: var(--ide-progress);          /* 호환 별칭 → 블루(정통성) */
+  --ide-vermilion-dim: var(--ide-progress-dim);  /* 호환 별칭 → 블루 틴트 */
+
+  /* 크롬 표면 별칭 — 전부 #181818 (titleBar/activityBar/statusBar) */
+  --ide-titlebar: #181818;
+  --ide-activitybar: #181818;
+  --ide-statusbar: #181818;       /* 비포커스/대기 상태바 */
+  --ide-statusbar-busy: #0078d4;  /* 실행 중 상태바(블루) — .ide-statusbar--busy 로 토글 */
+
+  /* 활성 인디케이터 — VS Code 액티비티바 활성 좌측 2px 흰 바(#ffffff) */
+  --ide-act-indicator: #ffffff;
+  /* 탭 상단 활성 보더 — tab.activeBorderTop 1px #0078d4 */
+  --ide-tab-top: #0078d4;
+
+  /* ── 상태 색 — VS Code 톤(에디터 데코레이션 계열) ─────────────────── */
+  --ide-ok: #4ec9b0;       /* 청록(성공·완료) */
+  --ide-ok-fg: #89d185;    /* 그린(터미널 성공 라인) */
+  --ide-warn: #cca700;     /* 앰버(경고·승인 대기) */
+  --ide-danger: #f14c4c;   /* 레드(에러) */
+  --ide-info: #3794ff;     /* 인포 블루 */
+
+  /* 터미널 ANSI 톤(로그 라인용) */
+  --ide-term-fg: #cccccc;
+  --ide-term-green: #23d18b;
+  --ide-term-yellow: #f5f543;
+  --ide-term-blue: #3b8eea;
+  --ide-term-cyan: #29b8db;
+  --ide-term-red: #f14c4c;
+  --ide-term-dim: #717171;
+
+  /* 스크롤바(어두운 — scrollbarSlider) */
+  --ide-scroll: rgba(121, 121, 121, 0.4);
+  --ide-scroll-hover: rgba(100, 100, 100, 0.7);
+
+  /* ── 폰트 — UI = 시스템(-apple-system) · 에디터/라벨 = 모노 ───────────
+     VS Code 의 워크벤치 UI 는 OS 시스템 폰트를, 코드/라벨은 모노를 쓴다.
+     한국어 UI 가독을 위해 Pretendard 를 시스템 체인에 섞는다. */
+  --ide-ui: -apple-system, BlinkMacSystemFont, "Pretendard", "Segoe UI",
+    "Apple SD Gothic Neo", "Malgun Gothic", system-ui, sans-serif;
+  --ide-mono: var(--font-geist-mono), "SF Mono", "Cascadia Code",
+    "Menlo", "Consolas", monospace;
+
+  /* ── 셸 치수 (VS Code 실제 값) — 사용처가 grid 트랙으로 참조 가능 ──── */
+  --ide-activitybar-w: 48px;   /* 액티비티바 폭 48px(아이콘 24px) */
+  --ide-titlebar-h: 35px;      /* 타이틀바 35px */
+  --ide-statusbar-h: 22px;     /* 상태바 22px(폰트 12px) */
+  --ide-tab-h: 35px;           /* 탭 높이 35px */
+  --ide-sidebar-w: 288px;      /* 사이드바 기본 폭(리사이즈 가능) */
+  --ide-side-header-h: 22px;   /* 사이드바 섹션 헤더 22px */
+  --ide-panel-tabbar-h: 35px;  /* 패널 탭바 35px */
+  --ide-act-icon: 18px;        /* 액티비티바 아이콘 18px(축소) */
+
+  /* 컨테이너 본체 — 다크 테마는 여기 안에만 스코프된다. */
+  position: relative;
+  background: var(--ide-bg);
+  color: var(--ide-text);
+  color-scheme: dark;
+  font-family: var(--ide-ui);
+  font-size: 13px;
+  line-height: 1.4;
+  -webkit-font-smoothing: antialiased;
+}
+
+/* IDE 내부 스크롤바를 VS Code 풍(어두운 오버레이)으로. .ide 자손에만 적용. */
+.ide *::-webkit-scrollbar { width: 14px; height: 14px; }
+.ide *::-webkit-scrollbar-track { background: transparent; }
+.ide *::-webkit-scrollbar-thumb {
+  background: var(--ide-scroll);
+  border: 3px solid transparent;
+  background-clip: padding-box;
+  border-radius: 0;
+}
+.ide *::-webkit-scrollbar-thumb:hover {
+  background: var(--ide-scroll-hover);
+  background-clip: padding-box;
+}
+.ide *::-webkit-scrollbar-corner { background: transparent; }
+.ide * { scrollbar-width: thin; scrollbar-color: var(--ide-scroll) transparent; }
+
+/* IDE 안의 포커스 링은 VS Code 블루로(전역 버밀리언 :focus-visible 위에 덮음). */
+.ide :focus-visible {
+  outline: 1px solid var(--ide-focus-border);
+  outline-offset: -1px;
+}
+/* IDE 안의 선택 영역 — VS Code 블루 셀렉션. */
+.ide ::selection {
+  background: rgba(38, 79, 120, 0.85);
+  color: var(--ide-text-strong);
+}
+
+/* 모노 라벨 — 도구명·경로·키워드 등 코드 톤 텍스트. */
+.ide-mono {
+  font-family: var(--ide-mono);
+  font-variant-numeric: tabular-nums;
+  letter-spacing: 0;
+}
+
+/* ── IDE 셸 그리드 — 전체 화면 셸을 잡는 최상위 레이아웃(선택 사용) ──
+   행: 타이틀바 / 본문(액티비티바|좌|에디터|우) / 상태바.
+   사용처가 grid-template-areas 로 자식들을 배치하거나, 아래 개별 유틸을
+   flex 로 조립해도 된다. 어느 쪽이든 토큰/색은 동일하게 적용된다. */
+.ide-shell {
+  display: grid;
+  grid-template-rows: auto 1fr auto;
+  height: 100dvh;
+  min-height: 0;
+  overflow: hidden;
+  background: var(--ide-bg);
+}
+.ide-body {
+  display: flex;
+  min-height: 0;
+  flex: 1;
+  overflow: hidden;
+}
+
+/* ── 타이틀바 — 최상단 얇은 바(메뉴/타이틀/창 컨트롤). ───────────── */
+.ide-titlebar {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  height: var(--ide-titlebar-h);
+  flex-shrink: 0;
+  padding-inline: 8px;
+  background: var(--ide-titlebar);
+  border-bottom: 1px solid var(--ide-border);
+  color: var(--ide-text-dim);
+  font-size: 12px;
+  user-select: none;
+}
+/* 타이틀바 가운데 정렬 타이틀(현재 작업/파일명). */
+.ide-titlebar-title {
+  flex: 1;
+  text-align: center;
+  color: var(--ide-text-dim);
+  font-size: 12px;
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+}
+/* 좌상단 신호등(macOS 트래픽라이트) — 장식. */
+.ide-traffic { display: inline-flex; align-items: center; gap: 8px; padding-inline: 4px; }
+.ide-traffic-dot { width: 12px; height: 12px; border-radius: 9999px; }
+.ide-traffic-dot--close { background: #ff5f57; }
+.ide-traffic-dot--min { background: #febc2e; }
+.ide-traffic-dot--max { background: #28c840; }
+/* 타이틀바 메뉴 항목(파일/편집/...). */
+.ide-menu-item {
+  padding: 2px 7px;
+  border-radius: 4px;
+  color: var(--ide-text-dim);
+  cursor: default;
+  transition: background-color 0.1s ease, color 0.1s ease;
+}
+.ide-menu-item:hover { background: var(--ide-hover); color: var(--ide-text); }
+
+/* ── 액티비티바 — 좌측 아이콘 스트립(탐색기/검색/소스컨트롤/...). ────
+   VS Code: 폭 48px, bg #181818, 아이콘 24px, fg #d7d7d7 / inactive #868686,
+   활성 시 좌측 2px 흰 인디케이터(#ffffff) + 아이콘 풀화이트(#ffffff). */
+.ide-activitybar {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  width: var(--ide-activitybar-w);
+  flex-shrink: 0;
+  padding-block: 0;
+  background: var(--ide-activitybar);
+  border-right: 1px solid var(--ide-border);
+}
+/* 액티비티바 버튼 — 48px 정사각. 기본 흐린 글리프(#868686), hover 시 #d7d7d7.
+   .ide-act-item(정통 명) 과 기존 .ide-activity-btn(호환) 둘 다 지원. */
+.ide-act-item,
+.ide-activity-btn {
+  position: relative;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  width: var(--ide-activitybar-w);
+  height: 48px;
+  color: var(--ide-text-faint);   /* inactive #868686 */
+  background: transparent;
+  border: 0;
+  cursor: pointer;
+  transition: color 0.1s ease;
+}
+.ide-act-item:hover,
+.ide-activity-btn:hover { color: var(--ide-text-d7); }
+.ide-act-item svg,
+.ide-activity-btn svg { width: var(--ide-act-icon); height: var(--ide-act-icon); }
+/* codicon 글리프(폰트 아이콘)일 때 — 24px 글리프. */
+.ide-act-item .codicon,
+.ide-activity-btn .codicon { font-size: var(--ide-act-icon); }
+.ide-act-item.active,
+.ide-activity-btn.active { color: var(--ide-act-indicator); } /* 활성 아이콘 = #ffffff */
+/* 활성 표식 — 좌측 2px 세로 흰 바(VS Code activityBar.activeBorder). */
+.ide-act-item.active::before,
+.ide-activity-btn.active::before {
+  content: "";
+  position: absolute;
+  left: 0; top: 0; bottom: 0;
+  width: 2px;
+  background: var(--ide-act-indicator);
+}
+/* 액티비티바 badge — 우하단 파란 카운터(#0078d4, 흰 글자). VS Code activityBarBadge. */
+.ide-act-badge {
+  position: absolute;
+  right: 6px;
+  bottom: 6px;
+  min-width: 16px;
+  height: 16px;
+  padding-inline: 4px;
+  border-radius: 8px;
+  background: var(--ide-badge);
+  color: #ffffff;
+  font-family: var(--ide-ui);
+  font-size: 9px;
+  font-weight: 600;
+  line-height: 16px;
+  text-align: center;
+}
+/* 액티비티바 하단 영역(설정/계정) — flex 로 밀어내기. */
+.ide-activity-spacer { margin-top: auto; }
+
+/* ── 사이드패널(좌/우) — 탐색기/챗/페르소나 스택의 공용 컨테이너. ────
+   VS Code: sideBar.bg #181818, 기본 폭 ~288px(리사이즈). */
+.ide-sidebar {
+  display: flex;
+  flex-direction: column;
+  min-height: 0;
+  /* 폭은 IDEShell 의 리사이즈 래퍼(leftW/rightW)가 결정한다 — 고정 폭을 두면
+     래퍼와 충돌해 드래그 시 내용이 안 따라오고 빈 공간/어긋남이 생긴다. */
+  width: 100%;
+  min-width: 0;
+  background: var(--ide-bg-alt);
+  overflow: hidden;
+}
+.ide-sidebar--left { border-right: 1px solid var(--ide-border); }
+.ide-sidebar--right { border-left: 1px solid var(--ide-border); }
+
+/* 사이드바 최상단 뷰 타이틀(예: "EXPLORER" / "OCTOPUS") — 35px, #cccccc, 대문자.
+   VS Code 사이드바 헤더(sideBarTitle.foreground). */
+.ide-side-title {
+  display: flex;
+  align-items: center;
+  height: var(--ide-titlebar-h);
+  flex-shrink: 0;
+  padding-inline: 20px 8px;
+  color: var(--ide-text);
+  font-family: var(--ide-ui);
+  font-size: 11px;
+  font-weight: 400;
+  letter-spacing: 0.08em;
+  text-transform: uppercase;
+  user-select: none;
+}
+.ide-side-title .ide-sidebar-actions { margin-left: auto; display: inline-flex; gap: 2px; }
+
+/* 사이드바 섹션 헤더 — 접기 가능한 그룹(예: "OPEN EDITORS"). 22px, 11px 대문자 #cccccc.
+   정통 명 .ide-side-header + 기존 호환 명 .ide-sidebar-head 둘 다 지원. */
+.ide-side-header,
+.ide-sidebar-head {
+  display: flex;
+  align-items: center;
+  gap: 4px;
+  height: var(--ide-side-header-h);
+  flex-shrink: 0;
+  padding-inline: 8px 8px;
+  color: var(--ide-text);
+  font-family: var(--ide-ui);
+  font-size: 11px;
+  font-weight: 700;          /* VS Code 섹션 헤더는 볼드 */
+  letter-spacing: 0.02em;
+  text-transform: uppercase;
+  user-select: none;
+  cursor: pointer;
+}
+/* 섹션 헤더 앞 ▸/▾ 셰브론(codicon) 자리. */
+.ide-side-header .codicon-chevron-right,
+.ide-side-header .codicon-chevron-down,
+.ide-sidebar-head .codicon-chevron-right,
+.ide-sidebar-head .codicon-chevron-down { font-size: 16px; color: var(--ide-text); }
+.ide-side-header .ide-sidebar-actions,
+.ide-sidebar-head .ide-sidebar-actions { margin-left: auto; display: inline-flex; gap: 2px; }
+/* 섹션 액션은 헤더 hover 시에만 또렷(VS Code 동작). */
+.ide-side-header .ide-icon-btn,
+.ide-sidebar-head .ide-icon-btn { opacity: 0; transition: opacity 0.1s ease; }
+.ide-side-header:hover .ide-icon-btn,
+.ide-sidebar-head:hover .ide-icon-btn { opacity: 1; }
+/* 헤더 안 작은 아이콘 버튼(새로고침/접기 등). */
+.ide-icon-btn {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  width: 22px;
+  height: 22px;
+  border-radius: 5px;
+  color: var(--ide-text-dim);
+  background: transparent;
+  border: 0;
+  cursor: pointer;
+  transition: background-color 0.1s ease, color 0.1s ease;
+}
+.ide-icon-btn:hover { background: var(--ide-hover); color: var(--ide-text); }
+.ide-icon-btn svg { width: 16px; height: 16px; }
+/* 사이드패널 스크롤 본문. */
+.ide-sidebar-body {
+  flex: 1;
+  min-height: 0;
+  overflow-y: auto;
+  display: flex;
+  flex-direction: column;
+}
+
+/* 탐색기 트리 행(파일/폴더) + 범용 리스트 행 — VS Code 리스트 행 어휘.
+   list.hoverBg #2a2d2e / list.activeSelectionBg #04395e. 행 높이 22px.
+   정통 명 .ide-list-row + 기존 .ide-tree-row 둘 다 지원. */
+.ide-tree-row,
+.ide-list-row {
+  display: flex;
+  align-items: center;
+  gap: 6px;
+  height: 22px;
+  padding-inline: 8px;
+  color: var(--ide-text);
+  cursor: pointer;
+  white-space: nowrap;
+  user-select: none;
+}
+.ide-tree-row:hover,
+.ide-list-row:hover { background: var(--ide-hover); }
+.ide-tree-row.active,
+.ide-list-row.active,
+.ide-list-row[aria-selected="true"] { background: var(--ide-active-bg); color: var(--ide-text); }
+.ide-tree-row svg,
+.ide-list-row svg { width: 16px; height: 16px; flex-shrink: 0; color: var(--ide-text-dim); }
+.ide-tree-row .codicon,
+.ide-list-row .codicon { font-size: 16px; flex-shrink: 0; color: var(--ide-text-dim); }
+.ide-tree-indent { width: 8px; flex-shrink: 0; }
+
+/* ── 중앙 에디터 영역 — 탭바 + 작업뷰 본문. ───────────────────────── */
+.ide-editor {
+  display: flex;
+  flex-direction: column;
+  flex: 1;
+  min-width: 0;
+  min-height: 0;
+  background: var(--ide-bg);
+  overflow: hidden;
+}
+/* 탭 스트립(editorGroupHeader.tabsBg #181818) — 비활성 탭은 #181818,
+   활성 탭만 에디터 바탕 #1f1f1f 로 떠 보인다. 탭 경계 #2b2b2b. */
+.ide-tabs {
+  display: flex;
+  align-items: stretch;
+  height: var(--ide-tab-h);
+  flex-shrink: 0;
+  background: var(--ide-bg-alt);          /* tabsBg #181818 */
+  border-bottom: 1px solid var(--ide-border);
+  overflow-x: auto;
+  scrollbar-width: none;
+}
+.ide-tabs::-webkit-scrollbar { display: none; }
+.ide-tab {
+  display: inline-flex;
+  align-items: center;
+  gap: 8px;
+  height: 100%;
+  padding-inline: 10px 8px;
+  max-width: 220px;
+  background: var(--ide-bg-alt);          /* tab.inactiveBg #181818 */
+  color: var(--ide-text-dim);             /* tab.inactiveFg #9d9d9d */
+  border-right: 1px solid var(--ide-border); /* tab.border #2b2b2b */
+  font-family: var(--ide-ui);
+  font-size: 13px;
+  white-space: nowrap;
+  cursor: pointer;
+  user-select: none;
+  transition: background-color 0.08s ease, color 0.08s ease;
+}
+.ide-tab:hover { background: #1f1f1f; color: var(--ide-text); } /* tab.hoverBackground */
+.ide-tab svg { width: 16px; height: 16px; flex-shrink: 0; }
+.ide-tab .codicon { font-size: 16px; flex-shrink: 0; }
+.ide-tab-label { overflow: hidden; text-overflow: ellipsis; }
+/* 활성 탭 — 에디터 바탕 #1f1f1f + 흰 라벨 + 상단 1px #0078d4(activeBorderTop). */
+.ide-tab.active {
+  background: var(--ide-bg);               /* tab.activeBg #1f1f1f */
+  color: var(--ide-text-strong);           /* tab.activeFg #ffffff */
+  border-bottom: 1px solid var(--ide-bg);  /* 하단 경계를 덮어 본문과 이어지게 */
+}
+.ide-tab.active::before {
+  content: "";
+  position: absolute;
+  margin-top: -1px;
+}
+/* 탭 닫기(×) — codicon-close. 평소 숨김, hover/active 탭에서 노출. */
+.ide-tab-close {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  width: 20px;
+  height: 20px;
+  border-radius: 5px;
+  color: var(--ide-text-dim);
+  opacity: 0;
+  transition: opacity 0.08s ease, background-color 0.08s ease;
+}
+.ide-tab-close .codicon { font-size: 16px; }
+.ide-tab:hover .ide-tab-close,
+.ide-tab.active .ide-tab-close { opacity: 1; }
+.ide-tab-close:hover { background: rgba(255, 255, 255, 0.1); color: var(--ide-text); }
+/* 수정점(dirty) — VS Code 는 ● 흰 점(닫기 자리). 호버 시 닫기로 교체되는 동작은 사용처. */
+.ide-tab-dirty {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  width: 20px;
+  height: 20px;
+  color: var(--ide-text);
+  font-size: 16px;
+}
+/* dirty 점이 codicon 이 아닌 단순 원 div 일 때의 폴백. */
+.ide-tab-dirty:empty::before {
+  content: "";
+  width: 8px;
+  height: 8px;
+  border-radius: 9999px;
+  background: var(--ide-text);
+}
+/* dirty 탭은 닫기 버튼을 평소 숨기고 점만 보이게(hover 시 닫기 노출은 사용처 토글). */
+.ide-tab.dirty .ide-tab-close { opacity: 1; }
+
+/* 에디터 본문 — 작업뷰(아티팩트/진행)가 스크롤되는 영역. */
+.ide-editor-body {
+  flex: 1;
+  min-height: 0;
+  overflow: auto;
+  background: var(--ide-bg);
+}
+
+/* ── 자유 배치 캔버스 보드 (.ide-board-*) ──────────────────────────────
+   "하나의 캔버스" — 산출물을 파일/탭/코드뷰 없이 줌·팬 가능한 2D 보드 위
+   카드로 자유 배치. IDE 크롬은 다크 유지, 보드 면은 밝은 페이퍼(작업 화이트톤).
+   카드 내부는 .ide-doc-light 스코프라 렌더러가 본연의 화이트 문서 톤으로 그려진다. */
+.ide-board {
+  position: relative;
+  flex: 1;
+  min-height: 0;
+  min-width: 0;
+  overflow: hidden;
+  background: #f1f1ef;
+  /* 옅은 도트 그리드 — 캔버스 결(줌과 함께 사용처가 background-size 를 갱신). */
+  background-image: radial-gradient(rgba(0, 0, 0, 0.07) 1px, transparent 1px);
+  background-size: 22px 22px;
+  background-position: 0 0;
+  color-scheme: light;
+  touch-action: none;
+}
+.ide-board.is-panning { cursor: grabbing; }
+.ide-board:not(.is-panning) { cursor: grab; }
+
+/* 변환 레이어 — translate(pan) scale(zoom). 카드는 이 안에 절대 배치. */
+.ide-board-canvas {
+  position: absolute;
+  top: 0;
+  left: 0;
+  transform-origin: 0 0;
+  will-change: transform;
+}
+
+/* 카드 — 산출물 한 장. 흰 표면 + 종이 그림자 + 헤더(드래그 핸들). */
+.ide-board-card {
+  position: absolute;
+  width: 380px;
+  border-radius: 10px;
+  background: #ffffff;
+  border: 1px solid rgba(0, 0, 0, 0.10);
+  box-shadow: 0 1px 2px rgba(0, 0, 0, 0.06), 0 8px 24px rgba(0, 0, 0, 0.08);
+  overflow: hidden;
+  cursor: default;
+}
+.ide-board-card.is-dragging {
+  box-shadow: 0 4px 10px rgba(0, 0, 0, 0.12), 0 18px 44px rgba(0, 0, 0, 0.16);
+  z-index: 5;
+}
+/* 선택된 카드 — 우측 검토팀이 이 문서 담당을 강조. 페르소나 드롭 대상. */
+.ide-board-card.is-active {
+  border-color: var(--ide-accent, #d9472a);
+  box-shadow: 0 0 0 2px var(--ide-accent, #d9472a), 0 8px 24px rgba(0, 0, 0, 0.10);
+}
+/* 카드 헤더 — 드래그 핸들(grab). 아이콘 + 라벨(.md/.json 파일명 아님) + 점핸들. */
+.ide-board-card-head {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  height: 34px;
+  padding: 0 10px;
+  border-bottom: 1px solid rgba(0, 0, 0, 0.07);
+  background: #fbfbfa;
+  cursor: grab;
+  user-select: none;
+}
+.ide-board-card-head:active { cursor: grabbing; }
+.ide-board-card-head .codicon { font-size: 14px; flex-shrink: 0; }
+.ide-board-card-title {
+  min-width: 0;
+  flex: 1;
+  font-family: var(--ide-ui);
+  font-size: 12.5px;
+  font-weight: 600;
+  color: #1f1f1f;
+  letter-spacing: -0.01em;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}
+.ide-board-card-grip { color: rgba(0, 0, 0, 0.28); font-size: 13px !important; }
+/* 카드 헤더 "크게 보기" 버튼 — 상세 오버레이 열기. */
+.ide-board-card-max {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  width: 22px;
+  height: 22px;
+  flex-shrink: 0;
+  border: 0;
+  border-radius: 5px;
+  background: transparent;
+  color: rgba(0, 0, 0, 0.4);
+  cursor: pointer;
+}
+.ide-board-card-max:hover { background: rgba(0, 0, 0, 0.07); color: #1f1f1f; }
+.ide-board-card-max .codicon { font-size: 13px; }
+
+/* ── 결과물 상세 오버레이(.ide-card-modal-*) — 큰 스크롤 패널로 전체 내용 보기 ── */
+/* 전체 창을 덮는 풀스크린 오버레이(position:fixed — 보드/패널 모두 위로). */
+.ide-card-modal-backdrop {
+  position: fixed;
+  inset: 0;
+  z-index: 1000;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  padding: 4vh 4vw;
+  background: rgba(0, 0, 0, 0.5);
+  animation: ide-fade-in 0.14s ease both;
+}
+.ide-card-modal {
+  display: flex;
+  flex-direction: column;
+  width: min(980px, 94vw);
+  max-height: 92vh;
+  border-radius: 12px;
+  background: #ffffff;
+  border: 1px solid rgba(0, 0, 0, 0.12);
+  box-shadow: 0 24px 80px rgba(0, 0, 0, 0.5);
+  overflow: hidden;
+}
+.ide-card-modal-head {
+  display: flex;
+  align-items: center;
+  gap: 9px;
+  height: 42px;
+  flex-shrink: 0;
+  padding: 0 12px;
+  border-bottom: 1px solid rgba(0, 0, 0, 0.08);
+  background: #fbfbfa;
+}
+.ide-card-modal-head > .codicon { font-size: 15px; color: #555; flex-shrink: 0; }
+.ide-card-modal-title {
+  min-width: 0;
+  flex: 1;
+  font-family: var(--ide-ui);
+  font-size: 13.5px;
+  font-weight: 700;
+  color: #1f1f1f;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}
+.ide-card-modal-close {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  width: 26px;
+  height: 26px;
+  flex-shrink: 0;
+  border: 0;
+  border-radius: 6px;
+  background: transparent;
+  color: #777;
+  cursor: pointer;
+}
+.ide-card-modal-close:hover { background: rgba(0, 0, 0, 0.07); color: #1f1f1f; }
+.ide-card-modal-body {
+  flex: 1;
+  min-height: 0;
+  overflow-y: auto;
+  padding: 18px 22px 26px;
+  background: #ffffff;
+}
+.ide-card-modal .ide-cand-note .codicon { color: var(--arch, var(--accent)); }
+
+/* 카드 본문 — 렌더러(.ide-doc-light). 너무 길면 잘라 카드 높이를 제한. */
+.ide-board-card-body {
+  max-height: 460px;
+  overflow-y: auto;          /* 카드 안에서 스크롤(휠은 CanvasBoard 가 카드 위에선 줌 대신 스크롤 허용) */
+  overscroll-behavior: contain;
+  padding: 14px 16px 16px;
+  position: relative;
+}
+
+/* 보드 툴바 — 우하단 줌 컨트롤(줌 아웃/퍼센트/줌 인/맞춤). */
+.ide-board-toolbar {
+  position: absolute;
+  right: 14px;
+  bottom: 14px;
+  z-index: 10;
+  display: flex;
+  align-items: center;
+  gap: 2px;
+  padding: 3px;
+  border-radius: 9px;
+  background: var(--ide-bg-alt);
+  border: 1px solid var(--ide-border);
+  box-shadow: 0 2px 10px rgba(0, 0, 0, 0.25);
+}
+.ide-board-toolbar button {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  width: 26px;
+  height: 26px;
+  border: 0;
+  border-radius: 6px;
+  background: transparent;
+  color: var(--ide-text-dim);
+  cursor: pointer;
+}
+.ide-board-toolbar button:hover { background: var(--ide-hover); color: var(--ide-text); }
+.ide-board-toolbar .codicon { font-size: 15px; }
+.ide-board-zoom {
+  min-width: 44px;
+  text-align: center;
+  font-family: var(--ide-mono);
+  font-size: 11px;
+  color: var(--ide-text-dim);
+  user-select: none;
+}
+
+/* 라이브 칩 — 좌상단 "작업 중"(현재 도구). 보드 위 떠 있는 절제된 표식. */
+.ide-board-live {
+  position: absolute;
+  left: 14px;
+  top: 12px;
+  z-index: 10;
+  display: flex;
+  align-items: center;
+  gap: 7px;
+  max-width: 60%;
+  padding: 5px 11px;
+  border-radius: 9px;
+  background: var(--ide-bg-alt);
+  border: 1px solid var(--ide-border);
+  color: var(--ide-text);
+  font-size: 12px;
+  box-shadow: 0 2px 10px rgba(0, 0, 0, 0.22);
+}
+.ide-board-live .codicon { font-size: 13px; color: var(--ide-progress); }
+.ide-board-live-label {
+  min-width: 0;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}
+
+/* ── 멀티 에이전트 협업 레이어(.collab-* / .ide-collab-* / .ide-orch-* / .ide-cand-*) ──
+   피그마 풍: 라이브 커서 · 코멘트 핀/스레드 · 오케스트레이터 도크 · 후보안 변형 카드.
+   커서/핀/스레드/후보안은 변환 레이어(.ide-board-canvas) 안 = 줌·팬과 함께 움직인다.
+   협업 바/오케스트레이터/줌 툴바는 변환 밖(.ide-board) 고정. */
+
+/* 상단 협업 컨트롤 — 테마 태그라인 + 시작/정지. */
+.ide-collab-bar {
+  position: absolute;
+  left: 50%;
+  top: 12px;
+  transform: translateX(-50%);
+  z-index: 10;
+  display: flex;
+  align-items: center;
+  gap: 9px;
+  max-width: calc(100% - 280px);
+  padding: 6px 8px 6px 12px;
+  border-radius: 9px;
+  background: var(--ide-bg-alt);
+  border: 1px solid var(--ide-border);
+  box-shadow: 0 2px 12px rgba(0, 0, 0, 0.24);
+}
+.ide-collab-bar > .codicon { font-size: 14px; color: var(--ide-text-dim); flex-shrink: 0; }
+.ide-collab-tagline {
+  min-width: 0;
+  font-family: var(--ide-ui);
+  font-size: 12px;
+  font-weight: 600;
+  color: var(--ide-text);
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}
+.ide-collab-toggle {
+  display: inline-flex;
+  align-items: center;
+  gap: 5px;
+  flex-shrink: 0;
+  height: 24px;
+  padding: 0 10px;
+  border: 0;
+  border-radius: 6px;
+  background: var(--ide-accent);
+  color: #ffffff;
+  font-family: var(--ide-ui);
+  font-size: 11px;
+  font-weight: 600;
+  cursor: pointer;
+}
+.ide-collab-toggle:hover { background: var(--ide-accent-hover); }
+.ide-collab-toggle.is-on { background: var(--ide-elevated); color: var(--ide-text); border: 1px solid var(--ide-border-strong); }
+.ide-collab-toggle .codicon { font-size: 12px; }
+.ide-collab-count {
+  flex-shrink: 0;
+  font-family: var(--ide-mono);
+  font-size: 10px;
+  color: var(--ide-text-faint);
+}
+
+/* 라이브 커서 — 화살표 + 이름 라벨. transition 으로 부드럽게 글라이드. */
+.collab-cursor {
+  position: absolute;
+  z-index: 7;
+  pointer-events: none;
+  display: flex;
+  align-items: flex-start;
+  gap: 3px;
+  transition: left 1.9s cubic-bezier(0.22, 1, 0.36, 1), top 1.9s cubic-bezier(0.22, 1, 0.36, 1);
+}
+.collab-cursor svg { filter: drop-shadow(0 1px 2px rgba(0, 0, 0, 0.35)); }
+.collab-cursor-name {
+  margin-top: 10px;
+  padding: 1px 7px;
+  border-radius: 8px;
+  color: #ffffff;
+  font-family: var(--ide-ui);
+  font-size: 10.5px;
+  font-weight: 600;
+  white-space: nowrap;
+  box-shadow: 0 1px 4px rgba(0, 0, 0, 0.25);
+}
+@media (prefers-reduced-motion: reduce) {
+  .collab-cursor { transition: none; }
+}
+
+/* 코멘트 핀(피그마 코멘트) — 아바타 원 + 답글 수 배지. */
+.collab-pin {
+  position: absolute;
+  z-index: 7;
+  width: 26px;
+  height: 26px;
+  padding: 0;
+  border: 0;
+  border-radius: 50% 50% 50% 2px;
+  background: #ffffff;
+  box-shadow: 0 1px 4px rgba(0, 0, 0, 0.28), 0 0 0 2px var(--arch);
+  cursor: pointer;
+  transform: translate(0, 0);
+  transition: transform 0.1s ease;
+}
+.collab-pin:hover,
+.collab-pin.is-open { transform: scale(1.12); z-index: 9; }
+.collab-pin img { width: 20px; height: 20px; border-radius: 50%; margin: 3px; display: block; }
+.collab-pin-count {
+  position: absolute;
+  right: -5px;
+  top: -5px;
+  min-width: 15px;
+  height: 15px;
+  padding: 0 3px;
+  border-radius: 8px;
+  background: var(--arch);
+  color: #fff;
+  font-family: var(--ide-mono);
+  font-size: 9px;
+  line-height: 15px;
+  text-align: center;
+}
+
+/* 코멘트 스레드 — 핀 클릭 시 펼치는 잉크 카드. */
+.collab-thread {
+  position: absolute;
+  z-index: 12;
+  width: 252px;
+  padding: 9px 10px 10px;
+  border-radius: 11px;
+  background: #1f1f1f;
+  border: 1px solid rgba(255, 255, 255, 0.1);
+  box-shadow: 0 10px 34px rgba(0, 0, 0, 0.4);
+  color: #f3f3f3;
+}
+.collab-thread-head {
+  display: flex;
+  align-items: center;
+  margin-bottom: 7px;
+  padding-bottom: 6px;
+  border-bottom: 1px solid rgba(255, 255, 255, 0.08);
+}
+.collab-thread-on {
+  font-family: var(--ide-ui);
+  font-size: 10.5px;
+  color: #b9b9b9;
+}
+.collab-thread-close {
+  margin-left: auto;
+  border: 0;
+  background: transparent;
+  color: #9a9a9a;
+  cursor: pointer;
+  padding: 2px;
+}
+.collab-thread-close:hover { color: #fff; }
+.collab-thread-close .codicon { font-size: 12px; }
+.collab-msg { display: flex; gap: 7px; padding: 4px 0; }
+.collab-msg.is-reply { padding-left: 14px; }
+/* width/height 명시 — Tailwind preflight(img{height:auto})·플렉스 압축으로 찌그러짐 방지. */
+.collab-msg-av { flex-shrink: 0; width: 20px; height: 20px; object-fit: cover; border-radius: 50%; margin-top: 1px; }
+.collab-msg-body { min-width: 0; display: flex; flex-direction: column; line-height: 1.4; }
+.collab-msg-author { font-family: var(--ide-ui); font-size: 10.5px; font-weight: 700; }
+.collab-msg-text { font-family: var(--ide-ui); font-size: 11.5px; color: #e6e6e6; }
+
+/* 후보안 카드 — 원본 옆 변형(아키타입 색). */
+.ide-cand-card { border-color: var(--arch); box-shadow: 0 1px 2px rgba(0, 0, 0, 0.06), 0 8px 26px color-mix(in srgb, var(--arch) 22%, transparent); }
+.ide-cand-head {
+  display: flex;
+  align-items: center;
+  gap: 7px;
+  height: 32px;
+  padding: 0 10px;
+  border-bottom: 1px solid;
+}
+.ide-cand-head .codicon { font-size: 13px; flex-shrink: 0; }
+.ide-cand-title {
+  min-width: 0;
+  flex: 1;
+  font-family: var(--ide-ui);
+  font-size: 12px;
+  font-weight: 700;
+  color: #1f1f1f;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}
+.ide-cand-badge {
+  flex-shrink: 0;
+  padding: 1px 7px;
+  border-radius: 8px;
+  border: 1px solid;
+  font-family: var(--ide-mono);
+  font-size: 9px;
+  font-weight: 700;
+}
+.ide-cand-note {
+  display: flex;
+  align-items: flex-start;
+  gap: 5px;
+  padding: 7px 10px;
+  background: #fbfbfa;
+  border-bottom: 1px solid rgba(0, 0, 0, 0.06);
+  font-family: var(--ide-ui);
+  font-size: 11px;
+  line-height: 1.45;
+  color: #444;
+}
+.ide-cand-note .codicon { font-size: 12px; color: var(--arch); margin-top: 1px; flex-shrink: 0; }
+.ide-cand-empty { margin: 0; color: #888; font-size: 12px; }
+
+/* 개선안 "달라진 점" — 원본 대비 구체 변경 목록(흰 본문). */
+.ide-cand-changes {
+  padding: 9px 12px 6px;
+  background: #ffffff;
+}
+.ide-cand-changes-head {
+  font-family: var(--ide-ui);
+  font-size: 10px;
+  font-weight: 700;
+  letter-spacing: 0.04em;
+  text-transform: uppercase;
+  color: #8a8a8a;
+  margin-bottom: 6px;
+}
+.ide-cand-change {
+  display: flex;
+  align-items: flex-start;
+  gap: 6px;
+  padding: 3px 0;
+  font-family: var(--ide-ui);
+  font-size: 12px;
+  line-height: 1.45;
+  color: #1f1f1f;
+}
+.ide-cand-change .codicon { font-size: 13px; margin-top: 1px; flex-shrink: 0; }
+.ide-cand-effect {
+  display: flex;
+  align-items: center;
+  gap: 6px;
+  padding: 8px 12px;
+  border-top: 1px solid rgba(0, 0, 0, 0.06);
+  background: #fbfbfa;
+  font-family: var(--ide-ui);
+  font-size: 11px;
+  font-weight: 600;
+  color: #2f6f3e;
+}
+.ide-cand-effect .codicon { font-size: 12px; color: #2f8f57; flex-shrink: 0; }
+
+/* 오케스트레이터 도크 — 좌하단. 에이전트 명령 → 하달 → 후보안. */
+.ide-orch-dock {
+  position: absolute;
+  left: 14px;
+  bottom: 14px;
+  z-index: 10;
+  width: 282px;
+  padding: 9px 10px 10px;
+  border-radius: 10px;
+  background: var(--ide-bg-alt);
+  border: 1px solid var(--ide-border);
+  box-shadow: 0 4px 18px rgba(0, 0, 0, 0.3);
+}
+.ide-orch-head { display: flex; align-items: center; gap: 7px; margin-bottom: 7px; }
+.ide-orch-mark {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  width: 22px;
+  height: 22px;
+  border-radius: 6px;
+  background: var(--ide-progress-dim);
+  color: var(--ide-progress);
+}
+.ide-orch-mark .codicon { font-size: 14px; }
+.ide-orch-name { font-family: var(--ide-ui); font-size: 12px; font-weight: 600; color: var(--ide-text); }
+.ide-orch-meta { margin-left: auto; font-family: var(--ide-mono); font-size: 10px; color: var(--ide-text-faint); }
+.ide-orch-empty { margin: 0; font-size: 11px; color: var(--ide-text-faint); }
+.ide-orch-list { display: flex; flex-direction: column; gap: 4px; max-height: 148px; overflow-y: auto; }
+.ide-orch-item { display: flex; align-items: center; gap: 6px; }
+.ide-orch-from {
+  flex-shrink: 0;
+  width: 22px;
+  text-align: center;
+  border-radius: 5px;
+  color: #fff;
+  font-family: var(--ide-mono);
+  font-size: 9px;
+  font-weight: 700;
+  line-height: 16px;
+}
+.ide-orch-text {
+  min-width: 0;
+  flex: 1;
+  font-family: var(--ide-ui);
+  font-size: 11px;
+  color: var(--ide-text-dim);
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}
+.ide-orch-status {
+  flex-shrink: 0;
+  font-family: var(--ide-mono);
+  font-size: 9px;
+  color: var(--ide-text-faint);
+}
+.ide-orch-status.done { color: var(--ide-ok); }
+
+/* 우측 rail — 보드로 끌 수 있는 에이전트 행. */
+.persona-agent-drag { cursor: grab; }
+.persona-agent-drag:active { cursor: grabbing; }
+/* 사용 힌트 — rail 상단 안내. */
+.persona-draghint {
+  display: flex;
+  align-items: flex-start;
+  gap: 7px;
+  margin: 8px 10px 4px;
+  padding: 7px 10px;
+  border-radius: 8px;
+  background: var(--ide-elevated);
+  border: 1px solid var(--ide-border);
+  color: var(--ide-text-dim);
+  font-size: 11.5px;
+  line-height: 1.45;
+}
+.persona-draghint .codicon { font-size: 13px; color: var(--ide-progress); margin-top: 1px; }
+/* 텍스트는 한 블록으로 — flex 안에서 줄어들며 정상 줄바꿈(조각이 개별 flex 아이템이 되어 깨지던 문제 수정). */
+.persona-draghint-text { flex: 1; min-width: 0; }
+
+/* ── 전역 오버플로우 가드 ──────────────────────────────────────────────
+   글씨가 들어가는 영역에서 긴 단어/URL/이메일/무공백 토큰이 박스를 뚫고 나가는 현상 방지.
+   overflow-wrap 은 상속 속성이라 .ide 한 곳에 두면 모든 자손 텍스트에 적용된다(공백 있는
+   정상 텍스트는 영향 없음 — 줄바꿈 기회가 없을 때만 끊는다). 색/레이아웃은 건드리지 않는다. */
+.ide { overflow-wrap: anywhere; }
+
+/* 검토팀 행(우측 패널) — 카드 검토팀과 동일 로스터·색을 ide 다크 토큰으로. */
+.persona-team-row {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  padding: 5px 6px;
+  border-radius: 6px;
+}
+.persona-team-row { cursor: grab; transition: opacity 0.12s ease, background 0.12s ease; }
+.persona-team-row:hover { background: var(--ide-hover); }
+.persona-team-row:active { cursor: grabbing; }
+.persona-team-row.is-pick {
+  background: var(--ide-progress-dim);
+  box-shadow: inset 2px 0 0 var(--ide-accent-bright);
+}
+.persona-team-row.is-dim { opacity: 0.4; }
+.persona-team-av {
+  flex-shrink: 0;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  width: 22px;
+  height: 22px;
+  border-radius: 9999px;
+  color: #fff;
+  font-size: 10.5px;
+  font-weight: 700;
+}
+.persona-team-meta { display: flex; flex-direction: column; gap: 1px; min-width: 0; }
+.persona-team-name { font-size: 11.5px; font-weight: 600; color: var(--ide-text); }
+.persona-team-title { font-weight: 400; color: var(--ide-text-faint); }
+.persona-team-lens {
+  font-size: 10px;
+  color: var(--ide-text-dim);
+  line-height: 1.3;
+  overflow: hidden;
+  display: -webkit-box;
+  -webkit-line-clamp: 1;
+  -webkit-box-orient: vertical;
+}
+.persona-team-evi {
+  display: flex; align-items: center; gap: 4px; margin-top: 2px;
+  font-size: 9px; color: var(--ide-text-faint);
+}
+.persona-team-evi .codicon { font-size: 10px; }
+.persona-team-evi-n { color: var(--ide-accent-bright); }
+
+
+/* ── 스케줄 패널(.ide-sched-*) — 우측 rail 자동 실행 등록 ────────────────── */
+.ide-sched { border-bottom: 1px solid var(--ide-border); padding-bottom: 8px; }
+/* 등록 폼 — 업무 select + 주기 select + 등록 버튼. (좌우 12px — rail 카드와 정렬) */
+.ide-sched-add {
+  display: flex;
+  gap: 5px;
+  padding: 6px 12px 8px;
+}
+.ide-sched-select {
+  min-width: 0;
+  flex: 1;
+  height: 26px;
+  padding: 0 6px;
+  border-radius: 6px;
+  background: var(--ide-elevated);
+  border: 1px solid var(--ide-border-strong);
+  color: var(--ide-text);
+  font-family: var(--ide-ui);
+  font-size: 11px;
+  cursor: pointer;
+}
+.ide-sched-select:focus-visible { outline: 1px solid var(--ide-focus-border); }
+.ide-sched-addbtn {
+  display: inline-flex;
+  align-items: center;
+  gap: 3px;
+  flex-shrink: 0;
+  height: 26px;
+  padding: 0 9px;
+  border: 0;
+  border-radius: 6px;
+  background: var(--ide-accent);
+  color: #ffffff;
+  font-family: var(--ide-ui);
+  font-size: 11px;
+  font-weight: 600;
+  cursor: pointer;
+}
+.ide-sched-addbtn:hover { background: var(--ide-accent-hover); }
+.ide-sched-addbtn .codicon { font-size: 13px; }
+/* 목록 — 내부 스크롤로 높이 제한. (좌우 12px — rail 카드와 정렬) */
+.ide-sched-list {
+  display: flex;
+  flex-direction: column;
+  gap: 4px;
+  max-height: 168px;
+  overflow-y: auto;
+  padding: 0 12px;
+}
+.ide-sched-empty {
+  margin: 0;
+  padding: 2px 0 8px;
+  font-size: 11px;
+  line-height: 1.5;
+  color: var(--ide-text-faint);
+}
+.ide-sched-item {
+  display: flex;
+  align-items: center;
+  gap: 7px;
+  padding: 6px 8px;
+  border-radius: 7px;
+  background: var(--ide-bg-alt);
+  border: 1px solid var(--ide-border);
+}
+.ide-sched-item.is-off { opacity: 0.55; }
+.ide-sched-item.is-fired {
+  border-color: color-mix(in srgb, var(--ide-ok) 60%, transparent);
+  background: color-mix(in srgb, var(--ide-ok) 14%, var(--ide-bg-alt));
+}
+.ide-sched-toggle {
+  flex-shrink: 0;
+  display: inline-flex;
+  border: 0;
+  background: transparent;
+  color: var(--ide-text-faint);
+  cursor: pointer;
+  padding: 0;
+}
+.ide-sched-toggle.on { color: var(--ide-progress); }
+.ide-sched-toggle .codicon { font-size: 15px; }
+.ide-sched-info { min-width: 0; flex: 1; display: flex; flex-direction: column; line-height: 1.25; }
+.ide-sched-task {
+  font-family: var(--ide-ui);
+  font-size: 12px;
+  font-weight: 600;
+  color: var(--ide-text);
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}
+.ide-sched-meta {
+  font-family: var(--ide-mono);
+  font-size: 10px;
+  color: var(--ide-text-dim);
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}
+.ide-sched-next { color: var(--ide-text-faint); }
+.ide-sched-item.is-fired .ide-sched-next { color: var(--ide-ok); font-weight: 600; }
+.ide-sched-run,
+.ide-sched-del {
+  flex-shrink: 0;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  width: 22px;
+  height: 22px;
+  border: 0;
+  border-radius: 5px;
+  background: transparent;
+  color: var(--ide-text-dim);
+  cursor: pointer;
+}
+.ide-sched-run:hover { background: var(--ide-hover); color: var(--ide-progress); }
+.ide-sched-del:hover { background: var(--ide-hover); color: var(--ide-danger); }
+.ide-sched-run:disabled { opacity: 0.4; cursor: not-allowed; }
+.ide-sched-run .codicon,
+.ide-sched-del .codicon { font-size: 13px; }
+
+/* 빈 보드 — 가운데 안내. */
+.ide-board-empty {
+  position: absolute;
+  inset: 0;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  gap: 10px;
+  padding: 24px;
+  text-align: center;
+  color: #6b6b6b;
+  pointer-events: none;
+}
+.ide-board-empty .codicon { font-size: 30px; color: #b9b9b6; }
+.ide-board-empty-title { font-size: 14px; font-weight: 600; color: #3a3a3a; }
+.ide-board-empty-sub { font-size: 12.5px; color: #7a7a78; }
+
+/* 뷰(대시보드 등) 풀캔버스 헤더 — 보드로 돌아가는 닫기 행(탭 대체). */
+.ide-view-bar {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  height: 34px;
+  flex-shrink: 0;
+  padding: 0 10px;
+  background: var(--ide-panel);
+  border-bottom: 1px solid var(--ide-border);
+}
+.ide-view-bar .codicon { font-size: 14px; color: var(--ide-text-dim); }
+.ide-view-bar-title {
+  font-size: 12.5px;
+  font-weight: 600;
+  color: var(--ide-text);
+}
+.ide-view-bar-back {
+  margin-left: auto;
+  display: inline-flex;
+  align-items: center;
+  gap: 5px;
+  height: 24px;
+  padding: 0 9px;
+  border: 0;
+  border-radius: 6px;
+  background: transparent;
+  color: var(--ide-text-dim);
+  font-family: var(--ide-ui);
+  font-size: 11.5px;
+  cursor: pointer;
+}
+.ide-board-toolbar button:focus-visible,
+.ide-view-bar-back:hover { background: var(--ide-hover); color: var(--ide-text); }
+
+/* 정의 에디터(중앙 탭) — 워크플로/카드 스펙 편집. */
+.def-edit { padding: 18px 22px; max-width: 720px; }
+.def-block { margin-bottom: 22px; }
+.def-block-head { font-size: 13px; font-weight: 700; color: var(--ide-text); margin-bottom: 8px; }
+.def-label {
+  display: block; font-size: 10px; font-weight: 600; letter-spacing: 0.04em;
+  text-transform: uppercase; color: var(--ide-text-faint); margin: 10px 0 4px;
+}
+.def-edit .facet-edit-area, .def-select, .def-inline {
+  width: 100%; padding: 7px 9px; border: 1px solid var(--ide-border-strong); border-radius: 6px;
+  background: var(--ide-elevated); color: var(--ide-text); font-size: 12.5px; font-family: inherit; outline: none;
+}
+.def-edit .facet-edit-area:focus, .def-select:focus, .def-inline:focus { border-color: var(--ide-accent-bright); }
+.def-select { appearance: none; -webkit-appearance: none; -moz-appearance: none; cursor: pointer; }
+.def-select option { background: var(--ide-elevated); }
+.def-card { border: 1px solid var(--ide-border-strong); border-radius: 9px; padding: 12px; margin-bottom: 12px; background: var(--ide-bg-alt); }
+.def-card-head { display: flex; align-items: center; gap: 8px; }
+.def-card-head .def-inline { flex: 1; font-weight: 700; }
+.def-slot { font-size: 10px; color: var(--ide-text-faint); white-space: nowrap; }
+.def-x { background: none; border: 0; color: var(--ide-text-faint); cursor: pointer; padding: 2px; border-radius: 4px; }
+.def-x:hover { color: var(--ide-danger); background: var(--ide-hover); }
+.def-sec-row { display: flex; align-items: center; justify-content: space-between; }
+.def-sec-toggle { display: flex; align-items: center; gap: 7px; font-size: 12px; color: var(--ide-text); cursor: pointer; }
+.def-sec-toggle input { accent-color: var(--ide-accent); }
+.def-sec-ord { display: flex; align-items: center; gap: 2px; }
+.def-sec-ord button { background: none; border: 0; color: var(--ide-text-dim); cursor: pointer; padding: 1px; }
+.def-sec-ord button:disabled { opacity: 0.3; cursor: default; }
+.def-sec-pos { font-size: 10px; color: var(--ide-text-faint); width: 14px; text-align: center; }
+.def-slot-row { display: flex; gap: 6px; margin-bottom: 5px; align-items: center; }
+.def-slot-id { font-size: 10px; color: var(--ide-text-faint); width: 56px; flex-shrink: 0; }
+.def-sig-row { display: flex; gap: 6px; margin-bottom: 5px; align-items: center; }
+.def-sig-from { flex: 2; }
+.def-sig-as { flex: 1.2; }
+.def-sig-label { flex: 1.4; }
+.def-add, .def-add-card button.btl-discuss-btn { font-size: 11.5px; }
+.def-add { display: inline-flex; align-items: center; gap: 4px; margin-top: 4px; background: none; border: 1px dashed var(--ide-border-strong); border-radius: 6px; padding: 5px 10px; color: var(--ide-text-dim); cursor: pointer; }
+.def-add:hover { color: var(--ide-text); border-color: var(--ide-accent-bright); }
+.def-add-card { display: flex; gap: 8px; align-items: center; margin-top: 8px; }
+.def-add-card .def-inline { flex: 1; }
+.def-note { font-size: 10.5px; color: var(--ide-text-faint); margin-top: 16px; }
+
+/* 워크플로 편집 진입 버튼(중앙 패널 엶). */
+.wf-edit-btn {
+  flex-shrink: 0; width: 30px; height: 30px;
+  display: inline-flex; align-items: center; justify-content: center;
+  border: 1px solid var(--ide-border-strong); border-radius: 7px;
+  background: var(--ide-elevated); color: var(--ide-text-dim); cursor: pointer;
+}
+.wf-edit-btn:hover { color: var(--ide-text); border-color: var(--ide-accent-bright); }
+
+/* 워크플로 선택 드롭다운(탐색기 상단). */
+.wf-pick {
+  position: relative;
+  display: flex;
+  align-items: center;
+  gap: 6px;
+  padding: 0 8px;
+  height: 30px;
+  border: 1px solid var(--ide-border-strong);
+  border-radius: 7px;
+  background: var(--ide-elevated);
+}
+.wf-pick > .codicon:first-child { font-size: 13px; color: var(--ide-accent-bright); }
+.wf-pick-select {
+  flex: 1;
+  appearance: none;
+  -webkit-appearance: none; /* 네이티브 화살표 제거(없으면 caret 과 이중 표시) */
+  -moz-appearance: none;
+  background: transparent;
+  border: 0;
+  color: var(--ide-text);
+  font-size: 12px;
+  font-weight: 600;
+  cursor: pointer;
+  outline: none;
+}
+.wf-pick-select::-ms-expand { display: none; }
+.wf-pick-select option { background: var(--ide-elevated); color: var(--ide-text); }
+.wf-pick-caret { font-size: 12px; color: var(--ide-text-faint); pointer-events: none; }
+
+/* 워크플로 정의 인스펙터(좌 패널) — 팩/카드 스펙 읽기. */
+.wf-pack { margin-bottom: 10px; }
+.wf-pack-head {
+  display: flex; align-items: center; gap: 7px; width: 100%;
+  padding: 8px 8px; background: none; border: 0; cursor: pointer;
+  border-radius: 7px;
+}
+.wf-pack-head:hover { background: var(--ide-hover); }
+.wf-pack-head .codicon { font-size: 13px; color: var(--ide-text-faint); }
+.wf-pack-name { font-size: 13px; font-weight: 700; color: var(--ide-text); letter-spacing: -0.01em; }
+.wf-pack-badge {
+  font-size: 9px; font-weight: 600; color: var(--ide-text-faint);
+  background: var(--ide-elevated); border-radius: 4px; padding: 1px 6px;
+}
+.wf-pack-count { margin-left: auto; font-size: 10px; color: var(--ide-text-faint); }
+.wf-pack-edit { font-size: 12px !important; color: var(--ide-text-faint); padding: 2px; border-radius: 4px; }
+.wf-pack-edit:hover { color: var(--ide-text); background: var(--ide-hover); }
+.wf-card { display: block; width: 100%; text-align: left; cursor: pointer; font: inherit; color: inherit; padding: 0; }
+.wf-card:hover { border-color: var(--ide-accent-bright); }
+.wf-pack-body { padding: 2px 4px 4px; }
+.wf-pack-desc {
+  font-size: 11px; color: var(--ide-text-dim); margin: 0 0 10px; line-height: 1.5;
+  padding-left: 8px; border-left: 2px solid var(--ide-border-strong);
+}
+.wf-empty { font-size: 11px; color: var(--ide-text-faint); padding: 4px 8px; }
+
+/* 카드 한 장 — 또렷한 경계 + 헤더 띠 + 속성 행. */
+.wf-card {
+  border: 1px solid var(--ide-border-strong);
+  border-radius: 9px;
+  margin-bottom: 8px;
+  background: var(--ide-elevated);
+  overflow: hidden;
+}
+.wf-card-head {
+  display: flex; align-items: center; gap: 7px;
+  padding: 8px 10px;
+  background: rgba(255, 255, 255, 0.03);
+  border-bottom: 1px solid var(--ide-border);
+}
+.wf-card-head .codicon { font-size: 14px; color: var(--ide-accent-bright); }
+.wf-card-title { font-size: 12.5px; font-weight: 700; color: var(--ide-text); }
+.wf-card-src {
+  margin-left: auto; font-size: 9.5px; font-weight: 600; color: var(--ide-accent-bright);
+  background: var(--ide-progress-dim); border-radius: 5px; padding: 2px 7px;
+}
+.wf-row { display: flex; gap: 8px; padding: 7px 10px; }
+.wf-row + .wf-row { border-top: 1px solid var(--ide-border); }
+.wf-row-key {
+  flex-shrink: 0; width: 42px; font-size: 10px; font-weight: 600;
+  color: var(--ide-text-faint); padding-top: 3px; text-transform: uppercase; letter-spacing: 0.03em;
+}
+.wf-chips { display: flex; flex-wrap: wrap; gap: 5px; }
+.wf-chip {
+  font-size: 10.5px; color: var(--ide-text-dim);
+  background: var(--ide-bg-alt); border: 1px solid var(--ide-border-strong);
+  border-radius: 5px; padding: 2px 7px; line-height: 1.4;
+}
+.wf-chip--sec { color: var(--ide-text); border-color: var(--ide-border-strong); }
+
+/* 문서 원문 패널 — 카드 '원문 열기'로 중앙에 여는 VS Code 에디터풍 소스 뷰. */
+.ide-doc-source {
+  background: var(--ide-editor, var(--ide-panel));
+  overscroll-behavior: contain;
+}
+.ide-doc-source-pre {
+  margin: 0;
+  padding: 16px 20px;
+  color: var(--ide-text);
+  font-family: var(--ide-mono, var(--font-geist-mono), monospace);
+  font-size: 12.5px;
+  line-height: 1.65;
+  white-space: pre-wrap;
+  word-break: break-word;
+  tab-size: 2;
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .ide-board-canvas { will-change: auto; }
+}
+/* 빈 에디터 안내(웰컴 탭 풍) — 가운데 흐린 텍스트. */
+.ide-editor-empty {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  gap: 8px;
+  height: 100%;
+  color: var(--ide-text-faint);
+  text-align: center;
+  padding: 24px;
+}
+/* 에디터 거터 라인넘버 톤(작업뷰가 코드 풍 줄을 그릴 때). */
+.ide-gutter {
+  color: var(--ide-text-faint);
+  font-family: var(--ide-mono);
+  text-align: right;
+  user-select: none;
+}
+
+/* ── 하단 패널 — 터미널/실행 로그/문제(PROBLEMS) 탭. ───────────────
+   VS Code: panel.bg #1f1f1f, border #2b2b2b, 탭바 35px,
+   panelTitle active #e7e7e7 / inactive #8c8c8c, active 탭 하단 1px #e7e7e7. */
+.ide-panel {
+  display: flex;
+  flex-direction: column;
+  min-height: 0;
+  min-width: 0;
+  /* 좁은 폭에서 탭/내용이 우측 패널 위로 새지 않게 자기 박스로 클리핑 */
+  overflow: hidden;
+  background: var(--ide-panel-alt);
+  border-top: 1px solid var(--ide-border);
+}
+/* 패널 탭 헤더(터미널/출력/문제) — 대문자 작은 탭 라벨. */
+.ide-panel-tabs {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  height: var(--ide-panel-tabbar-h);
+  flex-shrink: 0;
+  min-width: 0;
+  overflow: hidden;
+  padding-inline: 12px;
+  border-bottom: 1px solid var(--ide-border);
+  background: var(--ide-panel-alt);
+}
+.ide-panel-tab {
+  position: relative;
+  padding: 0 2px;
+  height: 100%;
+  display: inline-flex;
+  align-items: center;
+  gap: 5px;
+  color: #8c8c8c;                 /* panelTitle.inactiveForeground */
+  font-family: var(--ide-ui);
+  font-size: 11px;
+  letter-spacing: 0.02em;
+  text-transform: uppercase;
+  cursor: pointer;
+  background: transparent;
+  border: 0;
+  transition: color 0.1s ease;
+}
+.ide-panel-tab .codicon { font-size: 16px; }
+.ide-panel-tab svg { width: 16px; height: 16px; }
+.ide-panel-tab:hover { color: var(--ide-text-e7); }
+.ide-panel-tab.active { color: var(--ide-text-e7); } /* panelTitle.activeForeground #e7e7e7 */
+.ide-panel-tab.active::after {
+  content: "";
+  position: absolute;
+  left: 0; right: 0; bottom: 0;
+  height: 1px;
+  background: var(--ide-text-e7);  /* panelTitle.activeBorder #e7e7e7 */
+}
+.ide-panel-actions { margin-left: auto; display: inline-flex; gap: 2px; }
+/* 패널 본문(터미널 출력 스크롤). */
+.ide-panel-body {
+  flex: 1;
+  min-height: 0;
+  overflow: auto;
+  padding: 6px 12px;
+  background: var(--ide-panel-alt);
+  font-family: var(--ide-mono);
+  font-size: 12px;
+  line-height: 1.5;
+  color: var(--ide-term-fg);
+}
+
+/* 터미널 로그 라인 — 한 줄 = 한 이벤트. 톤별 변형으로 상태 색을 입힌다. */
+.ide-term-line {
+  display: flex;
+  gap: 8px;
+  white-space: pre-wrap;
+  word-break: break-word;
+  color: var(--ide-term-fg);
+}
+.ide-term-line + .ide-term-line { margin-top: 1px; }
+/* 라인 앞 프롬프트/타임스탬프 글리프. */
+.ide-term-prompt { color: var(--ide-term-green); flex-shrink: 0; }
+.ide-term-time { color: var(--ide-term-dim); flex-shrink: 0; }
+/* 톤 변형(이벤트 종류별). */
+.ide-term-line--ok    { color: var(--ide-term-green); }
+.ide-term-line--info  { color: var(--ide-term-blue); }
+.ide-term-line--warn  { color: var(--ide-term-yellow); }
+.ide-term-line--error { color: var(--ide-term-red); }
+.ide-term-line--dim   { color: var(--ide-term-dim); }
+.ide-term-line--cyan  { color: var(--ide-term-cyan); }
+/* 실행 중 라인 끝의 블록 커서(터미널 캐럿). */
+.ide-term-cursor {
+  display: inline-block;
+  width: 7px;
+  height: 14px;
+  vertical-align: text-bottom;
+  background: var(--ide-text);
+  animation: ide-term-blink 1s step-end infinite;
+}
+@keyframes ide-term-blink { 0%, 49% { opacity: 1; } 50%, 100% { opacity: 0; } }
+
+/* ── 상태바 — 최하단 22px 바(브랜치/실행 상태/카운트). ─────────────
+   VS Code: statusBar.bg #181818, fg #cccccc, 폰트 12px, 좌/우 그룹.
+   항목 hover = statusBarItem.hoverBackground(#0078d4). */
+.ide-statusbar {
+  display: flex;
+  align-items: center;
+  gap: 0;
+  height: var(--ide-statusbar-h);
+  flex-shrink: 0;
+  padding-inline: 0;
+  background: var(--ide-statusbar);
+  color: var(--ide-text);          /* #cccccc */
+  font-family: var(--ide-ui);
+  font-size: 12px;
+  user-select: none;
+  overflow: hidden;
+  transition:
+    background-color 0.2s ease,
+    height 0.22s cubic-bezier(0.32, 0.72, 0, 1),
+    transform 0.22s cubic-bezier(0.32, 0.72, 0, 1),
+    opacity 0.18s ease;
+}
+/* 실행 중 — VS Code 처럼 상태바 전체가 강조색(블루)으로. 사용처가 토글. */
+.ide-statusbar--busy {
+  background: var(--ide-statusbar-busy);
+  color: #ffffff;
+}
+/* 대기 — 상태바를 아래로 접어 숨긴다(높이 0 + 슬라이드 다운). 실행 시 쑥 올라온다. */
+.ide-statusbar--hidden {
+  height: 0;
+  transform: translateY(100%);
+  opacity: 0;
+  pointer-events: none;
+  border-top-color: transparent;
+}
+/* 좌/우 그룹 컨테이너 — 좌측 그룹과 우측 그룹을 명시적으로 묶는다(정통).
+   .ide-statusbar 안에 .ide-status-left / .ide-status-right 로 배치하거나,
+   기존처럼 .ide-status-spacer 로 가운데를 밀어도 동일하게 동작. */
+.ide-status-left,
+.ide-status-right {
+  display: inline-flex;
+  align-items: center;
+  height: 100%;
+}
+.ide-status-right { margin-left: auto; }
+/* 상태바 항목 — 좌/우 묶음의 한 셀. hover 시 파란 배경(#0078d4). */
+.ide-status-item {
+  display: inline-flex;
+  align-items: center;
+  gap: 4px;
+  height: 100%;
+  padding-inline: 6px;
+  color: inherit;
+  cursor: pointer;
+  transition: background-color 0.1s ease, color 0.1s ease;
+}
+.ide-status-item:hover { background: var(--ide-accent-bright); color: #ffffff; }
+.ide-status-item svg { width: 14px; height: 14px; }
+.ide-status-item .codicon { font-size: 14px; line-height: 1; }
+.ide-status-spacer { flex: 1; }
+/* 상태바 안 강조 셀(예: 승인 대기 = 앰버, 에러 = 레드, 강조 = 블루). */
+.ide-status-item--warn  { background: var(--ide-warn); color: #1e1e1e; }
+.ide-status-item--warn:hover  { background: #e0b800; color: #1e1e1e; }
+.ide-status-item--error { background: var(--ide-danger); color: #ffffff; }
+.ide-status-item--error:hover { background: #ff6363; color: #ffffff; }
+.ide-status-item--accent { background: var(--ide-accent); color: #ffffff; }
+.ide-status-item--accent:hover { background: var(--ide-accent-hover); color: #ffffff; }
+
+/* ── 리사이저 — 패널 경계 드래그 핸들(좌/우/하단). ───────────────── */
+.ide-resizer {
+  position: relative;
+  flex-shrink: 0;
+  background: transparent;
+  z-index: 5;
+  transition: background-color 0.12s ease 0.05s;
+}
+.ide-resizer--col { width: 4px; cursor: col-resize; margin-inline: -2px; }
+.ide-resizer--row { height: 4px; cursor: row-resize; margin-block: -2px; }
+/* hover/드래그 시 VS Code 처럼 강조 라인이 켜진다. */
+.ide-resizer:hover,
+.ide-resizer.dragging { background: var(--ide-accent-bright); }
+
+/* ── 버튼/입력 — IDE 안에서 쓰는 VS Code 풍 컨트롤. ──────────────── */
+.ide-btn {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  gap: 6px;
+  padding: 4px 14px;
+  background: var(--ide-accent);
+  color: #ffffff;
+  border: 1px solid transparent;
+  border-radius: 2px;
+  font-size: 13px;
+  cursor: pointer;
+  transition: background-color 0.1s ease;
+}
+.ide-btn:hover { background: var(--ide-accent-hover); }
+/* 세컨더리(차분) 버튼. */
+.ide-btn--secondary {
+  background: var(--ide-elevated);
+  color: var(--ide-text);
+  border-color: var(--ide-border-strong);
+}
+.ide-btn--secondary:hover { background: var(--ide-hover); }
+/* 위험(거부/취소) 버튼. */
+.ide-btn--danger { background: var(--ide-danger); }
+.ide-btn--danger:hover { background: #d13438; }
+/* 입력/텍스트영역 웰 — 어두운 인셋 + 포커스 시 블루 보더. */
+.ide-input {
+  width: 100%;
+  padding: 5px 8px;
+  background: var(--ide-elevated);
+  color: var(--ide-text);
+  border: 1px solid var(--ide-border-strong);
+  border-radius: 2px;
+  font-size: 13px;
+  line-height: 1.5;
+  outline: none;
+  transition: border-color 0.1s ease;
+}
+.ide-input::placeholder { color: var(--ide-text-faint); }
+.ide-input:focus { border-color: var(--ide-focus-border); }
+
+/* ── 명령 팔레트 (⌘P / ⌘⇧P) — VS Code quickInput 위젯 정밀 복제. ──────
+   상단 중앙에 떠 있는 패널: 폭 600px, 어두운 표면 + input.bg #313131 입력,
+   리스트 hover #2a2d2e / active #04395e. 강한 그림자 + 1px 보더.
+   구조: .ide-cmdpalette-overlay(백드롭) > .ide-cmdpalette(패널)
+        > .ide-cmdpalette-input > .ide-cmdpalette-list > .ide-cmd-row */
+/* ── 빠른 찾기 팔레트 — IDE 콘솔 톤을 덜어낸 부드러운 런처(카드형) ──────── */
+.ide-cmdpalette-overlay {
+  position: absolute;
+  inset: 0;
+  z-index: 100;
+  display: flex;
+  justify-content: center;
+  align-items: flex-start;
+  padding-top: 11vh;                          /* 화면 위쪽에서 살짝 내려와 부드럽게 */
+  background: rgba(0, 0, 0, 0.32);            /* 옅은 백드롭 — 집중 유도 */
+  backdrop-filter: blur(3px);
+}
+.ide-cmdpalette {
+  width: 560px;
+  max-width: calc(100% - 32px);
+  background: var(--ide-bg-alt);
+  border: 1px solid var(--ide-border);
+  border-radius: 16px;
+  box-shadow:
+    0 1px 0 rgba(255, 255, 255, 0.04) inset,
+    0 22px 60px -16px rgba(0, 0, 0, 0.6);
+  overflow: hidden;
+  padding: 8px;
+}
+/* 입력 — 큼직하고 둥근 검색 필드. */
+.ide-cmdpalette-input {
+  width: 100%;
+  height: 46px;
+  padding-inline: 16px;
+  background: var(--ide-elevated);
+  color: var(--ide-text);
+  border: 1px solid transparent;
+  border-radius: 12px;
+  font-family: var(--ide-ui);
+  font-size: 14.5px;
+  outline: none;
+  transition: border-color 0.15s ease, box-shadow 0.15s ease;
+}
+.ide-cmdpalette-input::placeholder { color: var(--ide-text-faint); }
+.ide-cmdpalette-input:focus {
+  border-color: var(--ide-accent);
+  box-shadow: 0 0 0 3px var(--ide-progress-dim);
+}
+/* 결과 리스트 — 스크롤. */
+.ide-cmdpalette-list {
+  max-height: 52vh;
+  overflow-y: auto;
+  padding: 8px 2px 2px;
+  display: flex;
+  flex-direction: column;
+  gap: 2px;
+}
+/* 결과 행 — 키 큰 카드형. hover/선택은 은은한 틴트, 모서리 둥글게. */
+.ide-cmd-row {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  min-height: 44px;
+  padding: 6px 11px;
+  border-radius: 12px;
+  color: var(--ide-text);
+  font-family: var(--ide-ui);
+  font-size: 13.5px;
+  white-space: nowrap;
+  cursor: pointer;
+  transition: background-color 0.12s ease;
+}
+/* 좌측 아이콘 — 부드러운 라운드 타일(글리프 가운데 정렬). */
+.ide-cmd-row .codicon {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  width: 32px;
+  height: 32px;
+  border-radius: 10px;
+  background: var(--ide-elevated);
+  color: var(--ide-text-dim);
+  font-size: 15px;
+  flex-shrink: 0;
+}
+.ide-cmd-row:hover { background: var(--ide-hover); }
+.ide-cmd-row.active,
+.ide-cmd-row[aria-selected="true"] { background: var(--ide-progress-dim); }
+.ide-cmd-row.active .codicon,
+.ide-cmd-row[aria-selected="true"] .codicon {
+  background: var(--ide-accent);
+  color: #ffffff;
+}
+.ide-cmd-label { overflow: hidden; text-overflow: ellipsis; font-weight: 500; }
+/* 행 우측 보조(카테고리/단축키) — 부드러운 칩. */
+.ide-cmd-meta {
+  margin-left: auto;
+  flex-shrink: 0;
+  padding: 2px 10px;
+  border-radius: 9999px;
+  background: var(--ide-elevated);
+  color: var(--ide-text-dim);
+  font-size: 11px;
+}
+.ide-cmd-row.active .ide-cmd-meta,
+.ide-cmd-row[aria-selected="true"] .ide-cmd-meta {
+  background: rgba(255, 255, 255, 0.12);
+  color: var(--ide-text);
+}
+
+/* ── 우측 페르소나 스택 — 멀티 에이전트 카드가 쌓인다. ──────────────
+   다크/글래스 톤의 카드. 활성(작업 중) / 완료 / 대기 상태 변형 제공. */
+.persona-card {
+  position: relative;
+  display: flex;
+  flex-direction: column;
+  gap: 6px;
+  margin: 6px 8px;
+  padding: 10px 12px;
+  border-radius: 8px;
+  background: linear-gradient(
+    180deg,
+    rgba(255, 255, 255, 0.04),
+    rgba(255, 255, 255, 0.015)
+  );
+  border: 1px solid var(--ide-border-strong);
+  color: var(--ide-text);
+  transition:
+    border-color 0.18s ease,
+    box-shadow 0.18s ease,
+    background-color 0.18s ease;
+}
+.persona-card:hover { border-color: #4a4a4a; }
+/* 카드 머리 행 — 아바타 + 이름/역할. */
+.persona-card-head { display: flex; align-items: center; gap: 8px; }
+/* 페르소나 아바타 — 둥근 모노그램 타일(이니셜/아이콘). */
+.persona-avatar {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  width: 28px;
+  height: 28px;
+  border-radius: 7px;
+  flex-shrink: 0;
+  background: var(--ide-elevated);
+  color: var(--ide-text);
+  font-size: 12px;
+  font-weight: 600;
+}
+.persona-avatar svg { width: 16px; height: 16px; }
+.persona-name { font-size: 13px; font-weight: 600; color: var(--ide-text-strong); line-height: 1.2; }
+.persona-role { font-size: 11px; color: var(--ide-text-dim); }
+/* 카드 본문(현재 작업 한 줄/도구 라벨). */
+.persona-task {
+  font-size: 12px;
+  color: var(--ide-text-dim);
+  line-height: 1.45;
+}
+.persona-task .ide-mono { color: var(--ide-text); }
+/* 상태 점 — 카드 우상단. 대기/작업중/완료. */
+.persona-status-dot {
+  width: 8px;
+  height: 8px;
+  border-radius: 9999px;
+  background: var(--ide-text-faint);
+  flex-shrink: 0;
+}
+/* 작업 중 — 버밀리언 보더 + 좌측 강조 바 + 펄스 점. */
+.persona-card--active {
+  border-color: var(--ide-vermilion);
+  box-shadow: inset 2px 0 0 var(--ide-vermilion), 0 0 0 1px var(--ide-vermilion-dim);
+  background: linear-gradient(
+    180deg,
+    var(--ide-vermilion-dim),
+    rgba(255, 255, 255, 0.015)
+  );
+}
+.persona-card--active .persona-status-dot {
+  background: var(--ide-vermilion);
+  animation: ide-persona-pulse 1.8s cubic-bezier(0.4, 0, 0.6, 1) infinite;
+}
+@keyframes ide-persona-pulse {
+  0%   { box-shadow: 0 0 0 0 var(--ide-vermilion-dim); }
+  70%  { box-shadow: 0 0 0 6px transparent; }
+  100% { box-shadow: 0 0 0 0 transparent; }
+}
+/* 완료 — 청록 보더 + 청록 점(체크는 사용처가 SVG 로). */
+.persona-card--done { border-color: rgba(78, 201, 176, 0.45); }
+.persona-card--done .persona-status-dot { background: var(--ide-ok); }
+/* 대기 — 흐리게 가라앉힘. */
+.persona-card--idle { opacity: 0.62; }
+
+/* 작은 작업 진행 스피너(페르소나/탭/터미널 공용) — VS Code 블루 링. */
+.ide-spinner {
+  display: inline-block;
+  width: 1em;
+  height: 1em;
+  border-radius: 9999px;
+  border: 2px solid var(--ide-border-strong);
+  border-top-color: var(--ide-vermilion);
+  animation: ide-spin 0.8s linear infinite;
+  flex-shrink: 0;
+}
+@keyframes ide-spin { to { transform: rotate(360deg); } }
+
+/* 작은 칩/뱃지 — 도구 카운트·상태 라벨(터미널 톤). */
+.ide-badge {
+  display: inline-flex;
+  align-items: center;
+  gap: 4px;
+  padding: 0 6px;
+  height: 18px;
+  border-radius: 9px;
+  background: var(--ide-elevated);
+  color: var(--ide-text-dim);
+  font-size: 11px;
+  font-family: var(--ide-mono);
+  line-height: 1;
+}
+.ide-badge--accent { background: var(--ide-progress-dim); color: #4ea0ff; }
+.ide-badge--ok { background: rgba(78, 201, 176, 0.16); color: var(--ide-ok); }
+.ide-badge--warn { background: rgba(204, 167, 0, 0.18); color: var(--ide-warn); }
+
+/* IDE 영역 진입 페이드(셸 첫 마운트) — 절제된 1회 등장. */
+@keyframes ide-fade-in { from { opacity: 0; } to { opacity: 1; } }
+.ide-fade-in { animation: ide-fade-in 0.3s ease both; }
+
+
+/* ╔══════════════════════════════════════════════════════════════════╗
+   ║  통일 탭 + Monaco 래퍼 + IDE 내부 뷰 다크 스코프 (Monaco 교체용)   ║
+   ║  목적: 아티팩트 산출물 · 뷰(대시보드/콘텐츠/아웃바운드/설정) ·     ║
+   ║  파일 무엇이든 "하나의 일관된 VS Code 다크 탭"으로 열린다.         ║
+   ║  중앙은 손수 만든 문서뷰 대신 실제 Monaco 에디터(소스) +           ║
+   ║  미리보기(리치 렌더러) 토글. 흰 페이지로 점프하지 않는다.          ║
+   ║  스코프: 전부 .ide 안에서만(상단 화이트 토큰 불변).                ║
+   ╚══════════════════════════════════════════════════════════════════╝ */
+
+/* ── 통일 탭 보강 ──────────────────────────────────────────────────
+   기존 .ide-tabs/.ide-tab(위 정의)을 그대로 쓰되, 아티팩트/뷰/파일 어떤
+   탭이든 동일한 chrome(아이콘+라벨+닫기, 상단 active 바)으로 통일한다.
+   · position: relative 를 모든 탭에 보장(active 상단 바·dirty 점 기준점).
+   · 변형 클래스 없이도 일관 — 사용처는 .ide-tab 만 붙이면 된다. */
+.ide-tab {
+  position: relative;
+}
+/* 활성 탭 상단 1px #0078d4 바(tab.activeBorderTop) — VS Code Dark Modern 정통.
+   변형 클래스 없이 .ide-tab.active 면 항상 적용. */
+.ide-tab.active::after {
+  content: "";
+  position: absolute;
+  left: 0; right: 0; top: 0;
+  height: 1px;
+  background: var(--ide-tab-top);
+}
+/* 탭 아이콘 슬롯 — 아티팩트 파일 글리프/뷰 아이콘이 같은 16px 자리를 공유. */
+.ide-tab-icon {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  width: 16px;
+  height: 16px;
+  flex-shrink: 0;
+}
+.ide-tab-icon svg { width: 16px; height: 16px; }
+.ide-tab-icon .codicon { font-size: 16px; }
+
+/* ── Monaco 래퍼 ──────────────────────────────────────────────────
+   중앙 에디터의 "소스(Monaco)" 모드 컨테이너. Monaco 가 절대 위치로 채우도록
+   position: relative + 높이 확보. 배경은 에디터 바탕(.ide-bg)과 동일하게. */
+.ide-monaco {
+  position: relative;
+  flex: 1;
+  min-height: 0;
+  width: 100%;
+  height: 100%;
+  background: var(--ide-bg);
+  overflow: hidden;
+}
+/* Monaco 가 로드되기 전/실패 시 폴백 표면(코드 톤 빈 화면). */
+.ide-monaco-loading {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 8px;
+  height: 100%;
+  color: var(--ide-text-faint);
+  font-family: var(--ide-mono);
+  font-size: 12px;
+  background: var(--ide-bg);
+}
+/* @monaco-editor/react 가 만드는 컨테이너가 래퍼를 가득 채우게(높이 0 방지). */
+.ide-monaco .monaco-editor,
+.ide-monaco section,
+.ide-monaco > div {
+  width: 100% !important;
+  height: 100% !important;
+}
+/* 에디터 바탕 헬퍼 — Monaco 외 코드 톤 표면(소스 폴백·읽기전용 프리뷰)에 재사용. */
+.ide-bg { background: var(--ide-bg); }
+
+/* ── 소스 / 미리보기 토글 ──────────────────────────────────────────
+   에디터 상단 우측의 작은 세그먼트 토글: [소스] / [미리보기].
+   소스 = Monaco(신택스 하이라이트), 미리보기 = 기존 리치 렌더러(WorkView).
+   VS Code 의 미리보기 토글(에디터 액션) 어휘를 다크 톤으로. */
+.ide-editor-actions {
+  display: flex;
+  align-items: center;
+  gap: 6px;
+  height: 30px;
+  flex-shrink: 0;
+  padding-inline: 10px;
+  background: var(--ide-bg);
+  border-bottom: 1px solid var(--ide-border);
+  color: var(--ide-text-dim);
+}
+/* 액션 바 좌측 — 파일 경로/언어 라벨(브레드크럼 풍). */
+.ide-editor-breadcrumb {
+  display: inline-flex;
+  align-items: center;
+  gap: 6px;
+  min-width: 0;
+  font-family: var(--ide-mono);
+  font-size: 11px;
+  color: var(--ide-text-faint);
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+}
+
+/* ── 브레드크럼 바(정통) — VS Code 의 에디터 상단 경로 바. ───────────
+   breadcrumbs.foreground #cccccc(은은) · 13px UI 폰트 · ▸ 셰브론 구분.
+   .ide-breadcrumb(바) > .ide-breadcrumb-item(세그먼트) + codicon-chevron-right. */
+.ide-breadcrumb {
+  display: flex;
+  align-items: center;
+  height: 22px;
+  flex-shrink: 0;
+  padding-inline: 12px;
+  background: var(--ide-bg);
+  color: var(--ide-text-dim);
+  font-family: var(--ide-ui);
+  font-size: 13px;
+  white-space: nowrap;
+  overflow: hidden;
+  user-select: none;
+}
+.ide-breadcrumb-item {
+  display: inline-flex;
+  align-items: center;
+  gap: 4px;
+  padding: 1px 4px;
+  border-radius: 3px;
+  color: var(--ide-text-dim);
+  cursor: pointer;
+  transition: color 0.1s ease, background-color 0.1s ease;
+}
+.ide-breadcrumb-item:hover { color: var(--ide-text); background: rgba(255, 255, 255, 0.06); }
+.ide-breadcrumb-item .codicon { font-size: 16px; }
+/* 세그먼트 사이 셰브론(codicon-chevron-right) — 흐린 구분자. */
+.ide-breadcrumb-sep {
+  color: var(--ide-text-faint);
+  font-size: 16px;
+  margin-inline: 1px;
+}
+/* 세그먼트 토글 컨테이너 — 우측 정렬. */
+.ide-doctoggle {
+  display: inline-flex;
+  align-items: center;
+  margin-left: auto;
+  padding: 2px;
+  border-radius: 5px;
+  background: var(--ide-elevated);
+  border: 1px solid var(--ide-border-strong);
+}
+/* 토글 버튼 — 비활성은 흐림, 활성만 들린 표면 + 또렷한 잉크. */
+.ide-doctoggle-btn {
+  display: inline-flex;
+  align-items: center;
+  gap: 5px;
+  padding: 2px 10px;
+  height: 20px;
+  border: 0;
+  border-radius: 4px;
+  background: transparent;
+  color: var(--ide-text-dim);
+  font-size: 11px;
+  line-height: 1;
+  cursor: pointer;
+  transition: background-color 0.1s ease, color 0.1s ease;
+}
+.ide-doctoggle-btn:hover { color: var(--ide-text); }
+.ide-doctoggle-btn svg { width: 13px; height: 13px; }
+.ide-doctoggle-btn.active {
+  background: var(--ide-bg);
+  color: var(--ide-text-strong);
+  box-shadow: 0 0 0 1px var(--ide-border-strong);
+}
+
+/* ── IDE 내부 뷰 다크 스코프 (.ide-view) ──────────────────────────
+   대시보드/콘텐츠/아웃바운드/설정 컴포넌트는 원래 흰 페이지용(:root 화이트
+   토큰: --bg-0/--text-1/--line-1 등)으로 만들어졌다. 그 "같은 컴포넌트"를
+   IDE 에디터 탭 안에서 다크로 렌더하기 위해, .ide-view 래퍼가 화이트 토큰을
+   다크로 오버라이드한다(원래 흰 페이지는 .ide-view 가 없으니 영향 없음).
+   → 컴포넌트 코드 수정 없이 var(--bg-0) 등이 다크값으로 해석된다. */
+.ide-view {
+  /* 표면 — 화이트 스택을 VS Code 다크 스택으로 리맵. */
+  --bg-0: #1e1e1e;
+  --bg-1: #252526;
+  --bg-2: #2d2d30;
+  --bg-3: #252526;
+  --bg-raised: #2d2d30;
+  --bg-inset: #1a1a1a;
+
+  /* 보더 — 잉크 알파(검정) → 화이트 알파(어두운 면 위 헤어라인). */
+  --line-1: rgba(255, 255, 255, 0.10);
+  --line-2: rgba(255, 255, 255, 0.06);
+  --line-strong: rgba(255, 255, 255, 0.20);
+
+  /* 텍스트 — 잉크(검정) → 라이트 그레이 스택. */
+  --ink: #e6e6e6;
+  --text-1: #e6e6e6;
+  --text-2: #b0b0b0;
+  --text-3: #8a8a8a;
+
+  /* 표면/그림자 별칭 — 다크에선 그림자를 더 깊게(검정 알파). */
+  --shadow-card: 0 1px 2px rgba(0, 0, 0, 0.4), 0 8px 24px rgba(0, 0, 0, 0.35);
+  --shadow-1: 0 1px 2px rgba(0, 0, 0, 0.45), 0 12px 32px rgba(0, 0, 0, 0.4);
+
+  /* 글래스 — 다크 표면에 맞춰 어두운 반투명으로(흰 글래스 → 잉크 글래스). */
+  --glass-bg: rgba(40, 40, 42, 0.55);
+  --glass-bg-strong: rgba(40, 40, 42, 0.72);
+  --glass-border: rgba(255, 255, 255, 0.08);
+  --glass-border-line: rgba(255, 255, 255, 0.12);
+  --glass-shadow: 0 1px 2px rgba(0, 0, 0, 0.4), 0 10px 30px rgba(0, 0, 0, 0.4);
+
+  /* 하위 호환 별칭(컴포넌트가 --background/--panel 등을 참조해도 다크로). */
+  --background: var(--bg-0);
+  --foreground: var(--text-1);
+  --panel: var(--bg-1);
+  --panel-border: var(--line-1);
+
+  /* 액센트(버밀리언)는 다크에서도 동일 — 단 틴트만 살짝 진하게. */
+  --accent-tint: rgba(217, 71, 42, 0.18);
+  --accent-glow: rgba(217, 71, 42, 0.18);
+  --accent-dim: rgba(217, 71, 42, 0.18);
+
+  /* 상태 dim — 어두운 면에서 읽히도록 알파 상향. */
+  --ok-dim: rgba(47, 143, 87, 0.20);
+  --ok-glow: rgba(47, 143, 87, 0.20);
+  --warn-dim: rgba(184, 121, 31, 0.20);
+  --danger-dim: rgba(192, 57, 43, 0.20);
+  --info-dim: rgba(217, 71, 42, 0.18);
+
+  /* 뷰 본문 — 에디터 영역을 가득 채우고 스크롤. 다크 바탕 + 라이트 본문. */
+  height: 100%;
+  min-height: 0;
+  overflow: auto;
+  background: var(--bg-0);
+  color: var(--text-1);
+  color-scheme: dark;
+}
+
+/* recharts 가독 보정 — 차트 컴포넌트는 흰 톤 리터럴 색을 일부 직접 쓴다.
+   .ide-view 안에서 축/그리드/툴팁을 다크 면에 맞게 밝혀 가독을 확보한다.
+   (브랜드 색 시리즈는 그대로 두고, 무채 보조 요소만 보정한다.) */
+.ide-view .recharts-cartesian-grid line,
+.ide-view .recharts-cartesian-axis-line,
+.ide-view .recharts-cartesian-axis-tick-line {
+  stroke: rgba(255, 255, 255, 0.12);
+}
+.ide-view .recharts-cartesian-axis-tick-value,
+.ide-view .recharts-text,
+.ide-view .recharts-label {
+  fill: var(--text-2);
+}
+.ide-view .recharts-legend-item-text {
+  color: var(--text-2) !important;
+}
+.ide-view .recharts-reference-line line {
+  stroke: rgba(255, 255, 255, 0.22);
+}
+/* 차트 툴팁 — 흰 카드 → 다크 카드(에디터 표면 톤). */
+.ide-view .recharts-default-tooltip {
+  background: var(--bg-1) !important;
+  border: 1px solid var(--line-1) !important;
+  color: var(--text-1) !important;
+}
+.ide-view .recharts-tooltip-item,
+.ide-view .recharts-tooltip-label {
+  color: var(--text-1) !important;
+}
+/* 뷰 진입 페이드 — IDE 탭 전환 시 1회 등장(셸 페이드와 동일 톤). */
+.ide-view-in { animation: ide-fade-in 0.25s ease both; }
+
+/* ── IDE 모션 최소화 가드 ──────────────────────────────────────────
+   접근성: prefers-reduced-motion 시 IDE 안의 모든 모션을 끈다. */
+@media (prefers-reduced-motion: reduce) {
+  .ide-term-cursor,
+  .persona-card--active .persona-status-dot,
+  .ide-spinner,
+  .ide-fade-in,
+  .ide-view-in {
+    animation: none;
+  }
+  .ide-term-cursor { opacity: 1; }
+  .ide-activity-btn,
+  .ide-menu-item,
+  .ide-icon-btn,
+  .ide-tree-row,
+  .ide-tab,
+  .ide-tab-close,
+  .ide-panel-tab,
+  .ide-status-item,
+  .ide-resizer,
+  .ide-btn,
+  .ide-input,
+  .persona-card,
+  .ide-statusbar,
+  .ide-doctoggle-btn {
+    transition: none;
+  }
+}
+
+/* ╔══════════════════════════════════════════════════════════════════╗
+   ║  채팅 패널 — Claude Code / Cursor 채팅 UI 결 (.ide 스코프 전용)    ║
+   ║  좌측 챗 패널을 VS Code 다크 안에서 Claude Code / Cursor 톤으로     ║
+   ║  정제한다. 턴 단위 메시지 · 접히는 도구 블록 · 생각 중 인디케이터 · ║
+   ║  코드블록(복사) · 파일 참조 · Cursor 풍 컴포저(모드/모델/컨텍스트   ║
+   ║  칩) · 빈 상태 그리팅 + 추천 칩.                                    ║
+   ║  ── 스코프 규칙 ────────────────────────────────────────────────  ║
+   ║  · 모든 선택자는 `.ide` 안에서만 적용 → 흰 미니멀 페이지 영향 0.    ║
+   ║  · 색은 전부 `--ide-*` 토큰만(하드코딩 금지). 액센트 = 정통 #0078d4.║
+   ║  · 모션은 prefers-reduced-motion 가드(블록 끝)에서 일괄 차단.       ║
+   ╚══════════════════════════════════════════════════════════════════╝ */
+
+/* ── 턴 컨테이너 ───────────────────────────────────────────────────
+   대화는 "턴" 단위로 흐른다. 유저 턴과 어시스턴트 턴 사이에 넉넉한 간격.
+   .chat-thread 를 스크롤 컨테이너에 붙이면 턴 간 수직 리듬이 통일된다. */
+.ide .chat-thread {
+  display: flex;
+  flex-direction: column;
+  gap: 18px;            /* 턴 사이 충분한 간격 */
+  padding: 14px 12px 18px;
+}
+
+/* .chat-turn — 한 턴 묶음(유저/어시스턴트 공용 베이스). */
+.ide .chat-turn {
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+  min-width: 0;
+}
+.ide .chat-turn + .chat-turn {
+  /* 연속 턴 사이 추가 숨 — gap 위에 미세하게 더. */
+  margin-top: 2px;
+}
+
+/* .chat-turn-user — Cursor 풍 옅은 박스. 또렷이 구분되는 들린 표면 + 라운드.
+   유저 발화를 카드처럼 담아 어시스턴트 평문과 시각적으로 분리한다. */
+.ide .chat-turn-user {
+  align-self: stretch;
+}
+.ide .chat-turn-user .chat-bubble {
+  display: block;
+  padding: 9px 12px;
+  border-radius: 10px;
+  background: var(--ide-elevated);           /* #313131 — Cursor 풍 옅은 박스 */
+  border: 1px solid var(--ide-border-strong);
+  color: var(--ide-text);
+  font-size: 13.5px;
+  line-height: 1.55;
+  white-space: pre-wrap;
+  overflow-wrap: anywhere;
+}
+
+/* .chat-turn-assistant — 작은 아바타/마커 + 본문(평문). 카드 없이 흐른다. */
+.ide .chat-turn-assistant {
+  display: flex;
+  align-items: flex-start;
+  gap: 9px;
+}
+.ide .chat-turn-assistant .chat-body {
+  min-width: 0;
+  flex: 1;
+  padding-top: 1px;
+  color: var(--ide-text);
+  font-size: 13.5px;
+  line-height: 1.6;
+}
+.ide .chat-turn-assistant .chat-body p { margin: 0; }
+.ide .chat-turn-assistant .chat-body p + p { margin-top: 8px; }
+
+/* .chat-avatar — 작은 원형 마커(octopus 마크/아이콘). 어시스턴트 턴 머리에. */
+.ide .chat-avatar {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  width: 22px;
+  height: 22px;
+  flex-shrink: 0;
+  margin-top: 1px;
+  border-radius: 9999px;
+  background: var(--ide-elevated);
+  border: 1px solid var(--ide-border-strong);
+  color: var(--ide-text);
+  font-size: 12px;
+  line-height: 1;
+}
+.ide .chat-avatar .codicon { font-size: 13px; }
+.ide .chat-avatar svg { width: 13px; height: 13px; }
+
+/* 어시스턴트 타이핑 캐럿 — 본문 끝에서 깜빡이는 블루 막대(스트리밍 중). */
+.ide .chat-caret {
+  display: inline-block;
+  width: 6px;
+  height: 1em;
+  margin-left: 1px;
+  vertical-align: text-bottom;
+  background: var(--ide-accent);
+  animation: chat-caret-blink 1s step-end infinite;
+}
+@keyframes chat-caret-blink { 0%, 49% { opacity: 1; } 50%, 100% { opacity: 0; } }
+
+/* ── 도구 호출 블록 (Claude Code 풍) ───────────────────────────────
+   tool_start/tool_end 를 접히는 블록으로. 헤더에 채움원형점(circle-filled)
+   + 라벨(실행 중 = spin / 완료 = check). 펼치면 "tool(args)" 다음줄에
+   좌측 꺾인 가이드(보더) 들여쓰기로 요약/입력을 모노로 보여 준다.
+   구조: <details class="chat-tool"><summary class="chat-tool-head">…</summary>
+         <div class="chat-tool-body">…</div></details> */
+.ide .chat-tool {
+  margin: 2px 0;
+  font-size: 12.5px;
+}
+/* 헤더 행 — 상태 글리프 + 라벨. <summary> 기본 마커 제거. */
+.ide .chat-tool-head {
+  display: flex;
+  align-items: center;
+  gap: 7px;
+  padding: 3px 6px;
+  border-radius: 6px;
+  color: var(--ide-text-dim);
+  cursor: pointer;
+  list-style: none;
+  user-select: none;
+  transition: background-color 0.1s ease, color 0.1s ease;
+}
+.ide .chat-tool-head::-webkit-details-marker { display: none; }
+.ide .chat-tool-head:hover {
+  background: var(--ide-hover);
+  color: var(--ide-text);
+}
+/* 상태 글리프 슬롯 — 실행중(spin)·완료(check)·기본(채움 원형점)이 같은 자리. */
+.ide .chat-tool-glyph {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  width: 14px;
+  height: 14px;
+  flex-shrink: 0;
+  font-size: 12px;
+  color: var(--ide-text-faint);
+}
+.ide .chat-tool-glyph .codicon { font-size: 11px; }
+/* 실행 중 — 블루 spin(codicon-loading codicon-modifier-spin 또는 .ide-spinner).
+   회전축이 글리프 광학 중심과 맞도록 spin 전용 codicon-loading 사용(sync 는 흔들림). */
+.ide .chat-tool--running .chat-tool-glyph { color: var(--ide-progress); }
+/* 완료 — 청록 체크(codicon-check). */
+.ide .chat-tool--done .chat-tool-glyph { color: var(--ide-ok); }
+/* 에러 — 레드(codicon-error/x). */
+.ide .chat-tool--error .chat-tool-glyph { color: var(--ide-danger); }
+/* 라벨 — 모노 톤, 넘치면 말줄임. */
+.ide .chat-tool-label {
+  min-width: 0;
+  flex: 1;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+  font-family: var(--ide-mono);
+  color: inherit;
+}
+.ide .chat-tool--done .chat-tool-label,
+.ide .chat-tool--running .chat-tool-label { color: var(--ide-text); }
+/* 우측 보조 메타(도구명/소요 등) — 흐린 모노. */
+.ide .chat-tool-meta {
+  margin-left: auto;
+  flex-shrink: 0;
+  font-family: var(--ide-mono);
+  font-size: 10.5px;
+  color: var(--ide-text-faint);
+}
+/* 펼침/접힘 셰브론 — details[open] 에서 회전. */
+.ide .chat-tool-caret {
+  flex-shrink: 0;
+  font-size: 14px;
+  color: var(--ide-text-faint);
+  transition: transform 0.12s ease;
+}
+.ide .chat-tool[open] .chat-tool-caret { transform: rotate(90deg); }
+
+/* 펼침 본문 — Claude Code 의 "다음줄 꺾인 가이드 result" 느낌.
+   좌측 1px 가이드 보더로 들여쓰기, 모노 톤. tool(args)·result 를 담는다. */
+.ide .chat-tool-body {
+  margin: 3px 0 4px 13px;     /* 글리프 중앙(≈14px)에 가이드가 맞물리게 */
+  padding: 4px 0 4px 11px;
+  border-left: 1px solid var(--ide-border-strong);  /* 좌측 꺾인 가이드 */
+  font-family: var(--ide-mono);
+  font-size: 12px;
+  line-height: 1.55;
+  color: var(--ide-text-dim);
+  white-space: pre-wrap;
+  overflow-wrap: anywhere;
+}
+/* 본문 안 입력(args) 라인 — 살짝 흐리게. */
+.ide .chat-tool-args { color: var(--ide-text-faint); }
+/* 본문 안 결과(result) 요약 라인 — 기본 톤. */
+.ide .chat-tool-result { color: var(--ide-text-dim); }
+
+/* ── 파일 참조 (아티팩트 → "파일 열림") ─────────────────────────────
+   아티팩트 생성은 인라인 파일 참조 한 줄로(codicon file + 파일명).
+   클릭하면 중앙 에디터 탭으로 연결되는 톤(액션 가능 색). */
+.ide .chat-fileref {
+  display: inline-flex;
+  align-items: center;
+  gap: 6px;
+  max-width: 100%;
+  margin: 2px 0;
+  padding: 3px 8px;
+  border-radius: 6px;
+  background: var(--ide-elevated);
+  border: 1px solid var(--ide-border);
+  color: var(--ide-text);
+  font-family: var(--ide-mono);
+  font-size: 12px;
+  cursor: pointer;
+  text-align: left;
+  transition: background-color 0.1s ease, border-color 0.1s ease, color 0.1s ease;
+}
+.ide .chat-fileref:hover {
+  background: var(--ide-hover);
+  border-color: var(--ide-border-strong);
+  color: var(--ide-text-strong);
+}
+.ide .chat-fileref .codicon { font-size: 14px; color: var(--ide-accent); flex-shrink: 0; }
+.ide .chat-fileref-name {
+  min-width: 0;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}
+/* "에디터에 열림" 류 보조 라벨 — 흐리게. */
+.ide .chat-fileref-hint { color: var(--ide-text-faint); flex-shrink: 0; }
+
+/* ── 생각 중 인디케이터 ────────────────────────────────────────────
+   thinking/status 를 은은한 점멸 "생각 중". 도구블록과 같은 들여쓰기 톤. */
+.ide .chat-thinking {
+  display: flex;
+  align-items: center;
+  gap: 7px;
+  padding: 2px 6px;
+  color: var(--ide-text-faint);
+  font-size: 12.5px;
+  animation: chat-thinking-pulse 1.6s ease-in-out infinite;
+}
+.ide .chat-thinking .chat-thinking-dot {
+  width: 6px;
+  height: 6px;
+  flex-shrink: 0;
+  border-radius: 9999px;
+  background: var(--ide-progress);
+}
+@keyframes chat-thinking-pulse {
+  0%, 100% { opacity: 0.45; }
+  50%      { opacity: 1; }
+}
+
+/* ── 코드 / 마크다운 코드블록 ──────────────────────────────────────
+   text_delta 안의 삼중백틱 코드펜스 → 모노 코드블록(복사 버튼).
+   구조: <div class="chat-code"><div class="chat-code-head">lang
+         <button class="chat-code-copy">…</button></div><pre><code>…</code></pre></div> */
+.ide .chat-code {
+  position: relative;
+  margin: 8px 0;
+  border-radius: 7px;
+  background: var(--ide-bg);              /* 코드 톤 어두운 표면(에디터 바탕) */
+  border: 1px solid var(--ide-border);
+  overflow: hidden;
+}
+/* 코드블록 헤더 — 언어 라벨 + 복사 버튼. 미세 헤어라인 하단. */
+.ide .chat-code-head {
+  display: flex;
+  align-items: center;
+  height: 26px;
+  padding-inline: 9px 5px;
+  background: var(--ide-bg-alt);
+  border-bottom: 1px solid var(--ide-border);
+  font-family: var(--ide-mono);
+  font-size: 10.5px;
+  letter-spacing: 0.04em;
+  text-transform: lowercase;
+  color: var(--ide-text-faint);
+  user-select: none;
+}
+/* 코드 본문 — 모노, 가로 스크롤 허용. */
+.ide .chat-code pre {
+  margin: 0;
+  padding: 9px 11px;
+  overflow-x: auto;
+  font-family: var(--ide-mono);
+  font-size: 12px;
+  line-height: 1.55;
+  color: var(--ide-text);
+  tab-size: 2;
+}
+.ide .chat-code code {
+  font-family: inherit;
+  font-size: inherit;
+  color: inherit;
+  white-space: pre;
+  overflow-wrap: normal;
+}
+/* 복사 버튼 — 헤더 우측 작은 아이콘 버튼. 헤더 없는 변형이면 우상단 떠있게. */
+.ide .chat-code-copy {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  gap: 4px;
+  margin-left: auto;
+  height: 20px;
+  min-width: 20px;
+  padding-inline: 5px;
+  border: 0;
+  border-radius: 4px;
+  background: transparent;
+  color: var(--ide-text-dim);
+  font-family: var(--ide-mono);
+  font-size: 10.5px;
+  cursor: pointer;
+  transition: background-color 0.1s ease, color 0.1s ease;
+}
+.ide .chat-code-copy:hover { background: var(--ide-hover); color: var(--ide-text); }
+.ide .chat-code-copy .codicon { font-size: 13px; }
+/* 복사 완료(짧은 토글) — 청록 체크 톤. 사용처가 .is-copied 토글. */
+.ide .chat-code-copy.is-copied { color: var(--ide-ok); }
+
+/* 인라인 코드(단일 백틱) — 본문 흐름 안의 작은 모노 칩. */
+.ide .chat-body code:not(pre code),
+.ide .chat-inline-code {
+  padding: 1px 5px;
+  border-radius: 4px;
+  background: var(--ide-elevated);
+  border: 1px solid var(--ide-border);
+  font-family: var(--ide-mono);
+  font-size: 0.92em;
+  color: var(--ide-text);
+  overflow-wrap: anywhere;
+}
+
+/* ── 챗 마크다운(components/Markdown.tsx) — 답변 본문 서식 ───────────────
+   에이전트 답변에 섞여 오는 제목/목록/굵게/링크를 깨짐 없이 렌더한다.
+   좁은 챗 폭에서 가로로 새지 않게 모든 요소에 줄바꿈 가드(min-width:0 +
+   overflow-wrap). 들여쓰기는 padding 으로만(margin 넘침 금지). */
+.ide .chat-md {
+  min-width: 0;
+  overflow-wrap: anywhere;
+  word-break: break-word;
+}
+/* 단락 — 기본 줄 간격. 인접 블록과 자연스러운 수직 리듬. */
+.ide .chat-md-p {
+  margin: 0;
+  overflow-wrap: anywhere;
+}
+.ide .chat-md > * + * { margin-top: 8px; }
+/* 제목 — 세 단계. 본문보다 또렷한 흰 톤 + 약간 큰 크기(과하지 않게). */
+.ide .chat-md-h {
+  margin: 0;
+  font-weight: 600;
+  line-height: 1.35;
+  color: var(--ide-text-strong);
+  overflow-wrap: anywhere;
+}
+.ide .chat-md-h1 { font-size: 15.5px; }
+.ide .chat-md-h2 { font-size: 14.5px; }
+.ide .chat-md-h3 { font-size: 13.5px; }
+.ide .chat-md-h4 { font-size: 13px; color: var(--ide-text); }
+/* 첫 제목 위 여백은 줄이고, 제목 다음 블록과는 살짝 붙인다. */
+.ide .chat-md > .chat-md-h + * { margin-top: 5px; }
+/* 목록 — padding 들여쓰기(가로 넘침 방지). 항목 간 미세 간격. */
+.ide .chat-md-ul,
+.ide .chat-md-ol {
+  margin: 0;
+  padding-left: 20px;
+  display: flex;
+  flex-direction: column;
+  gap: 3px;
+}
+.ide .chat-md-ul { list-style: disc; }
+.ide .chat-md-ol { list-style: decimal; }
+.ide .chat-md-ul li,
+.ide .chat-md-ol li {
+  margin: 0;
+  padding-left: 2px;
+  overflow-wrap: anywhere;
+}
+.ide .chat-md-ul li::marker,
+.ide .chat-md-ol li::marker { color: var(--ide-text-faint); }
+/* 강조 — 굵게(또렷한 흰), 기울임(본문색 유지). */
+.ide .chat-md strong { font-weight: 600; color: var(--ide-text-strong); }
+.ide .chat-md em { font-style: italic; }
+/* 링크 — VS Code 블루 + hover 밑줄. */
+.ide .chat-md-link {
+  color: var(--ide-accent-bright);
+  text-decoration: none;
+  overflow-wrap: anywhere;
+}
+.ide .chat-md-link:hover { text-decoration: underline; }
+/* 구분선 — 흐린 헤어라인. */
+.ide .chat-md-hr {
+  border: 0;
+  border-top: 1px solid var(--ide-border);
+  margin: 10px 0;
+}
+/* renderCode 미지정 시 폴백 코드블록(예외 경로) — 가로 스크롤. */
+.ide .chat-md-pre {
+  margin: 0;
+  padding: 9px 11px;
+  border-radius: 7px;
+  background: var(--ide-bg);
+  border: 1px solid var(--ide-border);
+  overflow-x: auto;
+  font-family: var(--ide-mono);
+  font-size: 12px;
+  line-height: 1.55;
+  color: var(--ide-text);
+}
+
+/* ── Cursor 풍 컴포저 ──────────────────────────────────────────────
+   둥근 다크 입력 박스 + 하단 모드/모델/컨텍스트 칩 행 + 우측 전송 버튼.
+   focus-within 시 블루 보더 강조. 줄 자동확장은 textarea(사용처) 담당. */
+.ide .chat-composer {
+  display: flex;
+  flex-direction: column;
+  gap: 7px;
+  padding: 8px 8px 7px;
+  border-radius: 10px;
+  background: var(--ide-elevated);          /* #313131 — Cursor 풍 다크 입력 */
+  border: 1px solid var(--ide-border-strong);
+  transition: border-color 0.12s ease, box-shadow 0.12s ease;
+}
+.ide .chat-composer:focus-within {
+  border-color: var(--ide-focus-border);    /* #0078d4 */
+  box-shadow: 0 0 0 1px var(--ide-focus-border);
+}
+/* 입력 영역 행 — textarea 가 늘어나는 본문. */
+.ide .chat-composer-input {
+  display: block;
+  width: 100%;
+  max-height: 168px;
+  min-height: 22px;
+  padding: 2px 4px;
+  border: 0;
+  background: transparent;
+  color: var(--ide-text);
+  font-family: var(--ide-ui);
+  font-size: 13.5px;
+  line-height: 1.5;
+  resize: none;
+  outline: none;
+  overflow-y: auto;
+}
+.ide .chat-composer-input::placeholder { color: var(--ide-text-faint); }
+.ide .chat-composer-input:disabled { cursor: not-allowed; opacity: 0.7; }
+
+/* 하단 칩 행 — 좌측 모드/모델/컨텍스트 칩 + 우측 전송 버튼. */
+.ide .chat-composer-bar {
+  display: flex;
+  align-items: center;
+  flex-wrap: wrap; /* 좁은 사이드바에서 칩이 넘쳐도 전송 버튼이 잘리지 않게 줄바꿈 */
+  gap: 6px;
+}
+/* 칩은 좁아지면 줄어들고 라벨은 말줄임 — 전송 버튼(flex-shrink:0)을 밀어내 자르지 않도록 */
+.ide .chat-composer-bar .chat-chip {
+  min-width: 0;
+  overflow: hidden;
+  text-overflow: ellipsis;
+}
+
+/* .chat-chip — 모드(Agent)/모델/컨텍스트(@달무드) 칩. 비기능 표시 톤(절제).
+   둥근 작은 캡슐 + 흐린 모노 라벨. 드롭다운 캐럿(codicon)을 안에 둘 수 있다. */
+.ide .chat-chip {
+  display: inline-flex;
+  align-items: center;
+  gap: 4px;
+  height: 21px;
+  padding-inline: 7px;
+  border-radius: 6px;
+  background: transparent;
+  border: 1px solid var(--ide-border-strong);
+  color: var(--ide-text-dim);
+  font-family: var(--ide-ui);
+  font-size: 11px;
+  line-height: 1;
+  white-space: nowrap;
+  cursor: pointer;
+  transition: background-color 0.1s ease, color 0.1s ease, border-color 0.1s ease;
+}
+.ide .chat-chip:hover {
+  background: var(--ide-hover);
+  color: var(--ide-text);
+}
+.ide .chat-chip .codicon { font-size: 12px; color: var(--ide-text-faint); }
+/* 캐럿(드롭다운 표시) — 살짝 더 흐리게. */
+.ide .chat-chip-caret { font-size: 13px; color: var(--ide-text-faint); margin-left: -1px; }
+/* 모드 칩(예: Agent) — 약간 또렷한 강조 변형(선택). */
+.ide .chat-chip--mode {
+  color: var(--ide-text);
+  border-color: var(--ide-border-strong);
+}
+/* 컨텍스트 칩(@멘션) — 액센트 앞글리프 톤. */
+.ide .chat-chip--context .codicon { color: var(--ide-accent); }
+
+/* 워크플로 칩 — 컴포저에서 워크플로 로드(빈 카드 시드). select 를 칩 안에 녹임. */
+.ide .chat-chip--wf { padding-right: 5px; }
+.ide .chat-chip--wf .chat-chip-wf-select {
+  appearance: none; -webkit-appearance: none; -moz-appearance: none;
+  background: transparent; border: 0; outline: none; cursor: pointer;
+  color: var(--ide-text-dim); font-family: var(--ide-ui); font-size: 11px; line-height: 1;
+  padding: 0 2px; max-width: 130px;
+}
+.ide .chat-chip--wf .chat-chip-wf-select option { color: #000; }
+.ide .chat-chip--wf:hover { border-color: var(--ide-accent); }
+.ide .chat-chip--wf:hover .chat-chip-wf-select { color: var(--ide-text); }
+
+/* 첨부 칩 — 클릭 가능한 액션 칩(파일 첨부). */
+.ide .chat-chip--attach { color: var(--ide-text); border-color: var(--ide-border-strong); }
+.ide .chat-chip--attach:hover { border-color: var(--ide-accent); color: var(--ide-accent); }
+.ide .chat-chip--attach:hover .codicon { color: var(--ide-accent); }
+.ide .chat-chip--attach:disabled { opacity: 0.5; cursor: not-allowed; }
+
+/* .chat-send — 우측 전송 버튼(codicon send). 입력 있을 때만 블루 활성. */
+.ide .chat-send {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  width: 26px;
+  height: 26px;
+  margin-left: auto;
+  flex-shrink: 0;
+  border: 0;
+  border-radius: 6px;
+  background: var(--ide-elevated);
+  color: var(--ide-text-faint);
+  cursor: pointer;
+  transition: background-color 0.12s ease, color 0.12s ease;
+}
+.ide .chat-send .codicon { font-size: 15px; }
+.ide .chat-send svg { width: 15px; height: 15px; }
+/* 활성(보낼 내용 있음) — 블루 채움 버튼. 사용처가 .is-active 토글하거나 :enabled 로. */
+.ide .chat-send.is-active,
+.ide .chat-send:not(:disabled):hover {
+  background: var(--ide-accent);
+  color: #ffffff;
+}
+.ide .chat-send.is-active:hover { background: var(--ide-accent-hover); }
+.ide .chat-send:disabled { cursor: not-allowed; }
+
+/* 컴포저 아래 힌트 라인(Enter 전송 등) — 흐린 메타. */
+.ide .chat-composer-hint {
+  margin-top: 6px;
+  padding-inline: 2px;
+  color: var(--ide-text-faint);
+  font-size: 10.5px;
+  line-height: 1.5;
+  text-align: center;
+  user-select: none;
+}
+.ide .chat-composer-hint kbd {
+  padding: 0 4px;
+  border-radius: 3px;
+  background: var(--ide-elevated);
+  border: 1px solid var(--ide-border-strong);
+  font-family: var(--ide-mono);
+  font-size: 9.5px;
+  color: var(--ide-text-dim);
+}
+
+/* ── 빈 상태 그리팅 (Claude Code / Cursor 풍) ───────────────────────
+   짧은 인사 + 추천 프롬프트 칩. 좁은 챗 폭에 맞춘 좌측 정렬. */
+.ide .chat-greeting {
+  display: flex;
+  flex-direction: column;
+  gap: 10px;
+  padding: 8px 4px;
+}
+.ide .chat-greeting-avatar {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  width: 30px;
+  height: 30px;
+  border-radius: 8px;
+  background: var(--ide-elevated);
+  border: 1px solid var(--ide-border-strong);
+  color: var(--ide-text);
+}
+.ide .chat-greeting-avatar .codicon { font-size: 16px; }
+.ide .chat-greeting-title {
+  color: var(--ide-text-strong);
+  font-size: 14px;
+  font-weight: 600;
+  line-height: 1.3;
+}
+.ide .chat-greeting-sub {
+  color: var(--ide-text-dim);
+  font-size: 12.5px;
+  line-height: 1.6;
+}
+
+/* .chat-suggest — 추천 프롬프트 칩 묶음. 세로/가로 어느 배치든 wrap. */
+.ide .chat-suggest {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 6px;
+  margin-top: 2px;
+}
+/* 추천 칩 한 개 — 클릭 시 프롬프트 채움. 도구 칩보다 조금 더 본문 톤. */
+.ide .chat-suggest-chip {
+  display: inline-flex;
+  align-items: center;
+  gap: 6px;
+  max-width: 100%;
+  padding: 5px 10px;
+  border-radius: 7px;
+  background: var(--ide-elevated);
+  border: 1px solid var(--ide-border);
+  color: var(--ide-text-dim);
+  font-family: var(--ide-ui);
+  font-size: 12px;
+  line-height: 1.35;
+  text-align: left;
+  cursor: pointer;
+  transition: background-color 0.1s ease, border-color 0.1s ease, color 0.1s ease;
+}
+.ide .chat-suggest-chip:hover {
+  background: var(--ide-hover);
+  border-color: var(--ide-border-strong);
+  color: var(--ide-text);
+}
+.ide .chat-suggest-chip .codicon { font-size: 13px; color: var(--ide-text-faint); flex-shrink: 0; }
+
+/* ── 채팅 패널 모션 최소화 가드 ─────────────────────────────────────
+   prefers-reduced-motion 시 채팅 UI 의 모든 모션을 끄고 정적으로 표시. */
+@media (prefers-reduced-motion: reduce) {
+  .ide .chat-caret,
+  .ide .chat-thinking {
+    animation: none;
+  }
+  .ide .chat-caret { opacity: 1; }
+  .ide .chat-thinking { opacity: 1; }
+  .ide .chat-tool-head,
+  .ide .chat-tool-caret,
+  .ide .chat-fileref,
+  .ide .chat-code-copy,
+  .ide .chat-composer,
+  .ide .chat-chip,
+  .ide .chat-send,
+  .ide .chat-suggest-chip {
+    transition: none;
+  }
+}
+
+
+/* ╔══════════════════════════════════════════════════════════════════╗
+   ║  OASIS 오디언스 페르소나 패널 + VS Code 뷰 idiom (.ide 스코프 전용) ║
+   ║  우측 사이드패널을 멀티 에이전트 카드 → "OASIS 오디언스 페르소나"   ║
+   ║  로 교체한다. popga-OASIS-engine(AI 가상 설문 시뮬레이터, GA4+      ║
+   ║  Nemotron 기반 페르소나 500명)의 5개 아키타입 분포 + 샘플 프로필    ║
+   ║  드릴다운을 VS Code 사이드바 리스트 톤으로 보여 준다.               ║
+   ║  더불어 대시보드/콘텐츠/아웃바운드/설정 뷰가 단순 다크화를 넘어     ║
+   ║  VS Code 에디터/뷰 idiom(뷰 툴바·섹션 구분선·리스트/트리·키-값·칩)  ║
+   ║  으로 보이도록 공용 클래스를 제공한다.                              ║
+   ║  ── 스코프 규칙 ────────────────────────────────────────────────  ║
+   ║  · 모든 선택자는 `.ide` 안에서만 → 흰 미니멀 페이지 영향 0.         ║
+   ║  · 색은 `--ide-*` 토큰 + 아래 아키타입 팔레트(--oasis-p*)만.        ║
+   ║    아키타입별 색은 사용처가 `--arch` 인라인 변수로 주입(P1~P5).     ║
+   ║  · 모션은 블록 끝 prefers-reduced-motion 가드에서 일괄 차단.        ║
+   ╚══════════════════════════════════════════════════════════════════╝ */
+
+/* ── 아키타입 색 팔레트 (P1~P5) — lib/oasis.ts archetypeColor 와 동일 톤 ──
+   VS Code "Dark Modern" 토큰 계열의 절제된 색. 네온/발광 금지. 사용처는
+   archetypeColor(type) 로 받은 HEX 를 .persona-arch 의 `--arch` 슬롯에
+   주입한다(막대/칩/좌측 강조 바가 그 색을 따른다). 토큰은 폴백/참조용. */
+.ide {
+  --oasis-p1: #4ec9b0;  /* 트렌드 헌터 — 청록 */
+  --oasis-p2: #569cd6;  /* 코스 플래너 — 블루 */
+  --oasis-p3: #9d9d9d;  /* 캐주얼 방문자 — 무채 슬레이트(최대 군집) */
+  --oasis-p4: #dcdcaa;  /* 콘텐츠 크리에이터 — 옐로 */
+  --oasis-p5: #c586c0;  /* 브랜드/IP 충성팬 — 퍼플 */
+}
+
+/* ── 아키타입 카드 (.persona-arch) ─────────────────────────────────
+   한 유형(P1~P5)을 한 행으로: [타입칩/account 글리프] [라벨+설명] +
+   하단 분포 막대(.persona-bar, 아키타입 색) + 우측 수/퍼센트.
+   VS Code 사이드바 리스트 톤: hover #2a2d2e, 클릭(선택) #04395e.
+   `--arch` 인라인 변수로 아키타입 색을 받는다(없으면 흐린 무채 폴백). */
+.ide .persona-arch {
+  --arch: var(--ide-text-faint);
+  position: relative;
+  display: flex;
+  flex-direction: column;
+  gap: 7px;
+  padding: 9px 12px 10px;
+  cursor: pointer;
+  border-left: 2px solid transparent;
+  color: var(--ide-text);
+  transition: background-color 0.1s ease, border-color 0.1s ease;
+}
+.ide .persona-arch:hover { background: var(--ide-hover); }
+/* 선택(드릴다운 열림) — 활성 행 배경 + 좌측 아키타입 색 강조 바. */
+.ide .persona-arch.active,
+.ide .persona-arch[aria-expanded="true"] {
+  background: var(--ide-active-bg);
+  border-left-color: var(--arch);
+}
+/* 머리 행 — 타입칩 + 라벨 + 우측 수치. */
+.ide .persona-arch-head {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  min-width: 0;
+}
+/* 타입칩(P1~P5) — 아키타입 색 틴트 캡슐 + 색 글자. account codicon 과 함께. */
+.ide .persona-arch-chip {
+  display: inline-flex;
+  align-items: center;
+  gap: 4px;
+  flex-shrink: 0;
+  height: 18px;
+  padding-inline: 7px;
+  border-radius: 9px;
+  background: color-mix(in srgb, var(--arch) 18%, transparent);
+  color: var(--arch);
+  font-family: var(--ide-mono);
+  font-size: 10.5px;
+  font-weight: 600;
+  line-height: 1;
+}
+.ide .persona-arch-chip .codicon { font-size: 12px; }
+/* 라벨 — 유형명(또렷). 넘치면 말줄임. */
+.ide .persona-arch-label {
+  min-width: 0;
+  flex: 1;
+  font-size: 13px;
+  font-weight: 600;
+  color: var(--ide-text-strong);
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}
+/* 우측 수치 — "n명 · pp%". 흐린 모노 메타. */
+.ide .persona-arch-stat {
+  flex-shrink: 0;
+  font-family: var(--ide-mono);
+  font-size: 11px;
+  color: var(--ide-text-dim);
+  font-variant-numeric: tabular-nums;
+}
+.ide .persona-arch-stat b {
+  color: var(--ide-text);
+  font-weight: 600;
+}
+/* 유형 한 줄 설명 — 흐린 보조 텍스트. */
+.ide .persona-arch-desc {
+  font-size: 11.5px;
+  line-height: 1.45;
+  color: var(--ide-text-dim);
+}
+/* 분포 막대 트랙 — 가라앉은 웰 위에 아키타입 색 채움(.persona-bar-fill). */
+.ide .persona-bar {
+  position: relative;
+  height: 4px;
+  border-radius: 9999px;
+  background: var(--ide-elevated);
+  overflow: hidden;
+}
+.ide .persona-bar-fill {
+  position: absolute;
+  inset: 0 auto 0 0;
+  width: var(--pct, 0%);
+  border-radius: 9999px;
+  background: var(--arch);
+  transition: width 0.4s cubic-bezier(0.22, 1, 0.36, 1);
+}
+
+/* ── 드릴다운 영역 (.persona-detail) ───────────────────────────────
+   아키타입 카드 아래로 펼쳐지는 샘플 프로필 묶음. 좌측에 아키타입 색
+   가이드 보더로 "이 유형의 표본"임을 드러낸다. */
+.ide .persona-detail {
+  --arch: var(--ide-text-faint);
+  display: flex;
+  flex-direction: column;
+  gap: 6px;
+  margin: 2px 8px 8px 14px;
+  padding-left: 8px;
+  border-left: 1px solid color-mix(in srgb, var(--arch) 45%, var(--ide-border));
+}
+/* 드릴다운 머리 — "표본 N" 라벨(11px 대문자 흐린 메타). */
+.ide .persona-detail-head {
+  display: flex;
+  align-items: center;
+  gap: 5px;
+  padding-top: 4px;
+  color: var(--ide-text-faint);
+  font-family: var(--ide-ui);
+  font-size: 10.5px;
+  letter-spacing: 0.04em;
+  text-transform: uppercase;
+}
+
+/* ── 샘플 프로필 카드 (.persona-sample) ────────────────────────────
+   개별 페르소나: 이름·나이·직업·지역 + 성향/페인포인트 칩 + 배경.
+   다크 들린 표면 카드. hover 보더 강조, active(펼침) 시 아키타입 색 보더. */
+.ide .persona-sample {
+  --arch: var(--ide-text-faint);
+  display: flex;
+  flex-direction: column;
+  gap: 6px;
+  padding: 9px 11px;
+  border-radius: 7px;
+  background: var(--ide-elevated);
+  border: 1px solid var(--ide-border-strong);
+  color: var(--ide-text);
+  cursor: pointer;
+  transition: border-color 0.12s ease, background-color 0.12s ease;
+}
+.ide .persona-sample:hover { border-color: #4a4a4a; }
+.ide .persona-sample.active,
+.ide .persona-sample[aria-expanded="true"] {
+  border-color: var(--arch);
+  background: color-mix(in srgb, var(--arch) 10%, var(--ide-elevated));
+}
+/* 머리 행 — 이름(또렷) + 우측 월 방문 뱃지. */
+.ide .persona-sample-head {
+  display: flex;
+  align-items: baseline;
+  gap: 6px;
+  min-width: 0;
+}
+.ide .persona-sample-name {
+  font-size: 13px;
+  font-weight: 600;
+  color: var(--ide-text-strong);
+  line-height: 1.2;
+}
+/* 이름 옆 나이·성별 — 흐린 보조. */
+.ide .persona-sample-sub {
+  flex-shrink: 0;
+  font-size: 11px;
+  color: var(--ide-text-dim);
+  font-variant-numeric: tabular-nums;
+}
+/* 우측 월 방문 칩 — 아키타입 색 틴트(행동 강도 신호). */
+.ide .persona-sample-visits {
+  margin-left: auto;
+  flex-shrink: 0;
+  display: inline-flex;
+  align-items: center;
+  gap: 4px;
+  padding: 0 6px;
+  height: 17px;
+  border-radius: 9px;
+  background: color-mix(in srgb, var(--arch) 16%, transparent);
+  color: var(--arch);
+  font-family: var(--ide-mono);
+  font-size: 10px;
+  line-height: 1;
+}
+.ide .persona-sample-visits .codicon { font-size: 11px; }
+/* 직업 · 지역 메타 행 — 흐린 모노, codicon 글리프 앞. */
+.ide .persona-sample-meta {
+  display: flex;
+  align-items: center;
+  flex-wrap: wrap;
+  gap: 4px 10px;
+  font-size: 11px;
+  color: var(--ide-text-dim);
+}
+.ide .persona-sample-meta span {
+  display: inline-flex;
+  align-items: center;
+  gap: 4px;
+  min-width: 0;
+}
+.ide .persona-sample-meta .codicon {
+  font-size: 12px;
+  color: var(--ide-text-faint);
+  flex-shrink: 0;
+}
+
+/* 성향/페인포인트 칩 묶음 — wrap. 라벨(흐린 대문자) + 칩 행. */
+.ide .persona-chips {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 4px;
+}
+/* 성향 칩 — 차분한 무채 캡슐(긍정적 특성 톤). */
+.ide .persona-chip {
+  display: inline-flex;
+  align-items: center;
+  gap: 3px;
+  padding: 1px 7px;
+  border-radius: 9px;
+  background: var(--ide-bg-alt);
+  border: 1px solid var(--ide-border-strong);
+  color: var(--ide-text-dim);
+  font-size: 10.5px;
+  line-height: 1.5;
+  white-space: nowrap;
+}
+/* 페인포인트 칩 — 앰버 톤(니즈/불편 신호로 구분). */
+.ide .persona-chip--pain {
+  background: rgba(204, 167, 0, 0.12);
+  border-color: rgba(204, 167, 0, 0.30);
+  color: #e0c050;
+}
+.ide .persona-chip .codicon { font-size: 11px; }
+/* 칩 묶음 앞 작은 라벨(예: "성향" / "페인포인트") — 흐린 대문자 메타. */
+.ide .persona-chips-label {
+  width: 100%;
+  margin-top: 1px;
+  color: var(--ide-text-faint);
+  font-size: 9.5px;
+  letter-spacing: 0.04em;
+  text-transform: uppercase;
+}
+/* 배경/의사결정 한 줄 — 흐린 본문(드릴다운 펼침 시 노출). */
+.ide .persona-sample-note {
+  font-size: 11px;
+  line-height: 1.5;
+  color: var(--ide-text-dim);
+}
+.ide .persona-sample-note .codicon {
+  font-size: 12px;
+  margin-right: 4px;
+  color: var(--ide-text-faint);
+  vertical-align: -2px;
+}
+
+/* ── 엔진 정체 헤더 (.persona-engine) ──────────────────────────────
+   "이게 popga OASIS engine 산출물"임을 드러내는 사이드바 상단 안내.
+   beaker/graph codicon + 한 줄 설명 + 총원/소스 메타. */
+.ide .persona-engine {
+  display: flex;
+  flex-direction: column;
+  gap: 4px;
+  margin: 8px;
+  padding: 9px 11px;
+  border-radius: 7px;
+  background: var(--ide-elevated);
+  border: 1px solid var(--ide-border-strong);
+}
+.ide .persona-engine-title {
+  display: flex;
+  align-items: center;
+  gap: 6px;
+  color: var(--ide-text-strong);
+  font-size: 12px;
+  font-weight: 600;
+}
+.ide .persona-engine-title .codicon {
+  font-size: 14px;
+  color: var(--ide-accent);
+}
+.ide .persona-engine-desc {
+  font-size: 10.5px;
+  line-height: 1.5;
+  color: var(--ide-text-dim);
+}
+.ide .persona-engine-meta {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 4px 8px;
+  margin-top: 2px;
+  font-family: var(--ide-mono);
+  font-size: 10px;
+  color: var(--ide-text-faint);
+}
+.ide .persona-engine-meta b {
+  color: var(--ide-text-dim);
+  font-weight: 600;
+}
+
+/* ── 라이브 오케스트레이션 연출 (.orch-* / .persona-arch--responding) ──
+   octopus 오케스트레이터 허브 ↔ 아키타입 페르소나 카드 사이의 명령 하달/
+   응답 반환을 시각화한다. 상태/활성 아키타입은 events 에서 파생(컴포넌트가
+   클래스 토글). OASIS 서사: 허브가 페르소나에게 묻고(하달) → 답을 받아(반환)
+   → 종합한다. 모션은 블록 끝 prefers-reduced-motion 가드에서 일괄 차단되고,
+   그때도 상태 텍스트/하이라이트(보더/글로우)는 유지된다.
+   accent 강조는 --ide-accent(블루) — 패널 정통성과 통일. */
+
+/* 오케스트레이터 노드 — popga 마크 + 라벨 + 상태 칩의 둥근 허브 카드. */
+.ide .orch-hub {
+  position: relative;
+  display: flex;
+  align-items: center;
+  gap: 9px;
+  margin: 8px;
+  padding: 9px 11px;
+  border-radius: 8px;
+  background: var(--ide-elevated);
+  border: 1px solid var(--ide-border-strong);
+  color: var(--ide-text);
+  transition: border-color 0.18s ease, box-shadow 0.18s ease;
+}
+/* 실행 중 — accent 보더 + 은은한 글로우 펄스(허브가 일하고 있음). */
+.ide .orch-hub--busy {
+  border-color: color-mix(in srgb, var(--ide-accent) 60%, var(--ide-border-strong));
+  box-shadow: 0 0 0 1px color-mix(in srgb, var(--ide-accent) 35%, transparent);
+  animation: orch-hub-glow 2.2s ease-in-out infinite;
+}
+@keyframes orch-hub-glow {
+  0%, 100% { box-shadow: 0 0 0 1px color-mix(in srgb, var(--ide-accent) 30%, transparent),
+                         0 0 6px color-mix(in srgb, var(--ide-accent) 16%, transparent); }
+  50%      { box-shadow: 0 0 0 1px color-mix(in srgb, var(--ide-accent) 55%, transparent),
+                         0 0 14px color-mix(in srgb, var(--ide-accent) 30%, transparent); }
+}
+/* 허브 마크 디스크 — popga 아이콘을 담는 둥근 면. */
+.ide .orch-hub-mark {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  flex-shrink: 0;
+  width: 30px;
+  height: 30px;
+  border-radius: 50%;
+  background: color-mix(in srgb, var(--ide-accent) 18%, var(--ide-bg-alt));
+  color: var(--ide-accent);
+  border: 1px solid color-mix(in srgb, var(--ide-accent) 40%, transparent);
+}
+.ide .orch-hub--busy .orch-hub-mark { animation: orch-mark-spin 6s linear infinite; }
+@keyframes orch-mark-spin { to { transform: rotate(360deg); } }
+/* 허브 본문 — 이름 + 상태 칩(세로). */
+.ide .orch-hub-body {
+  display: flex;
+  flex-direction: column;
+  gap: 3px;
+  min-width: 0;
+  flex: 1;
+}
+.ide .orch-hub-name {
+  font-size: 12px;
+  font-weight: 600;
+  color: var(--ide-text-strong);
+  line-height: 1.1;
+}
+/* 상태 칩 — 현재 단계 텍스트(대기/하달/종합/완료) + 글리프. */
+.ide .orch-status {
+  display: inline-flex;
+  align-items: center;
+  gap: 5px;
+  align-self: flex-start;
+  height: 17px;
+  padding-inline: 7px;
+  border-radius: 9px;
+  background: var(--ide-bg-alt);
+  border: 1px solid var(--ide-border-strong);
+  color: var(--ide-text-dim);
+  font-size: 10px;
+  font-family: var(--ide-mono);
+  line-height: 1;
+  white-space: nowrap;
+}
+.ide .orch-status .codicon { font-size: 11px; }
+/* 단계별 색 — 하달(accent)/종합(앰버)/완료(청록). */
+.ide .orch-status--dispatching {
+  background: color-mix(in srgb, var(--ide-accent) 16%, transparent);
+  border-color: color-mix(in srgb, var(--ide-accent) 38%, transparent);
+  color: color-mix(in srgb, var(--ide-accent) 78%, var(--ide-text-strong));
+}
+.ide .orch-status--synthesizing {
+  background: rgba(204, 167, 0, 0.14);
+  border-color: rgba(204, 167, 0, 0.34);
+  color: #e0c050;
+}
+.ide .orch-status--done {
+  background: color-mix(in srgb, var(--ide-ok) 14%, transparent);
+  border-color: color-mix(in srgb, var(--ide-ok) 34%, transparent);
+  color: var(--ide-ok);
+}
+/* 하달 자막(현재 도구 라벨) — 허브 아래 한 줄, 흐린 메타. */
+.ide .orch-dispatch-label {
+  margin: -2px 8px 4px;
+  padding-left: 11px;
+  font-size: 10px;
+  font-family: var(--ide-mono);
+  color: var(--ide-text-faint);
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}
+
+/* ── 연결선 + 펄스 (.orch-link) ────────────────────────────────────
+   허브와 아키타입 카드 사이를 잇는 세로 SVG 가이드(컴포넌트가 그린다).
+   기본은 흐린 점선, 활성(하달/반환 중) 시 accent. 펄스 점은 dispatch(위→
+   아래) / return(아래→위) 키프레임으로 이동한다. */
+.ide .orch-link {
+  stroke: var(--ide-border-strong);
+  stroke-width: 1.5;
+  stroke-dasharray: 3 4;
+  fill: none;
+  transition: stroke 0.18s ease;
+}
+.ide .orch-link--active { stroke: var(--ide-accent); }
+/* 이동 펄스 점(SVG circle). dispatch=하달, return=반환. */
+.ide .orch-pulse {
+  fill: var(--ide-accent);
+  opacity: 0;
+}
+.ide .anim-orch-dispatch { animation: orch-dispatch 0.9s ease-in-out infinite; }
+.ide .anim-orch-return { animation: orch-return 0.9s ease-in-out infinite; }
+@keyframes orch-dispatch {
+  0%   { offset-distance: 0%; opacity: 0; }
+  15%  { opacity: 1; }
+  85%  { opacity: 1; }
+  100% { offset-distance: 100%; opacity: 0; }
+}
+@keyframes orch-return {
+  0%   { offset-distance: 100%; opacity: 0; }
+  15%  { opacity: 1; }
+  85%  { opacity: 1; }
+  100% { offset-distance: 0%; opacity: 0; }
+}
+
+/* ── 응답 중 아키타입 카드 (.persona-arch--responding) ──────────────
+   허브가 이 아키타입에게 물어보는 동안: accent 보더 + 살짝 확대 + 은은한
+   펄스. .persona-arch 의 기존 active(드릴다운 열림)와 독립적으로 얹힌다. */
+.ide .persona-arch--responding {
+  border-left-color: var(--ide-accent);
+  background: color-mix(in srgb, var(--ide-accent) 9%, transparent);
+  box-shadow: inset 0 0 0 1px color-mix(in srgb, var(--ide-accent) 26%, transparent);
+  transform: scale(1.012);
+  transform-origin: left center;
+  animation: persona-pulse 1.6s ease-in-out infinite;
+}
+.ide .persona-arch--responding:hover {
+  background: color-mix(in srgb, var(--ide-accent) 13%, var(--ide-hover));
+}
+@keyframes persona-pulse {
+  0%, 100% { box-shadow: inset 0 0 0 1px color-mix(in srgb, var(--ide-accent) 22%, transparent); }
+  50%      { box-shadow: inset 0 0 0 1px color-mix(in srgb, var(--ide-accent) 50%, transparent),
+                         0 0 8px color-mix(in srgb, var(--ide-accent) 18%, transparent); }
+}
+
+/* 응답 중/완료 칩 — 아키타입 카드 머리에 붙는 작은 상태 표식.
+   응답 중: sync 스핀, 완료: check(청록). */
+.ide .persona-responding-chip {
+  display: inline-flex;
+  align-items: center;
+  gap: 3px;
+  flex-shrink: 0;
+  height: 16px;
+  padding-inline: 6px;
+  border-radius: 8px;
+  background: color-mix(in srgb, var(--ide-accent) 18%, transparent);
+  color: color-mix(in srgb, var(--ide-accent) 80%, var(--ide-text-strong));
+  font-size: 9.5px;
+  font-family: var(--ide-mono);
+  line-height: 1;
+  white-space: nowrap;
+}
+.ide .persona-responding-chip .codicon { font-size: 11px; }
+.ide .persona-responding-chip--done {
+  background: color-mix(in srgb, var(--ide-ok) 16%, transparent);
+  color: var(--ide-ok);
+}
+
+/* ════════════════════════════════════════════════════════════════
+   VS Code 뷰 idiom — 대시보드/콘텐츠/아웃바운드/설정 공용 어휘.
+   .ide-view(다크 토큰 리맵) 안에서 이 클래스들로 VS Code 에디터/뷰
+   레이아웃(뷰 툴바·섹션 구분선·리스트/트리·키-값·칩)을 조립한다.
+   색은 --ide-* 직접 참조(뷰 안에서도 다크 크롬 톤을 그대로 쓰기 위해).
+   ════════════════════════════════════════════════════════════════ */
+
+/* ── .ide-viewbar — 뷰 상단 툴바(제목 + codicon 액션). ───────────────
+   VS Code 의 뷰 헤더 톤: 35px, 좌측 제목(아이콘+라벨) + 우측 액션 아이콘. */
+.ide .ide-viewbar {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  height: 35px;
+  flex-shrink: 0;
+  padding-inline: 14px 8px;
+  background: var(--ide-bg-alt);
+  border-bottom: 1px solid var(--ide-border);
+  color: var(--ide-text);
+  user-select: none;
+}
+.ide .ide-viewbar-title {
+  display: inline-flex;
+  align-items: center;
+  gap: 7px;
+  min-width: 0;
+  font-size: 13px;
+  font-weight: 600;
+  color: var(--ide-text-strong);
+}
+.ide .ide-viewbar-title .codicon { font-size: 16px; color: var(--ide-text-dim); }
+/* 제목 옆 흐린 보조(경로/카운트 등). */
+.ide .ide-viewbar-sub {
+  font-family: var(--ide-mono);
+  font-size: 11px;
+  color: var(--ide-text-faint);
+}
+.ide .ide-viewbar-actions {
+  margin-left: auto;
+  display: inline-flex;
+  align-items: center;
+  gap: 2px;
+}
+
+/* ── .ide-section — 섹션 구분(11px 대문자 헤더 + 보더). ───────────────
+   뷰 본문을 의미 단위로 끊는다. 헤더는 VS Code 섹션 톤(대문자·흐림),
+   상단 1px 헤어라인으로 위 섹션과 분리. 첫 섹션은 보더 생략 가능. */
+.ide .ide-section {
+  padding: 12px 14px 14px;
+  border-top: 1px solid var(--ide-border);
+}
+.ide .ide-section:first-child { border-top: 0; }
+.ide .ide-section-head {
+  display: flex;
+  align-items: center;
+  gap: 6px;
+  margin-bottom: 10px;
+  color: var(--ide-text-dim);
+  font-size: 11px;
+  font-weight: 700;
+  letter-spacing: 0.04em;
+  text-transform: uppercase;
+}
+.ide .ide-section-head .codicon { font-size: 14px; color: var(--ide-text-faint); }
+/* 섹션 헤더 우측 보조(카운트/액션) — 자동 우측 정렬, 흐린 메타. */
+.ide .ide-section-meta {
+  margin-left: auto;
+  font-family: var(--ide-mono);
+  font-size: 11px;
+  font-weight: 400;
+  letter-spacing: 0;
+  text-transform: none;
+  color: var(--ide-text-faint);
+}
+
+/* ── .ide-vlist / .ide-vrow — VS Code 리스트 행(codicon + 텍스트). ────
+   범용 리스트(아웃바운드 연락처·콘텐츠 항목·설정 행 등). 행 높이 22px,
+   hover #2a2d2e / active #04395e. .ide-tree-row 와 같은 톤의 컨테이너 변형. */
+.ide .ide-vlist {
+  display: flex;
+  flex-direction: column;
+}
+.ide .ide-vrow {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  min-height: 26px;
+  padding: 3px 8px;
+  border-radius: 4px;
+  color: var(--ide-text);
+  cursor: pointer;
+  transition: background-color 0.1s ease;
+}
+.ide .ide-vrow:hover { background: var(--ide-hover); }
+.ide .ide-vrow.active,
+.ide .ide-vrow[aria-selected="true"] { background: var(--ide-active-bg); }
+.ide .ide-vrow > .codicon {
+  font-size: 16px;
+  flex-shrink: 0;
+  color: var(--ide-text-dim);
+}
+/* 행 본문 — 주 라벨(또렷) + 보조 라벨(흐림) 세로 스택 또는 한 줄. */
+.ide .ide-vrow-main {
+  min-width: 0;
+  flex: 1;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}
+.ide .ide-vrow-sub {
+  flex-shrink: 0;
+  font-family: var(--ide-mono);
+  font-size: 11px;
+  color: var(--ide-text-faint);
+}
+.ide .ide-vrow-sub-block {
+  display: block;
+  font-size: 11px;
+  color: var(--ide-text-dim);
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}
+
+/* ── .ide-kv — 키-값 행(설정/메타 표시). ─────────────────────────────
+   좌측 키(흐림) + 우측 값(또렷). VS Code 의 설정/속성 줄 톤. */
+.ide .ide-kv {
+  display: flex;
+  align-items: baseline;
+  gap: 12px;
+  padding: 4px 0;
+}
+.ide .ide-kv + .ide-kv { border-top: 1px solid var(--ide-border); }
+.ide .ide-kv-key {
+  flex-shrink: 0;
+  min-width: 96px;
+  color: var(--ide-text-dim);
+  font-size: 12px;
+}
+.ide .ide-kv-val {
+  flex: 1;
+  min-width: 0;
+  color: var(--ide-text);
+  font-size: 12px;
+  font-family: var(--ide-mono);
+  font-variant-numeric: tabular-nums;
+  word-break: break-word;
+}
+/* 모노가 아닌 본문 값(설명형) 변형. */
+.ide .ide-kv-val--text {
+  font-family: var(--ide-ui);
+  font-variant-numeric: normal;
+}
+
+/* ── .ide-pill — 상태 칩(라이브/대기/완료/경고 등). ──────────────────
+   .ide-badge 보다 약간 또렷한 라운드 캡슐. 톤 변형으로 상태색을 입힌다. */
+.ide .ide-pill {
+  display: inline-flex;
+  align-items: center;
+  gap: 4px;
+  height: 19px;
+  padding-inline: 8px;
+  border-radius: 9999px;
+  background: var(--ide-elevated);
+  border: 1px solid var(--ide-border-strong);
+  color: var(--ide-text-dim);
+  font-size: 11px;
+  line-height: 1;
+  white-space: nowrap;
+}
+.ide .ide-pill .codicon { font-size: 12px; }
+.ide .ide-pill--accent {
+  background: var(--ide-progress-dim);
+  border-color: transparent;
+  color: #4ea0ff;
+}
+.ide .ide-pill--ok {
+  background: rgba(78, 201, 176, 0.16);
+  border-color: transparent;
+  color: var(--ide-ok);
+}
+.ide .ide-pill--warn {
+  background: rgba(204, 167, 0, 0.18);
+  border-color: transparent;
+  color: var(--ide-warn);
+}
+.ide .ide-pill--danger {
+  background: rgba(241, 76, 76, 0.16);
+  border-color: transparent;
+  color: var(--ide-danger);
+}
+
+/* ── 통계 셀 (.ide-stat) — 뷰 상단 KPI 타일(대시보드/성과). ───────────
+   큰 수치 + 흐린 라벨 + 선택적 델타. 다크 들린 표면 카드. */
+.ide .ide-statgrid {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(140px, 1fr));
+  gap: 8px;
+}
+.ide .ide-stat {
+  display: flex;
+  flex-direction: column;
+  gap: 3px;
+  padding: 10px 12px;
+  border-radius: 6px;
+  background: var(--ide-elevated);
+  border: 1px solid var(--ide-border-strong);
+}
+.ide .ide-stat-label {
+  display: inline-flex;
+  align-items: center;
+  gap: 5px;
+  color: var(--ide-text-dim);
+  font-size: 11px;
+}
+.ide .ide-stat-label .codicon { font-size: 13px; color: var(--ide-text-faint); }
+.ide .ide-stat-value {
+  color: var(--ide-text-strong);
+  font-size: 20px;
+  font-weight: 600;
+  font-family: var(--ide-mono);
+  font-variant-numeric: tabular-nums;
+  line-height: 1.1;
+}
+.ide .ide-stat-delta {
+  font-size: 11px;
+  font-family: var(--ide-mono);
+}
+.ide .ide-stat-delta--up { color: var(--ide-ok); }
+.ide .ide-stat-delta--down { color: var(--ide-danger); }
+
+/* ── OASIS 패널 + 뷰 idiom 모션 최소화 가드 ──────────────────────────
+   prefers-reduced-motion 시 전환/막대 애니메이션을 끄고 정적으로 표시. */
+@media (prefers-reduced-motion: reduce) {
+  .ide .persona-arch,
+  .ide .persona-sample,
+  .ide .persona-bar-fill,
+  .ide .ide-vrow {
+    transition: none;
+  }
+  /* 오케스트레이션 연출 — 펄스/이동 점/스핀/확대 모션은 끄고, 상태 텍스트와
+     하이라이트(보더/글로우/단계색)는 유지한다(정적 표시). */
+  .ide .orch-hub--busy,
+  .ide .orch-hub--busy .orch-hub-mark,
+  .ide .persona-arch--responding {
+    animation: none;
+  }
+  .ide .persona-arch--responding { transform: none; }
+  .ide .anim-orch-dispatch,
+  .ide .anim-orch-return { animation: none; opacity: 1; }
+}
+
+/* ╔══════════════════════════════════════════════════════════════════╗
+   ║  .ide-doc — 에디터에서 열리는 "아티팩트 문서뷰" 다크 스코프        ║
+   ║  ── 무엇을 푸는가 ──────────────────────────────────────────────  ║
+   ║  components/artifacts/* 18종 렌더러는 토큰 기반(흰 :root 톤:       ║
+   ║  --bg-0/--text-1/--line-1/--accent …)으로 작성됐다. 그대로 다크   ║
+   ║  IDE 에디터에 얹으면 "흰 카드 + 세리프 제목 + 라이트 톤"이 떠서    ║
+   ║  VS Code 와 안 어울린다. WorkView(에디터 미리보기 컨테이너)가      ║
+   ║  렌더러를 `.ide-doc` 로 감싸면, 이 블록이 화이트 토큰을 VS Code    ║
+   ║  "Dark Modern" 값으로 오버라이드 → 토큰 기반 렌더러가 자동 다크.   ║
+   ║  ── 스코프 규칙(중요) ──────────────────────────────────────────  ║
+   ║  · 모든 오버라이드는 `.ide-doc` 안에서만 유효(로컬 --var 재정의).  ║
+   ║    `.ide-doc` 가 없는 흰 standalone 페이지(/dashboard 등)·로그인·  ║
+   ║    TopNav 는 기존 순백 :root 토큰 그대로 — 절대 영향 없음.         ║
+   ║  · 색은 .ide 셸의 --ide-* 값과 정렬(에디터 #1f1f1f / 텍스트       ║
+   ║    #cccccc / 액센트 #0078d4) — 정통 VS Code 톤. 브랜드 버밀리언은  ║
+   ║    문서 안에서 블루로 흡수(IDE 정통성).                            ║
+   ║  · 큰 에디토리얼 카드 그림자·세리프 디스플레이는 절제(시스템/모노).║
+   ╚══════════════════════════════════════════════════════════════════╝ */
+
+/* ── 1) 다크 문서 스코프 — 화이트 토큰을 VS Code Dark 값으로 리맵 ──────
+   렌더러가 참조하는 모든 토큰(표면/보더/텍스트/액센트/상태/별칭)을 한곳에서
+   덮는다. 컴포넌트 코드 수정 없이 var(--bg-0) 등이 다크값으로 해석된다.
+   .ide-view(대시보드용)와 같은 어휘지만, "문서" 톤(에디터 면 #1f1f1f 기준)에
+   맞춰 별도 스코프로 둔다 — 두 스코프가 같은 페이지에서 충돌하지 않는다. */
+.ide-doc {
+  /* 표면 — VS Code Dark Modern 스택.
+     --bg-0 = editor.bg(#1f1f1f) / --bg-1 = sideBar 톤(#252526) /
+     --bg-2 = 가장 어두운 인셋(#181818) / --bg-3 = bg-1 과 동일 톤. */
+  --bg-0: #1f1f1f;
+  --bg-1: #252526;
+  --bg-2: #181818;
+  --bg-3: #252526;
+  --bg-raised: #252526;   /* 한 단계 들린 표면(목업 행·강조 칩) */
+  --bg-inset: #181818;    /* 가라앉은 표면(입력 웰·코드 블록·트랙) */
+
+  /* 보더 — 잉크 알파(검정) → 화이트 알파(어두운 면 위 헤어라인). */
+  --line-1: rgba(255, 255, 255, 0.09);
+  --line-2: rgba(255, 255, 255, 0.06);
+  --line-strong: rgba(255, 255, 255, 0.18);
+
+  /* 텍스트 3단계 — 잉크(검정) → VS Code foreground 스택.
+     --text-1 #cccccc(foreground) / --text-2 #9d9d9d(descriptionFg) /
+     --text-3 #6e6e6e(더 흐린 메타). --ink 별칭도 본문색으로. */
+  --ink: #cccccc;
+  --text-1: #cccccc;
+  --text-2: #9d9d9d;
+  --text-3: #6e6e6e;
+
+  /* 액센트 — 문서 안에서는 VS Code 정통 블루(#0078d4)로 흡수(브랜드
+     버밀리언 아님 — IDE 정통성). 틴트/별칭도 블루 알파로 재매핑. */
+  --accent: #0078d4;
+  --accent-hover: #026ec1;
+  --accent-bright: #3794ff;
+  --accent-tint: rgba(0, 120, 212, 0.16);
+  --accent-dim: rgba(0, 120, 212, 0.16);
+  --accent-glow: rgba(0, 120, 212, 0.16);
+
+  /* 상태 — VS Code 에디터 데코레이션 톤으로 정렬(어두운 면 가독).
+     dim 은 알파를 올려 어두운 면 위에서도 칩/막대가 읽히게 한다. */
+  --ok: #4ec9b0;        --ok-dim: rgba(78, 201, 176, 0.18);
+  --ok-glow: rgba(78, 201, 176, 0.18);
+  --warn: #cca700;      --warn-dim: rgba(204, 167, 0, 0.18);
+  --danger: #f14c4c;    --danger-dim: rgba(241, 76, 76, 0.18);
+  --info: #3794ff;      --info-dim: rgba(0, 120, 212, 0.16);
+
+  /* 그림자 — 다크에선 검정 알파로 더 깊게(흰 카드 그림자 절제). */
+  --shadow-card: 0 1px 2px rgba(0, 0, 0, 0.4), 0 6px 18px rgba(0, 0, 0, 0.32);
+  --shadow-1: 0 1px 2px rgba(0, 0, 0, 0.45), 0 10px 28px rgba(0, 0, 0, 0.38);
+
+  /* 글래스 — 어두운 반투명으로(흰 글래스 → 잉크 글래스). */
+  --glass-bg: rgba(37, 37, 38, 0.55);
+  --glass-bg-strong: rgba(37, 37, 38, 0.72);
+  --glass-border: rgba(255, 255, 255, 0.08);
+  --glass-border-line: rgba(255, 255, 255, 0.12);
+  --glass-shadow: 0 1px 2px rgba(0, 0, 0, 0.4), 0 10px 30px rgba(0, 0, 0, 0.4);
+
+  /* 레거시 텍스처 토큰 — 다크 면 위 헤어라인 결로. */
+  --grid-line: rgba(255, 255, 255, 0.04);
+
+  /* 하위 호환 별칭(렌더러가 --background/--panel 등을 참조해도 다크로). */
+  --background: var(--bg-0);
+  --foreground: var(--text-1);
+  --panel: var(--bg-1);
+  --panel-border: var(--line-1);
+
+  /* 문서 본문 — 에디터 면 위 좁은 패딩의 "문서" 컨테이너. */
+  color: var(--text-1);
+  background: var(--bg-0);
+  color-scheme: dark;
+  font-family: var(--ide-ui, -apple-system, BlinkMacSystemFont, "Pretendard", "Segoe UI", "Apple SD Gothic Neo", sans-serif);
+}
+
+/* 세리프 디스플레이 절제 — 렌더러의 .font-serif/.display-serif 큰 제목을
+   .ide-doc 안에서는 시스템/모노 톤으로 약화(에디토리얼 명조 → VS Code 문서
+   헤더 톤). 흰 standalone 페이지에서는 :root 의 세리프 정의가 그대로 유지된다. */
+.ide-doc .font-serif,
+.ide-doc .display-serif {
+  font-family: var(--ide-ui, -apple-system, BlinkMacSystemFont, "Pretendard", "Segoe UI", "Apple SD Gothic Neo", sans-serif);
+  letter-spacing: -0.01em;
+}
+
+/* 큰 종이 카드 그림자 절제 — .ide-doc 안에서는 면 위 그림자를 거의 없앤다
+   (VS Code 문서는 떠 있는 흰 카드가 아니라 면에 박힌 콘텐츠다). */
+.ide-doc .surface-raised,
+.ide-doc .surface-hero {
+  box-shadow: 0 0 0 1px var(--line-2);
+}
+
+/* recharts 가독 보정 — 차트 렌더러가 흰 톤 리터럴(축/그리드/툴팁)을 일부 직접
+   쓴다. .ide-doc 안에서 무채 보조 요소를 다크 면에 맞게 밝혀 가독을 확보한다.
+   (브랜드/시리즈 색은 그대로 — 무채 보조만 보정.) .ide-view 규칙과 동일 톤. */
+.ide-doc .recharts-cartesian-grid line,
+.ide-doc .recharts-cartesian-axis-line,
+.ide-doc .recharts-cartesian-axis-tick-line {
+  stroke: rgba(255, 255, 255, 0.12);
+}
+.ide-doc .recharts-cartesian-axis-tick-value,
+.ide-doc .recharts-text,
+.ide-doc .recharts-label {
+  fill: var(--text-2);
+}
+.ide-doc .recharts-legend-item-text {
+  color: var(--text-2) !important;
+}
+.ide-doc .recharts-reference-line line {
+  stroke: rgba(255, 255, 255, 0.22);
+}
+.ide-doc .recharts-default-tooltip {
+  background: var(--bg-1) !important;
+  border: 1px solid var(--line-1) !important;
+  color: var(--text-1) !important;
+}
+.ide-doc .recharts-tooltip-item,
+.ide-doc .recharts-tooltip-label {
+  color: var(--text-1) !important;
+}
+
+/* 문서 진입 페이드 — 탭 전환 시 1회 등장(셸/뷰 페이드와 동일 톤). */
+.ide-doc-in { animation: ide-fade-in 0.25s ease both; }
+
+
+/* ╔══════════════════════════════════════════════════════════════════╗
+   ║  .ide-doc-light — 에디터 산출물 문서뷰 "라이트(화이트) 스코프"     ║
+   ║  ── 무엇을 푸는가 ──────────────────────────────────────────────  ║
+   ║  "가운데 작업창은 화이트톤으로 열려도 좋다"는 요청.                ║
+   ║  artifacts/* 렌더러는 원래 흰 페이지용 :root 토큰으로 작성됐으니,  ║
+   ║  .ide-doc(다크 리맵) 대신 이 스코프로 감싸면 렌더러 본연의 화이트  ║
+   ║  문서 톤이 살아난다 — IDE 크롬(탭/사이드바/상태바)은 다크 유지,    ║
+   ║  중앙 "문서"만 밝은 에디터 면이 된다(VS Code Light 톤의 파일 뷰).  ║
+   ║  · :root 와 동일한 화이트 스택을 스코프에 다시 고정(조상 리맵에     ║
+   ║    영향받지 않게 자기완결). 브랜드 버밀리언 액센트는 렌더러 본연.  ║
+   ║  · 세리프 디스플레이/큰 그림자는 .ide-doc 와 동일하게 절제(문서 톤).║
+   ╚══════════════════════════════════════════════════════════════════╝ */
+.ide-doc-light {
+  /* 표면 — 순백 스택(:root 그대로). */
+  --bg-0: #ffffff;
+  --bg-1: #fafafa;
+  --bg-2: #f0f0ef;
+  --bg-3: #fafafa;
+  --bg-raised: #ffffff;
+  --bg-inset: #f3f3f3;
+
+  /* 보더 — 잉크 알파 헤어라인. */
+  --line-1: rgba(0, 0, 0, 0.10);
+  --line-2: rgba(0, 0, 0, 0.06);
+  --line-strong: rgba(0, 0, 0, 0.18);
+
+  /* 텍스트 — 잉크 3단계. */
+  --ink: #1f1f1f;
+  --text-1: #1f1f1f;
+  --text-2: #515c6a;
+  --text-3: #767676;
+
+  /* 액센트 — 렌더러 본연의 브랜드 버밀리언(흰 면에서 또렷). */
+  --accent: #d9472a;
+  --accent-hover: #b8381f;
+  --accent-bright: #b8381f;
+  --accent-tint: rgba(217, 71, 42, 0.08);
+  --accent-dim: rgba(217, 71, 42, 0.08);
+  --accent-glow: rgba(217, 71, 42, 0.08);
+
+  /* 상태 — 클린 톤(흰 면 기준). */
+  --ok: #2f8f57;        --ok-dim: rgba(47, 143, 87, 0.10);
+  --ok-glow: rgba(47, 143, 87, 0.10);
+  --warn: #b8791f;      --warn-dim: rgba(184, 121, 31, 0.10);
+  --danger: #c0392b;    --danger-dim: rgba(192, 57, 43, 0.10);
+  --info: #d9472a;      --info-dim: rgba(217, 71, 42, 0.08);
+
+  /* 그림자 — 아주 옅은 회색만. */
+  --shadow-card: 0 1px 2px rgba(0, 0, 0, 0.05), 0 8px 24px rgba(0, 0, 0, 0.06);
+  --shadow-1: 0 1px 2px rgba(0, 0, 0, 0.05), 0 8px 24px rgba(0, 0, 0, 0.06);
+
+  /* 글래스 — 흰 반투명. */
+  --glass-bg: rgba(255, 255, 255, 0.65);
+  --glass-bg-strong: rgba(255, 255, 255, 0.82);
+  --glass-border: rgba(0, 0, 0, 0.06);
+  --glass-border-line: rgba(0, 0, 0, 0.10);
+  --glass-shadow: 0 1px 2px rgba(0, 0, 0, 0.05), 0 10px 30px rgba(0, 0, 0, 0.08);
+
+  --grid-line: rgba(0, 0, 0, 0.035);
+
+  /* 하위 호환 별칭. */
+  --background: var(--bg-0);
+  --foreground: var(--text-1);
+  --panel: var(--bg-1);
+  --panel-border: var(--line-1);
+
+  color: var(--text-1);
+  background: var(--bg-0);
+  color-scheme: light;
+  font-family: var(--ide-ui, -apple-system, BlinkMacSystemFont, "Pretendard", "Segoe UI", "Apple SD Gothic Neo", sans-serif);
+}
+
+/* 세리프 디스플레이 절제 — .ide-doc 와 동일(에디토리얼 명조 → 시스템 헤더 톤). */
+.ide-doc-light .font-serif,
+.ide-doc-light .display-serif {
+  font-family: var(--ide-ui, -apple-system, BlinkMacSystemFont, "Pretendard", "Segoe UI", "Apple SD Gothic Neo", sans-serif);
+  letter-spacing: -0.01em;
+}
+/* 큰 종이 카드 그림자 절제 — 면에 박힌 문서 톤. */
+.ide-doc-light .surface-raised,
+.ide-doc-light .surface-hero {
+  box-shadow: 0 0 0 1px var(--line-1);
+}
+
+/* 라이트 문서를 감싸는 에디터 본문 — 흰 거터(다크 #1f1f1f 대신).
+   산출물 미리보기 경로에서만 쓴다(WorkView/Welcome 다크 경로엔 미적용). */
+.ide-editor-body--light { background: #ffffff; }
+
+/* ── 2) VS Code "문서" 컴포넌트 어휘 (.ide-doc-*) ────────────────────
+   렌더러가 .ide-doc 안에서 채택하는 문서 idiom. 색은 위 리맵 토큰(var(--…))을
+   쓰므로 다크 스코프에선 자동 다크, 흰 컨텍스트(.ide-doc 없음)에서도 깨지지 않게
+   토큰 기반으로 정의한다. 치수/톤은 VS Code 문서 결(좁은 패딩·헤어라인·모노 라벨). */
+
+/* .ide-doc-head — 문서 제목 행: codicon + 제목 + 우측 메타.
+   하단 헤어라인으로 본문과 분리. 세리프 디스플레이 대신 또렷한 시스템 헤더. */
+.ide-doc-head {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  padding-bottom: 10px;
+  margin-bottom: 14px;
+  border-bottom: 1px solid var(--line-1);
+}
+.ide-doc-head .codicon {
+  font-size: 16px;
+  color: var(--text-3);
+  flex-shrink: 0;
+}
+/* 제목 — VS Code 문서 헤더 톤(세리프 아님, 또렷한 본문색). */
+.ide-doc-head-title {
+  min-width: 0;
+  font-size: 15px;
+  font-weight: 600;
+  letter-spacing: -0.01em;
+  color: var(--text-1);
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}
+/* 우측 메타(경로/카운트/시각) — 흐린 모노. 자동 우측 정렬. */
+.ide-doc-head-meta {
+  margin-left: auto;
+  flex-shrink: 0;
+  font-family: var(--ide-mono, var(--font-geist-mono), monospace);
+  font-variant-numeric: tabular-nums;
+  font-size: 11px;
+  color: var(--text-3);
+}
+
+/* .ide-doc-section — 섹션: 11px 대문자 헤더 + 상단 보더 구분.
+   첫 섹션은 보더 생략. 의미 단위로 본문을 끊는다(VS Code 섹션 톤). */
+.ide-doc-section {
+  padding-top: 14px;
+  margin-top: 14px;
+  border-top: 1px solid var(--line-2);
+}
+.ide-doc-section:first-child {
+  padding-top: 0;
+  margin-top: 0;
+  border-top: 0;
+}
+.ide-doc-section-head {
+  display: flex;
+  align-items: center;
+  gap: 6px;
+  margin-bottom: 10px;
+  font-size: 11px;
+  font-weight: 700;
+  letter-spacing: 0.04em;
+  text-transform: uppercase;
+  color: var(--text-2);
+}
+.ide-doc-section-head .codicon {
+  font-size: 14px;
+  color: var(--text-3);
+}
+/* 섹션 헤더 우측 보조(카운트/액션) — 흐린 모노, 우측 정렬. */
+.ide-doc-section-meta {
+  margin-left: auto;
+  font-family: var(--ide-mono, var(--font-geist-mono), monospace);
+  font-size: 11px;
+  font-weight: 400;
+  letter-spacing: 0;
+  text-transform: none;
+  color: var(--text-3);
+}
+
+/* .ide-doc-kv — 키-값 행(메타/속성 표시). 좌측 키(흐림) + 우측 값(또렷 모노).
+   인접 행 사이 헤어라인으로 표 느낌. VS Code 속성/설정 줄 톤. */
+.ide-doc-kv {
+  display: flex;
+  align-items: baseline;
+  gap: 12px;
+  padding: 5px 0;
+}
+.ide-doc-kv + .ide-doc-kv {
+  border-top: 1px solid var(--line-2);
+}
+.ide-doc-kv-key {
+  flex-shrink: 0;
+  min-width: 104px;
+  font-size: 12px;
+  color: var(--text-2);
+}
+.ide-doc-kv-val {
+  flex: 1;
+  min-width: 0;
+  font-size: 12px;
+  font-family: var(--ide-mono, var(--font-geist-mono), monospace);
+  font-variant-numeric: tabular-nums;
+  color: var(--text-1);
+  word-break: break-word;
+}
+/* 설명형(모노 아닌) 값 변형. */
+.ide-doc-kv-val--text {
+  font-family: var(--ide-ui, inherit);
+  font-variant-numeric: normal;
+}
+
+/* .ide-doc-list / .ide-doc-row — 리스트 행(연락처·항목·라인). hover 강조.
+   VS Code 리스트 행 어휘(hover 면색). 행 안에서 codicon + 본문 + 보조 메타. */
+.ide-doc-list {
+  display: flex;
+  flex-direction: column;
+  margin-inline: -8px;   /* hover 면을 섹션 패딩 너머로 살짝 확장(리스트 결) */
+}
+.ide-doc-row {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  min-height: 28px;
+  padding: 4px 8px;
+  border-radius: 4px;
+  color: var(--text-1);
+  transition: background-color 0.1s ease;
+}
+.ide-doc-row:hover {
+  background: rgba(255, 255, 255, 0.05);
+}
+.ide-doc-row > .codicon {
+  font-size: 16px;
+  flex-shrink: 0;
+  color: var(--text-3);
+}
+/* 행 본문 — 주 라벨(또렷, 넘치면 말줄임). */
+.ide-doc-row-main {
+  min-width: 0;
+  flex: 1;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}
+/* 행 보조(우측) — 흐린 모노 메타. */
+.ide-doc-row-sub {
+  flex-shrink: 0;
+  font-family: var(--ide-mono, var(--font-geist-mono), monospace);
+  font-variant-numeric: tabular-nums;
+  font-size: 11px;
+  color: var(--text-3);
+}
+
+/* .ide-doc-callout — 강조 블록(인용/주의/요약). 좌측 액센트 보더 + 인셋 면.
+   톤 변형(ok/warn/danger)으로 상태색을 입힌다. */
+.ide-doc-callout {
+  padding: 10px 14px;
+  border-left: 3px solid var(--accent);
+  border-radius: 0 4px 4px 0;
+  background: var(--bg-2);
+  color: var(--text-2);
+  font-size: 12.5px;
+  line-height: 1.6;
+}
+.ide-doc-callout--ok {
+  border-left-color: var(--ok);
+  background: var(--ok-dim);
+}
+.ide-doc-callout--warn {
+  border-left-color: var(--warn);
+  background: var(--warn-dim);
+}
+.ide-doc-callout--danger {
+  border-left-color: var(--danger);
+  background: var(--danger-dim);
+}
+
+/* .ide-doc-table — VS Code 톤 데이터 테이블. 헤더(흐린 대문자) + 헤어라인 행.
+   큰 카드 대신 면에 박힌 표로 데이터를 보여 준다. */
+.ide-doc-table {
+  width: 100%;
+  border-collapse: collapse;
+  font-size: 12.5px;
+}
+.ide-doc-table th {
+  padding: 6px 10px;
+  text-align: left;
+  font-size: 10.5px;
+  font-weight: 700;
+  letter-spacing: 0.04em;
+  text-transform: uppercase;
+  color: var(--text-3);
+  border-bottom: 1px solid var(--line-1);
+  white-space: nowrap;
+}
+.ide-doc-table td {
+  padding: 7px 10px;
+  color: var(--text-1);
+  border-bottom: 1px solid var(--line-2);
+  vertical-align: top;
+}
+.ide-doc-table tr:last-child td {
+  border-bottom: 0;
+}
+.ide-doc-table tbody tr:hover td {
+  background: rgba(255, 255, 255, 0.04);
+}
+/* 숫자 셀 — 모노 + tabular + 우측 정렬(지표 컬럼용). */
+.ide-doc-table .num,
+.ide-doc-table td.ide-doc-td-num,
+.ide-doc-table th.ide-doc-td-num {
+  font-family: var(--ide-mono, var(--font-geist-mono), monospace);
+  font-variant-numeric: tabular-nums;
+  text-align: right;
+}
+
+/* .ide-doc-pill — 상태 칩(라이브/대기/완료/경고). 라운드 캡슐 + 톤 변형. */
+.ide-doc-pill {
+  display: inline-flex;
+  align-items: center;
+  gap: 4px;
+  height: 19px;
+  padding-inline: 8px;
+  border-radius: 9999px;
+  background: var(--bg-2);
+  border: 1px solid var(--line-1);
+  color: var(--text-2);
+  font-size: 11px;
+  line-height: 1;
+  white-space: nowrap;
+  vertical-align: middle;
+}
+.ide-doc-pill .codicon { font-size: 12px; }
+.ide-doc-pill--accent {
+  background: var(--accent-tint);
+  border-color: transparent;
+  color: var(--accent-bright);
+}
+.ide-doc-pill--ok {
+  background: var(--ok-dim);
+  border-color: transparent;
+  color: var(--ok);
+}
+.ide-doc-pill--warn {
+  background: var(--warn-dim);
+  border-color: transparent;
+  color: var(--warn);
+}
+.ide-doc-pill--danger {
+  background: var(--danger-dim);
+  border-color: transparent;
+  color: var(--danger);
+}
+
+/* ── BTL 산출물 문서(RFP/제안서/견적서) 공용 요소 ──────────────────────
+   필드 리스트(정의형), 불릿, 태그 칩, 논의 버튼. 종이 면(.ide-doc-light) 위에서도
+   다크(.ide) 위에서도 토큰으로 일관되게. */
+.btl-field-list {
+  display: grid;
+  grid-template-columns: max-content 1fr;
+  gap: 4px 14px;
+  margin: 0;
+  font-size: 12.5px;
+  line-height: 1.55;
+}
+.btl-field-list dt {
+  color: var(--text-3);
+  font-size: 11px;
+  font-weight: 600;
+  white-space: nowrap;
+}
+.btl-field-list dd {
+  margin: 0;
+  color: var(--text-1);
+}
+.btl-bullet-list {
+  margin: 0;
+  padding-left: 16px;
+  font-size: 12.5px;
+  line-height: 1.6;
+  color: var(--text-1);
+}
+.btl-bullet-list li { margin: 2px 0; }
+.btl-bullet-list li b { color: var(--text-1); font-weight: 700; }
+
+.btl-tag-row {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 6px;
+  margin-top: 4px;
+}
+.btl-tag {
+  display: inline-flex;
+  align-items: center;
+  height: 21px;
+  padding-inline: 9px;
+  border-radius: 9999px;
+  background: var(--bg-2);
+  border: 1px solid var(--line-1);
+  color: var(--text-2);
+  font-size: 11px;
+  line-height: 1;
+  white-space: nowrap;
+}
+
+/* 합성(composite) — 구성 카드 진척. */
+.cm-row { display: flex; align-items: center; gap: 8px; padding: 5px 7px; border: 1px solid var(--line-2); border-radius: 6px; }
+.cm-name { font-size: 12px; font-weight: 600; color: var(--text-1); flex: 1; }
+.cm-add { display: inline-flex; align-items: center; gap: 3px; font-size: 10.5px; color: var(--accent); background: none; border: 1px solid var(--line-1); border-radius: 5px; padding: 2px 7px; cursor: pointer; }
+.cm-add:hover { border-color: var(--accent); }
+
+/* 콘텐츠 루프 리뷰 — 판정·반응율·요소·비포애프터. */
+.cl-review { margin-top: 10px; }
+.cl-verdict { display: flex; align-items: center; gap: 10px; padding: 7px 9px; border: 1px solid; border-radius: 7px; }
+.cl-verdict-badge { display: inline-flex; align-items: center; gap: 4px; color: #fff; font-size: 11px; font-weight: 700; padding: 2px 8px; border-radius: 5px; }
+.cl-verdict-badge .codicon { font-size: 12px; }
+.cl-engage { font-size: 12px; color: var(--text-2); }
+.cl-engage b { font-size: 14px; }
+.cl-reason { font-size: 12px; color: var(--text-2); line-height: 1.5; margin: 7px 0 0; }
+.cl-pivot { font-size: 12px; color: var(--warn); margin: 4px 0 0; }
+.cl-findings { margin-top: 8px; display: flex; flex-direction: column; gap: 5px; }
+.cl-finding { border-left: 2px solid var(--line-1); padding-left: 8px; }
+.cl-finding-target { display: block; font-size: 11px; font-weight: 700; color: var(--text-1); }
+.cl-finding-fix { display: block; font-size: 11px; color: var(--text-2); line-height: 1.45; }
+.cl-finding-fix .codicon { font-size: 12px; color: var(--accent); margin-right: 2px; }
+
+/* .rp-list — 검토 포인트 의제 목록 */
+.rp-list { list-style: none; margin: 0; padding: 0; display: flex; flex-direction: column; gap: 5px; }
+.rp-item { display: flex; align-items: flex-start; gap: 6px; font-size: 11.5px; color: var(--text-2); line-height: 1.45; }
+.rp-item .codicon { margin-top: 2px; flex-shrink: 0; }
+
+/* 다중 드래그 고스트 — 인원수 표시. */
+.persona-drag-ghost {
+  position: fixed; top: -1000px; left: -1000px; z-index: 9999;
+  background: var(--ide-accent); color: #fff; font-size: 11px; font-weight: 700;
+  padding: 5px 10px; border-radius: 7px; white-space: nowrap; pointer-events: none;
+  box-shadow: 0 6px 18px rgba(0,0,0,0.25);
+}
+.cl-after { margin-top: 10px; padding: 9px; border: 1px solid var(--accent); border-radius: 7px; background: var(--accent-tint); }
+.cl-after-head { font-size: 10px; font-weight: 700; text-transform: uppercase; letter-spacing: 0.04em; color: var(--accent); margin-bottom: 5px; }
+.cl-after-body { margin: 0; white-space: pre-wrap; word-break: break-word; font-size: 12px; line-height: 1.5; color: var(--text-1); font-family: inherit; max-height: 320px; overflow: auto; }
+
+/* RFP 요구 견적항목 대조 체크리스트 — 견적 카드. */
+.btl-check-row {
+  display: flex;
+  align-items: flex-start;
+  gap: 8px;
+  padding: 5px 7px;
+  border-radius: 6px;
+  border: 1px solid var(--line-2);
+  background: var(--bg-1);
+  cursor: pointer;
+}
+.btl-check-row:hover { border-color: var(--line-1); }
+.btl-check-row input { margin-top: 2px; accent-color: var(--accent); cursor: pointer; }
+.btl-check-meta { display: flex; flex-direction: column; gap: 1px; min-width: 0; }
+.btl-check-name { font-size: 12px; font-weight: 600; color: var(--text-1); }
+.btl-check-items { font-size: 10.5px; color: var(--text-3); line-height: 1.35; }
+
+/* facet 작업대 편집 패널 — 선택된 항목 본문 수정. */
+.facet-edit {
+  margin-top: 14px;
+  padding: 12px;
+  border: 1px solid var(--line-1);
+  border-radius: 8px;
+  background: var(--bg-2);
+}
+.facet-edit-head {
+  display: flex;
+  align-items: center;
+  gap: 6px;
+  font-size: 12px;
+  font-weight: 600;
+  color: var(--text-1);
+  margin-bottom: 8px;
+}
+.facet-edit-head .codicon { font-size: 13px; color: var(--text-3); }
+.facet-edit-area {
+  width: 100%;
+  resize: vertical;
+  padding: 8px 10px;
+  border: 1px solid var(--line-1);
+  border-radius: 6px;
+  background: var(--bg-1);
+  color: var(--text-1);
+  font-size: 12.5px;
+  line-height: 1.5;
+  font-family: inherit;
+}
+.facet-edit-area:focus { outline: none; border-color: var(--accent); }
+.facet-edit-actions {
+  display: flex;
+  justify-content: flex-end;
+  gap: 8px;
+  margin-top: 8px;
+}
+.facet-edit-cancel {
+  height: 30px;
+  padding-inline: 12px;
+  border-radius: 6px;
+  border: 1px solid var(--line-1);
+  background: transparent;
+  color: var(--text-2);
+  font-size: 12px;
+  cursor: pointer;
+}
+.facet-edit-cancel:hover { background: var(--bg-1); }
+
+/* 시그널 띠 — 산출물 카드 상단 '받자마자 보는 신호'. 읽기 전용 칩, tone 으로 위급도. */
+.btl-signals {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 5px;
+  margin-bottom: 10px;
+}
+.btl-signal {
+  display: inline-flex;
+  align-items: center;
+  gap: 4px;
+  height: 22px;
+  padding-inline: 8px;
+  border-radius: 6px;
+  background: var(--bg-2);
+  border: 1px solid var(--line-1);
+  color: var(--text-2);
+  font-size: 11px;
+  font-weight: 600;
+  line-height: 1;
+  white-space: nowrap;
+}
+.btl-signal .codicon { font-size: 12px; }
+.btl-signal--ok { background: var(--ok-dim); border-color: transparent; color: var(--ok); }
+.btl-signal--warn { background: var(--warn-dim); border-color: transparent; color: var(--warn); }
+.btl-signal--danger { background: var(--danger-dim); border-color: transparent; color: var(--danger); }
+
+/* 검토팀 — 이 문서를 맡길 팀원 목록. 행 클릭 = 그 사람만 검토. */
+.btl-team-list {
+  display: flex;
+  flex-direction: column;
+  gap: 4px;
+  margin-top: 2px;
+}
+.btl-team-row {
+  display: flex;
+  align-items: center;
+  gap: 9px;
+  width: 100%;
+  padding: 7px 9px;
+  border-radius: 7px;
+  border: 1px solid var(--line-2);
+  background: var(--bg-1);
+  cursor: pointer;
+  text-align: left;
+  transition: border-color 0.12s ease, background 0.12s ease;
+}
+.btl-team-row:hover:not(:disabled) {
+  border-color: var(--accent);
+  background: var(--bg-2);
+}
+.btl-team-row:disabled { opacity: 0.5; cursor: default; }
+.btl-team-av {
+  flex-shrink: 0;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  width: 24px;
+  height: 24px;
+  border-radius: 9999px;
+  color: #fff;
+  font-size: 11px;
+  font-weight: 700;
+}
+.btl-team-meta { display: flex; flex-direction: column; gap: 1px; min-width: 0; flex: 1; }
+.btl-team-name { font-size: 12px; font-weight: 600; color: var(--text-1); }
+.btl-team-title { font-weight: 400; color: var(--text-3); }
+.btl-team-lens {
+  font-size: 10.5px;
+  color: var(--text-3);
+  line-height: 1.35;
+  overflow: hidden;
+  display: -webkit-box;
+  -webkit-line-clamp: 1;
+  -webkit-box-orient: vertical;
+}
+.btl-team-row .codicon { flex-shrink: 0; font-size: 13px; color: var(--text-3); }
+.btl-team-row:hover:not(:disabled) .codicon { color: var(--accent); }
+
+/* 페르소나와 논의 — 슬롯 카드의 주 행동. 액센트 채움, 비활성 시 흐림. */
+.btl-discuss-btn {
+  display: inline-flex;
+  align-items: center;
+  gap: 6px;
+  margin-top: 12px;
+  height: 30px;
+  padding-inline: 14px;
+  border-radius: 6px;
+  border: 0;
+  background: var(--accent);
+  color: #fff;
+  font-size: 12px;
+  font-weight: 600;
+  cursor: pointer;
+  transition: filter 0.15s ease, opacity 0.15s ease;
+}
+.btl-discuss-btn:hover:not(:disabled) { filter: brightness(1.06); }
+.btl-discuss-btn:disabled { opacity: 0.45; cursor: default; }
+.btl-discuss-btn .codicon { font-size: 13px; }
+
+/* ── 3) .ide-doc 모션 최소화 가드 ─────────────────────────────────── */
+@media (prefers-reduced-motion: reduce) {
+  .ide-doc-in { animation: none; }
+  .ide-doc-row { transition: none; }
+}
+

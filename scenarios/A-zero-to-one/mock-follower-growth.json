@@ -1,0 +1,33 @@
+{
+  "note": "채널 오픈 후 28일 일별 스냅샷 — W0~W2 구간 실측, 이후 보수 추정. 6/3 포어링 릴스 확산 구간 포함 (데모 데이터)",
+  "snapshots": [
+    { "date": "2026-05-14", "instagram": 0, "newsletterSubs": 0 },
+    { "date": "2026-05-15", "instagram": 8, "newsletterSubs": 1 },
+    { "date": "2026-05-16", "instagram": 21, "newsletterSubs": 4 },
+    { "date": "2026-05-17", "instagram": 36, "newsletterSubs": 8 },
+    { "date": "2026-05-18", "instagram": 55, "newsletterSubs": 13 },
+    { "date": "2026-05-19", "instagram": 74, "newsletterSubs": 19 },
+    { "date": "2026-05-20", "instagram": 96, "newsletterSubs": 24 },
+    { "date": "2026-05-21", "instagram": 120, "newsletterSubs": 30 },
+    { "date": "2026-05-22", "instagram": 142, "newsletterSubs": 36 },
+    { "date": "2026-05-23", "instagram": 168, "newsletterSubs": 44 },
+    { "date": "2026-05-24", "instagram": 197, "newsletterSubs": 52 },
+    { "date": "2026-05-25", "instagram": 224, "newsletterSubs": 60 },
+    { "date": "2026-05-26", "instagram": 251, "newsletterSubs": 68 },
+    { "date": "2026-05-27", "instagram": 280, "newsletterSubs": 76 },
+    { "date": "2026-05-28", "instagram": 310, "newsletterSubs": 85 },
+    { "date": "2026-05-29", "instagram": 330, "newsletterSubs": 91 },
+    { "date": "2026-05-30", "instagram": 352, "newsletterSubs": 98 },
+    { "date": "2026-05-31", "instagram": 374, "newsletterSubs": 104 },
+    { "date": "2026-06-01", "instagram": 398, "newsletterSubs": 112 },
+    { "date": "2026-06-02", "instagram": 422, "newsletterSubs": 119 },
+    { "date": "2026-06-03", "instagram": 458, "newsletterSubs": 127 },
+    { "date": "2026-06-04", "instagram": 560, "newsletterSubs": 140 },
+    { "date": "2026-06-05", "instagram": 642, "newsletterSubs": 156 },
+    { "date": "2026-06-06", "instagram": 701, "newsletterSubs": 170 },
+    { "date": "2026-06-07", "instagram": 742, "newsletterSubs": 181 },
+    { "date": "2026-06-08", "instagram": 774, "newsletterSubs": 192 },
+    { "date": "2026-06-09", "instagram": 803, "newsletterSubs": 201 },
+    { "date": "2026-06-10", "instagram": 830, "newsletterSubs": 210 }
+  ]
+}

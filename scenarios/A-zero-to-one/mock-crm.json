@@ -1,0 +1,52 @@
+{
+  "leads": [
+    {
+      "name": "이하늘",
+      "company": "위켄드포터",
+      "email": "haneul.lee@example.com",
+      "stage": "meeting",
+      "score": 85,
+      "lastTouch": "2026-06-09"
+    },
+    {
+      "name": "박지호",
+      "company": "카페 슬로우브루",
+      "email": "jiho.park@example.com",
+      "stage": "replied",
+      "score": 72,
+      "lastTouch": "2026-06-08"
+    },
+    {
+      "name": "백소이",
+      "company": "티룸 다정",
+      "email": "soi.baek@example.com",
+      "stage": "replied",
+      "score": 76,
+      "lastTouch": "2026-06-07"
+    },
+    {
+      "name": "김서연",
+      "company": "모온 소품숍",
+      "email": "seoyeon.kim@example.com",
+      "stage": "contacted",
+      "score": 58,
+      "lastTouch": "2026-06-05"
+    },
+    {
+      "name": "한도윤",
+      "company": "스테이 성수온",
+      "email": "doyoon.han@example.com",
+      "stage": "new",
+      "score": 64,
+      "lastTouch": "2026-06-02"
+    },
+    {
+      "name": "오민재",
+      "company": "서점 틈",
+      "email": "minjae.oh@example.com",
+      "stage": "won",
+      "score": 91,
+      "lastTouch": "2026-06-10"
+    }
+  ]
+}

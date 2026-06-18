@@ -1,0 +1,55 @@
+{
+  "period": "최근 30일",
+  "note": "키워드 타겟 콘텐츠 유입 세션 ↔ 문의·구매 폼 제출 매칭 (데모 데이터)",
+  "rows": [
+    {
+      "contentId": "ct-01",
+      "title": "그릇 맛집이라는 말 — 요즘 식탁이 그릇을 고르는 법",
+      "keyword": "그릇 맛집",
+      "sessions": 980,
+      "inquiries": 3
+    },
+    {
+      "contentId": "ct-02",
+      "title": "1인 식탁을 차리는 기준 — '오늘' 라인 사용 가이드",
+      "keyword": "1인 식기 세트",
+      "sessions": 720,
+      "inquiries": 5
+    },
+    {
+      "contentId": "ct-03",
+      "title": "무광 유약 이야기 — 빛을 머금는 그릇의 표면",
+      "keyword": "무광 그릇",
+      "sessions": 850,
+      "inquiries": 4
+    },
+    {
+      "contentId": "ct-04",
+      "title": "카페 테이블 위의 온도 — 공간을 위한 그릇 납품 안내",
+      "keyword": "카페 그릇 납품",
+      "sessions": 160,
+      "inquiries": 7
+    },
+    {
+      "contentId": "ct-05",
+      "title": "혼밥 플레이팅 시작하기 — 한 그릇으로 차리는 식탁",
+      "keyword": "혼밥 플레이팅",
+      "sessions": 610,
+      "inquiries": 2
+    },
+    {
+      "contentId": "ct-06",
+      "title": "내열 뚝배기 관리법 — 오래 쓰는 그릇을 위한 안내",
+      "keyword": "내열 뚝배기",
+      "sessions": 540,
+      "inquiries": 3
+    },
+    {
+      "contentId": "ct-07",
+      "title": "반상기의 시간 — 본가 라인이 10년을 지켜 온 방식",
+      "keyword": "신혼 반상기",
+      "sessions": 430,
+      "inquiries": 2
+    }
+  ]
+}

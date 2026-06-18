@@ -1,0 +1,51 @@
+{
+  "brandName": "달무드",
+  "note": "W0~W2 실측, W3~W4 보수 추정 (데모 데이터)",
+  "weeks": [
+    {
+      "week": "W0",
+      "posts": 0,
+      "followers": 0,
+      "newsletterSubs": 0,
+      "outboundSent": 0,
+      "outboundReplies": 0,
+      "meetings": 0
+    },
+    {
+      "week": "W1",
+      "posts": 4,
+      "followers": 120,
+      "newsletterSubs": 30,
+      "outboundSent": 12,
+      "outboundReplies": 1,
+      "meetings": 0
+    },
+    {
+      "week": "W2",
+      "posts": 5,
+      "followers": 310,
+      "newsletterSubs": 85,
+      "outboundSent": 18,
+      "outboundReplies": 3,
+      "meetings": 1
+    },
+    {
+      "week": "W3",
+      "posts": 5,
+      "followers": 560,
+      "newsletterSubs": 140,
+      "outboundSent": 16,
+      "outboundReplies": 3,
+      "meetings": 2
+    },
+    {
+      "week": "W4",
+      "posts": 4,
+      "followers": 830,
+      "newsletterSubs": 210,
+      "outboundSent": 14,
+      "outboundReplies": 2,
+      "meetings": 1
+    }
+  ]
+}

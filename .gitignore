@@ -1,0 +1,59 @@
+# See https://help.github.com/articles/ignoring-files/ for more about ignoring files.
+
+# dependencies
+/node_modules
+/.pnp
+.pnp.*
+.yarn/*
+!.yarn/patches
+!.yarn/plugins
+!.yarn/releases
+!.yarn/versions
+
+# testing
+/coverage
+
+# next.js
+/.next/
+/out/
+
+# production
+/build
+
+# misc
+.DS_Store
+*.pem
+
+# debug
+npm-debug.log*
+yarn-debug.log*
+yarn-error.log*
+.pnpm-debug.log*
+
+# env files (can opt-in for committing if needed)
+.env*
+.env*.local
+!.env.example
+
+# vercel
+.vercel
+
+# typescript
+*.tsbuildinfo
+next-env.d.ts
+
+# golden run recordings (라이브 런 기록 — 샘플만 커밋)
+data/golden-runs/*.jsonl
+!data/golden-runs/sample.jsonl
+
+# runtime settings (인앱 설정에서 저장한 API 키 — 절대 커밋 금지)
+data/runtime-settings.json
+
+.omc/
+
+# 정의 에디터 런타임 저장(영속화) — 커밋 안 함
+data/workflow-packs.json
+data/rfp-cache/
+
+# 로컬 저장된 생성 이미지(저장 폴더 폴백)
+generated/

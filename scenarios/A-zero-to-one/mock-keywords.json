@@ -1,0 +1,132 @@
+{
+  "totalTracked": 6700,
+  "note": "6,700개 추적 중 기회 상위 14개 (mock)",
+  "seeds": [
+    {
+      "keyword": "성수동 팝업",
+      "monthlySearches": 22000,
+      "rank": null,
+      "prevRank": null,
+      "competitorRank": 3,
+      "intent": "탐색",
+      "audience": "B2C"
+    },
+    {
+      "keyword": "핸드포어드 캔들",
+      "monthlySearches": 3600,
+      "rank": 8,
+      "prevRank": 12,
+      "competitorRank": null,
+      "intent": "탐색",
+      "audience": "B2C"
+    },
+    {
+      "keyword": "소이캔들 추천",
+      "monthlySearches": 9900,
+      "rank": 14,
+      "prevRank": 17,
+      "competitorRank": null,
+      "intent": "거래",
+      "audience": "B2C"
+    },
+    {
+      "keyword": "시향 예약",
+      "monthlySearches": 1300,
+      "rank": null,
+      "prevRank": null,
+      "competitorRank": 8,
+      "intent": "거래",
+      "audience": "B2C"
+    },
+    {
+      "keyword": "성수 데이트 코스",
+      "monthlySearches": 14800,
+      "rank": null,
+      "prevRank": null,
+      "competitorRank": 7,
+      "intent": "탐색",
+      "audience": "B2C"
+    },
+    {
+      "keyword": "캔들 공방 체험",
+      "monthlySearches": 5400,
+      "rank": 18,
+      "prevRank": 20,
+      "competitorRank": null,
+      "intent": "탐색",
+      "audience": "B2C"
+    },
+    {
+      "keyword": "튜베로즈 캔들",
+      "monthlySearches": 880,
+      "rank": 6,
+      "prevRank": 7,
+      "competitorRank": null,
+      "intent": "정보",
+      "audience": "B2C"
+    },
+    {
+      "keyword": "여름밤 무드등",
+      "monthlySearches": 2400,
+      "rank": null,
+      "prevRank": null,
+      "competitorRank": null,
+      "intent": "탐색",
+      "audience": "B2C"
+    },
+    {
+      "keyword": "미니 캔들 선물",
+      "monthlySearches": 4100,
+      "rank": 13,
+      "prevRank": 11,
+      "competitorRank": null,
+      "intent": "거래",
+      "audience": "B2C"
+    },
+    {
+      "keyword": "달무드",
+      "monthlySearches": 590,
+      "rank": 1,
+      "prevRank": 1,
+      "competitorRank": null,
+      "intent": "탐색",
+      "audience": "B2C"
+    },
+    {
+      "keyword": "성수동 볼거리",
+      "monthlySearches": 18500,
+      "rank": null,
+      "prevRank": null,
+      "competitorRank": null,
+      "intent": "정보",
+      "audience": "B2C"
+    },
+    {
+      "keyword": "슬립 캔들",
+      "monthlySearches": 1900,
+      "rank": 23,
+      "prevRank": 25,
+      "competitorRank": null,
+      "intent": "탐색",
+      "audience": "B2C"
+    },
+    {
+      "keyword": "캔들 도매",
+      "monthlySearches": 2700,
+      "rank": null,
+      "prevRank": null,
+      "competitorRank": 5,
+      "intent": "거래",
+      "audience": "B2B"
+    },
+    {
+      "keyword": "기업 단체 시향",
+      "monthlySearches": 480,
+      "rank": 16,
+      "prevRank": 21,
+      "competitorRank": null,
+      "intent": "거래",
+      "audience": "B2B"
+    }
+  ]
+}

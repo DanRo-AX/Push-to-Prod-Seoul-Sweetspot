@@ -1,0 +1,47 @@
+{
+  "note": "온그릇 과거 뉴스레터 발송 원천 (데모 데이터, mock). 리브랜딩 전후 정기 발송분. delivered/opens/clicks 만 원천이며, 오픈율/CTR 은 도구가 계산한다(파생 미포함). subject 는 단골 유지 + 30대 신규 확장 전략과 정합.",
+  "records": [
+    {
+      "sentAt": "2026-04-09",
+      "subject": "온그릇 봄 소식 — 신혼 반상기 입고 안내",
+      "delivered": 2180,
+      "opens": 712,
+      "clicks": 88
+    },
+    {
+      "sentAt": "2026-04-23",
+      "subject": "10년을 지켜 온 그릇, 그리고 다음 이야기",
+      "delivered": 2240,
+      "opens": 805,
+      "clicks": 121
+    },
+    {
+      "sentAt": "2026-05-07",
+      "subject": "새 로고와 패키지를 처음 보여드립니다",
+      "delivered": 2310,
+      "opens": 932,
+      "clicks": 174
+    },
+    {
+      "sentAt": "2026-05-21",
+      "subject": "「오늘」 라인 출시 — 1인 식탁을 위한 무광 그릇",
+      "delivered": 2386,
+      "opens": 1018,
+      "clicks": 233
+    },
+    {
+      "sentAt": "2026-06-04",
+      "subject": "혼밥도 한 끼다 — 1인 플레이팅 그릇 고르는 법",
+      "delivered": 2452,
+      "opens": 1064,
+      "clicks": 271
+    },
+    {
+      "sentAt": "2026-06-11",
+      "subject": "오래 쓰는 그릇 — 단골님께 먼저 드리는 안내",
+      "delivered": 2498,
+      "opens": 1131,
+      "clicks": 246
+    }
+  ]
+}
